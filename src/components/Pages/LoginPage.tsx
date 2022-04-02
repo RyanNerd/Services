@@ -65,7 +65,9 @@ const LoginPage = (props: IProps) => {
                 />
                 {invalidPassword && <Form.Text muted>Password or username is invalid</Form.Text>}
             </FloatingLabel>
-            <Button onClick={() => authenticate()}>Login</Button>
+            <Button disabled={username.length === 0 || password.length === 0} onClick={() => authenticate()}>
+                Login
+            </Button>
         </>
     );
 };
