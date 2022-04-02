@@ -1,3 +1,4 @@
+import ClientPage from 'components/Pages/ClientPage';
 import LoginPage from 'components/Pages/LoginPage';
 import {Authenticated} from 'providers/authenticationProvider';
 import Button from 'react-bootstrap/Button';
@@ -31,7 +32,7 @@ const App = () => {
                 )}
             </Tab>
             <Tab eventKey="client" title="Client" disabled={!signIn.apiKey}>
-                <p>Client Lookup {signIn.organization}</p>
+                <ClientPage clientProvider={providers.clientProvider} tabKey={key} />
             </Tab>
             <Tab eventKey="settings" title="Settings" disabled={!signIn.apiKey}>
                 <p>Settings</p>

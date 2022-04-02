@@ -48,6 +48,7 @@ const LoginPage = (props: IProps) => {
                     onChange={(changeEvent) => setUsername(changeEvent.target.value)}
                     onKeyUp={() => setInvalidPassword(false)}
                     ref={inputFocus}
+                    style={{width: '320px'}}
                     value={username}
                 />
                 {invalidPassword && <Form.Text muted>Password or username is invalid</Form.Text>}
@@ -61,6 +62,7 @@ const LoginPage = (props: IProps) => {
                         setInvalidPassword(false);
                         if (keyboardEvent.key === 'Enter') await authenticate();
                     }}
+                    style={{width: '320px'}}
                     value={password}
                 />
                 {invalidPassword && <Form.Text muted>Password or username is invalid</Form.Text>}
