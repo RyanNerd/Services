@@ -13,8 +13,11 @@ const App = () => {
     const [key, setKey] = useState('login');
 
     const handleSignIn = async (authenticated: Authenticated) => {
-        await setSignIn(authenticated);
-        setKey('client');
+        if (authenticated.apiKey) {
+            await setSignIn(authenticated);
+            await providers.setApi(authenticated.apiKey);
+            setKey('client');
+        }
     };
 
     return (
