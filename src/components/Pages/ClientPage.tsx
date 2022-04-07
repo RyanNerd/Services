@@ -1,4 +1,4 @@
-import ClientSearchGrid from 'components/Pages/grids/ClientSearchGrid';
+import ClientSearchGrid from 'components/Pages/Grids/ClientSearchGrid';
 import {IClientProvider} from 'providers/clientProvider';
 import {Col, Row} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
