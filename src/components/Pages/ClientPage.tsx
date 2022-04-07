@@ -1,13 +1,11 @@
+import ClientSearchGrid from 'components/Pages/grids/ClientSearchGrid';
 import {IClientProvider} from 'providers/clientProvider';
 import {Col, Row} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
-import Table from 'react-bootstrap/Table';
-import ToggleButton from 'react-bootstrap/ToggleButton';
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
-import {randomString} from 'utilities/randomString';
 
 interface IProps {
     clientProvider: IClientProvider;
@@ -26,29 +24,6 @@ const ClientPage = (props: IProps) => {
     const [searchYear, setSearchYear] = useState('');
     const [searchResults, setSearchResults] = useState<null | ClientRecord[]>(null);
     const [searchByName, setSearchByName] = useState(true);
-
-    const ClientSelectionRow = (clientRecord: ClientRecord) => {
-        const domId = clientRecord.Id ? clientRecord.Id : randomString();
-        const dob = clientRecord.DOB_MONTH + '/' + clientRecord.DOB_DAY + '/' + clientRecord.DOB_YEAR;
-        return (
-            <tr key={`client-selection-grid-row-${domId}`} id={`client-selection-grid-row-${domId}`}>
-                <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                    <ToggleButton
-                        checked={false}
-                        name={'client-selection-list'}
-                        onChange={() => alert('todo: Selected Client# ' + clientRecord.Id)}
-                        onClick={() => alert('todo: Selected Client# ' + clientRecord.Id)}
-                        type="checkbox"
-                        value={clientRecord.Id as number}
-                        variant="info"
-                    />
-                </td>
-                <td>{clientRecord.FirstName}</td>
-                <td>{clientRecord.LastName}</td>
-                <td>{dob}</td>
-            </tr>
-        );
-    };
 
     /**
      * Set the search strings back to the default values
@@ -220,32 +195,7 @@ const ClientPage = (props: IProps) => {
             )}
 
             <Form.Group>
-                {searchResults && searchResults.length > 0 && (
-                    <Table
-                        bordered
-                        className="d-block"
-                        hover
-                        size="sm"
-                        striped
-                        style={{
-                            width: 'fit-content',
-                            borderCollapse: 'collapse',
-                            height: '500px',
-                            overflowY: 'auto',
-                            overflowX: 'auto'
-                        }}
-                    >
-                        <thead className="dark" style={{position: 'sticky', top: 0, display: 'table-header-group'}}>
-                            <tr style={{backgroundColor: 'lightgray'}}>
-                                <th> </th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>DOB</th>
-                            </tr>
-                        </thead>
-                        <tbody>{searchResults.map((client) => ClientSelectionRow(client))}</tbody>
-                    </Table>
-                )}
+                {searchResults && searchResults.length > 0 && <ClientSearchGrid searchResults={searchResults} />}
             </Form.Group>
         </Form>
     );
