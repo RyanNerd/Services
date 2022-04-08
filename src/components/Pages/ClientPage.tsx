@@ -6,12 +6,18 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
+import {SearchKeys} from 'types/SearchTypes';
 
 interface IProps {
     clientProvider: IClientProvider;
     tabKey: string;
 }
 
+/**
+ * Given a single character return true if the character is a digit
+ * @param {string} singleChar Single character string to test
+ * @returns {boolean} True if digit, otherwise false
+ */
 const isDigit = (singleChar: string) => {
     return singleChar >= '0' && singleChar < '9';
 };
@@ -46,8 +52,8 @@ const ClientPage = (props: IProps) => {
             const searchCriteria = {
                 where: [['FirstName', 'like', '%' + searchText + '%']],
                 orWhere: [['LastName', 'like', '%' + searchText]],
-                withTrashed: true
-            };
+                onlyTrashed: true
+            } as Record<SearchKeys, (string | number)[][] | boolean>;
             setSearchResults(await clientProvider.search(searchCriteria));
         };
 
@@ -57,7 +63,7 @@ const ClientPage = (props: IProps) => {
          */
         const findClientsByDOB = async () => {
             // Build out the search criteria
-            const searchCriteria = {withTrashed: true} as Record<string, unknown>;
+            const searchCriteria = {onlyTrashed: true} as Record<SearchKeys, (string | number)[][] | boolean>;
 
             const searchContext = [];
             if (searchText.length > 0 && Number.parseInt(searchText)) {
