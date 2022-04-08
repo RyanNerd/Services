@@ -23,6 +23,8 @@ const ClientSearchGrid = (props: IProps) => {
         const hoverReference = useRef(null);
         const isHover = useHover(hoverReference); // https://usehooks-ts.com/react-hook/use-hover
 
+        if (!hoverReference) return null;
+
         return (
             <tr
                 key={`client-selection-grid-row-${domId}`}
