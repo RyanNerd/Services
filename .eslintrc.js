@@ -227,7 +227,7 @@ module.exports = {
         'jsdoc/tag-lines': 1,
         'jsdoc/valid-types': ['error', {allowEmptyNamepaths: true, checkSeesForNamepaths: false}],
         'jsdoc/check-access': 1,
-        'jsdoc/check-examples': 1,
+        'jsdoc/check-examples': 'off',
         'jsdoc/match-description': 'off',
         'jsdoc/no-missing-syntax': 'off',
         'jsdoc/no-restricted-syntax': 'off',
