@@ -8,6 +8,8 @@ import {randomString} from 'utilities/randomString';
 
 interface IProps {
     searchResults: ClientRecord[] | null;
+    onEdit: (client: ClientRecord) => void;
+    onSelect: (client: ClientRecord) => void;
 }
 
 /**
@@ -16,6 +18,8 @@ interface IProps {
  */
 const ClientSearchGrid = (props: IProps) => {
     const searchResults = props.searchResults;
+    const onSelect = props.onSelect;
+    const onEdit = props.onEdit;
 
     const ClientSelectionRow = (clientRecord: ClientRecord) => {
         const domId = clientRecord.Id ? clientRecord.Id : randomString();
@@ -31,7 +35,7 @@ const ClientSearchGrid = (props: IProps) => {
                 id={`client-selection-grid-row-${domId}`}
                 ref={hoverReference}
                 style={{fontWeight: isHover ? 'bold' : undefined}}
-                onClick={() => alert('todo: select client: ' + clientRecord.Id)}
+                onClick={() => onSelect(clientRecord)}
             >
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <ToggleButton
@@ -46,7 +50,15 @@ const ClientSearchGrid = (props: IProps) => {
                 <td style={{cursor: 'pointer'}}>{clientRecord.LastName}</td>
                 <td style={{cursor: 'pointer'}}>{dob}</td>
                 <td>
-                    <Button type="button" variant="primary" size="sm">
+                    <Button
+                        type="button"
+                        variant="primary"
+                        size="sm"
+                        onClick={(mouseEvent) => {
+                            mouseEvent.stopPropagation();
+                            onEdit(clientRecord);
+                        }}
+                    >
                         Edit
                     </Button>
                 </td>
@@ -54,7 +66,7 @@ const ClientSearchGrid = (props: IProps) => {
         );
     };
 
-    if (!searchResults) return null;
+    if (searchResults === null) return null;
 
     return (
         <Table
@@ -80,7 +92,15 @@ const ClientSearchGrid = (props: IProps) => {
                     <th> </th>
                 </tr>
             </thead>
-            <tbody>{searchResults.map((client) => ClientSelectionRow(client))}</tbody>
+            {searchResults.length > 0 ? (
+                <tbody>{searchResults.map((client) => ClientSelectionRow(client))}</tbody>
+            ) : (
+                <tbody>
+                    <tr>
+                        <td>no clients found</td>
+                    </tr>
+                </tbody>
+            )}
         </Table>
     );
 };

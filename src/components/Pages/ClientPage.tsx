@@ -201,7 +201,13 @@ const ClientPage = (props: IProps) => {
             )}
 
             <Form.Group>
-                {searchResults && searchResults.length > 0 && <ClientSearchGrid searchResults={searchResults} />}
+                {searchResults && searchResults.length > 0 && (
+                    <ClientSearchGrid
+                        searchResults={searchResults}
+                        onSelect={(c) => alert('todo: client selected: ' + c.Id)}
+                        onEdit={(c) => alert('todo: client edit: ' + c.Id)}
+                    />
+                )}
             </Form.Group>
         </Form>
     );
