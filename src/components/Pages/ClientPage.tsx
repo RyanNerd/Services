@@ -28,7 +28,7 @@ const ClientPage = (props: IProps) => {
     const [searchText, setSearchText] = useState('');
     const [searchDay, setSearchDay] = useState('');
     const [searchYear, setSearchYear] = useState('');
-    const [searchResults, setSearchResults] = useState<null | ClientRecord[]>(null);
+    const [searchResults, setSearchResults] = useState<ClientRecord[]>([] as ClientRecord[]);
     const [searchByName, setSearchByName] = useState(true);
 
     /**
@@ -39,7 +39,7 @@ const ClientPage = (props: IProps) => {
         setSearchText('');
         setSearchDay('');
         setSearchYear('');
-        setSearchResults(null);
+        setSearchResults([]);
     };
 
     // Monitor changes to the search text
@@ -89,12 +89,13 @@ const ClientPage = (props: IProps) => {
             setSearchByName(!isSearchByDOB);
             if (searchText.length > 1 || isSearchByDOB) {
                 if (isSearchByDOB) {
+                    setSearchResults([]); // This prevents Uncaught Error: Rendered fewer hooks than expected
                     findClientsByDOB().catch((error: unknown) => setErrorDetails(error));
                 } else {
                     findClientsByName().catch((error: unknown) => setErrorDetails(error));
                 }
             } else {
-                setSearchResults(null);
+                setSearchResults([]);
             }
         } else {
             resetSearch();
@@ -201,7 +202,7 @@ const ClientPage = (props: IProps) => {
             )}
 
             <Form.Group>
-                {searchResults && searchResults.length > 0 && (
+                {searchResults.length > 0 && (
                     <ClientSearchGrid
                         searchResults={searchResults}
                         onSelect={(c) => alert('todo: client selected: ' + c.Id)}

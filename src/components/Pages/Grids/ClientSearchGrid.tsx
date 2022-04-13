@@ -1,13 +1,13 @@
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-import React, {useRef} from 'reactn';
+import React, {createRef, useEffect, useRef, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
 import {useHover} from 'usehooks-ts';
 import {randomString} from 'utilities/randomString';
 
 interface IProps {
-    searchResults: ClientRecord[] | null;
+    searchResults: ClientRecord[];
     onEdit: (client: ClientRecord) => void;
     onSelect: (client: ClientRecord) => void;
 }
@@ -17,23 +17,34 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const ClientSearchGrid = (props: IProps) => {
-    const searchResults = props.searchResults;
+    const [searchResults, setSearchResults] = useState(props.searchResults);
+    useEffect(() => {
+        setSearchResults(props.searchResults);
+    }, [props.searchResults]);
+
     const onSelect = props.onSelect;
     const onEdit = props.onEdit;
 
-    const ClientSelectionRow = (clientRecord: ClientRecord) => {
+    // https://stackoverflow.com/questions/57901725/react-creating-dynamically-refs-with-typescript
+    const references = useRef(Array.from({length: searchResults.length}, () => createRef<HTMLTableRowElement>()));
+
+    /**
+     * Client Selection Table Row component
+     * @param {ClientRecord} clientRecord The ClientRecord to parse
+     * @param {number} index Map index
+     * @returns {JSX.Element | null} Returns either the component or null if no component to render
+     */
+    const ClientSelectionRow = (clientRecord: ClientRecord, index: number) => {
         const domId = clientRecord.Id ? clientRecord.Id : randomString();
         const dob = clientRecord.DOB_MONTH + '/' + clientRecord.DOB_DAY + '/' + clientRecord.DOB_YEAR;
-        const hoverReference = useRef(null);
+        const hoverReference = references.current[index];
         const isHover = useHover(hoverReference); // https://usehooks-ts.com/react-hook/use-hover
-
-        if (!hoverReference) return null;
 
         return (
             <tr
                 key={`client-selection-grid-row-${domId}`}
                 id={`client-selection-grid-row-${domId}`}
-                ref={hoverReference}
+                ref={references.current[index]}
                 style={{fontWeight: isHover ? 'bold' : undefined}}
                 onClick={() => onSelect(clientRecord)}
             >
@@ -66,8 +77,6 @@ const ClientSearchGrid = (props: IProps) => {
         );
     };
 
-    if (searchResults === null) return null;
-
     return (
         <Table
             bordered
@@ -93,7 +102,7 @@ const ClientSearchGrid = (props: IProps) => {
                 </tr>
             </thead>
             {searchResults.length > 0 ? (
-                <tbody>{searchResults.map((client) => ClientSelectionRow(client))}</tbody>
+                <tbody>{searchResults.map((client, index) => ClientSelectionRow(client, index))}</tbody>
             ) : (
                 <tbody>
                     <tr>
