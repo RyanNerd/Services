@@ -1,47 +1,47 @@
-import ClientPage from 'components/Pages/ClientPage';
-import LoginPage from 'components/Pages/LoginPage';
-import {Authenticated} from 'providers/authenticationProvider';
-import Button from 'react-bootstrap/Button';
-import React, {useGlobal, useState} from 'reactn';
-import Tabs from 'react-bootstrap/Tabs';
-import Tab from 'react-bootstrap/Tab';
-import TabContent from 'styles/common.css';
+import {ReactNode} from 'react';
+import React, {useGlobal} from 'reactn';
 
-const App = () => {
-    const [signIn, setSignIn] = useGlobal('signIn');
-    const [providers] = useGlobal('providers');
-    const [key, setKey] = useState('login');
+interface IProps {
+    children: ReactNode | undefined;
+    callback: () => void;
+}
 
-    const handleSignIn = async (authenticated: Authenticated) => {
-        if (authenticated.apiKey) {
-            await setSignIn(authenticated);
-            await providers.setApi(authenticated.apiKey);
-            setKey('client');
-        }
+/**
+ * App entry point
+ * @param {IProps} props The props for this component
+ */
+const App = (props: IProps) => {
+    const [errorDetails] = useGlobal('errorDetails');
+    const errorTextLine = (text: unknown) => {
+        return (
+            <>
+                {text as ReactNode} <br></br>
+            </>
+        );
     };
 
-    return (
-        <Tabs className={TabContent} activeKey={key} onSelect={(key) => setKey(key || 'login')}>
-            <Tab eventKey="login" title={signIn.apiKey === null ? 'Login' : 'Logout'}>
-                {signIn.apiKey === null ? (
-                    <LoginPage
-                        authenticationProvider={providers.authenticationProvider}
-                        onLogin={async (authenticated) => await handleSignIn(authenticated)}
-                    />
-                ) : (
-                    <>
-                        <Button onClick={() => alert('todo: Logic to sign out')}>Logout</Button>
-                    </>
-                )}
-            </Tab>
-            <Tab eventKey="client" title="Client" disabled={!signIn.apiKey}>
-                <ClientPage clientProvider={providers.clientProvider} tabKey={key} />
-            </Tab>
-            <Tab eventKey="settings" title="Settings" disabled={!signIn.apiKey}>
-                <p>Settings</p>
-            </Tab>
-        </Tabs>
-    );
+    // If an error has been thrown (errorDetails !== undefined) then show an error page
+    if (errorDetails !== undefined) {
+        const errorMessage = errorDetails instanceof Error ? 'Message: ' + errorDetails.message : undefined;
+        const errorText = 'An error has occurred. See the console for more information';
+        const stack =
+            errorDetails instanceof Error ? errorDetails?.stack?.split(/\r?\n/) : [JSON.stringify(errorDetails)];
+
+        // eslint-disable-next-line no-console
+        console.error('Error Details', errorDetails);
+
+        return (
+            <div className="mx-5 mt-5">
+                <p>{errorText}</p>
+                {errorMessage && <p>{errorMessage}</p>}
+                <p>{stack ? 'Stack trace:' : ' '} </p>
+                {stack?.map((text) => errorTextLine(text))}
+            </div>
+        );
+    }
+
+    const {children} = props;
+    return <div className="mx-2 my-1">{children}</div>;
 };
 
 export default App;
