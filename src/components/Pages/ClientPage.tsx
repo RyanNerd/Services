@@ -85,17 +85,15 @@ const ClientPage = (props: IProps) => {
         // Is there text in searchText?
         if (searchText.length > 0) {
             // Figure out if this is a DOB or name search
-            const isSearchByDOB = isDigit(searchText.slice(0, 1));
+            const isSearchByDOB = isDigit(searchText.slice(0, 1)) && searchText.slice(0, 1) !== '0';
             setSearchByName(!isSearchByDOB);
+            setSearchResults([]); // This prevents Uncaught Error: Rendered fewer hooks than expected
             if (searchText.length > 1 || isSearchByDOB) {
                 if (isSearchByDOB) {
-                    setSearchResults([]); // This prevents Uncaught Error: Rendered fewer hooks than expected
                     findClientsByDOB().catch((error: unknown) => setErrorDetails(error));
                 } else {
                     findClientsByName().catch((error: unknown) => setErrorDetails(error));
                 }
-            } else {
-                setSearchResults([]);
             }
         } else {
             resetSearch();
