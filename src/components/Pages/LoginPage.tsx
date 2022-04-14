@@ -43,6 +43,7 @@ const LoginPage = (props: IProps) => {
             <FloatingLabel label="Username" controlId="userLogin" className="mb-3">
                 <Form.Control
                     autoFocus
+                    autoComplete="off"
                     type="text"
                     placeholder="username"
                     onChange={(changeEvent) => setUsername(changeEvent.target.value)}
@@ -53,7 +54,8 @@ const LoginPage = (props: IProps) => {
                 />
                 {invalidPassword && <Form.Text muted>Password or username is invalid</Form.Text>}
             </FloatingLabel>
-            <FloatingLabel controlId="floatingPassword" label="Password" className="mb-3">
+
+            <FloatingLabel controlId="userPassword" label="Password" className="mb-3">
                 <Form.Control
                     type="password"
                     placeholder="Password"
