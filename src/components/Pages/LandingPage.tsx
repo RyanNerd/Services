@@ -11,6 +11,7 @@ const LandingPage = () => {
     const [signIn, setSignIn] = useGlobal('signIn');
     const [providers] = useGlobal('providers');
     const [key, setKey] = useState('login');
+    const [serviceList] = useGlobal('serviceList');
 
     const handleSignIn = async (authenticated: Authenticated) => {
         if (authenticated.apiKey) {
@@ -36,7 +37,7 @@ const LandingPage = () => {
             </Tab>
 
             <Tab eventKey="client" title="Client" disabled={!signIn.apiKey}>
-                <ClientPage clientProvider={providers.clientProvider} tabKey={key} />
+                <ClientPage clientProvider={providers.clientProvider} serviceList={serviceList} tabKey={key} />
             </Tab>
 
             <Tab eventKey="reports" title="Reports" disabled={!signIn.apiKey}>

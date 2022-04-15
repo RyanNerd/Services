@@ -80,6 +80,15 @@ export type PillboxItemRecord = {
     Quantity: number;
 };
 
+export type ServiceListRecord = {
+    Id: number | null;
+    ServiceName: string;
+    HmisId?: null | number;
+    Updated?: null | Date;
+    Created?: null | Date;
+    deleted_at?: null | Date;
+};
+
 // Default empty Medication record
 export const newMedicineRecord = {
     Barcode: '',

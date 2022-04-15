@@ -26,7 +26,53 @@ const getInitialState = () => {
     return {
         errorDetails: undefined,
         providers,
-        signIn: {apiKey: null, organization: null, success: null}
+        signIn: {apiKey: null, organization: null, success: null},
+        serviceList: [
+            {
+                Id: 1,
+                ServiceName: 'Computer Lab'
+            },
+            {
+                Id: 2,
+                ServiceName: 'DI Vouchers - Emergency Services'
+            },
+            {
+                Id: 3,
+                ServiceName: 'Donations Closet'
+            },
+            {
+                Id: 4,
+                ServiceName: 'Emergency Fund Used'
+            },
+            {
+                Id: 5,
+                ServiceName: 'Food'
+            },
+            {
+                Id: 6,
+                ServiceName: 'Hot Meal'
+            },
+            {
+                Id: 7,
+                ServiceName: 'Laundry'
+            },
+            {
+                Id: 8,
+                ServiceName: 'Pet Supplies'
+            },
+            {
+                Id: 9,
+                ServiceName: 'Sack Meal'
+            },
+            {
+                Id: 10,
+                ServiceName: 'Shower'
+            },
+            {
+                Id: 11,
+                ServiceName: 'Voucher SP Thrift Store'
+            }
+        ]
     } as State;
 };
 

@@ -1,18 +1,18 @@
+import ClientCard from 'components/Pages/Grids/ClientCard';
 import ClientSearchGrid from 'components/Pages/Grids/ClientSearchGrid';
 import {IClientProvider} from 'providers/clientProvider';
-import {Card, Col, Row} from 'react-bootstrap';
+import {Col, Row} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import React, {useEffect, useGlobal, useState} from 'reactn';
-import {ClientRecord} from 'types/RecordTypes';
+import {ClientRecord, ServiceListRecord} from 'types/RecordTypes';
 import {SearchKeys} from 'types/SearchTypes';
 import {useDebounce} from 'usehooks-ts';
-import {clientDOB, clientFullName} from 'utilities/clientFormatting';
-import getFormattedDate from 'utilities/getFormattedDate';
 
 interface IProps {
     clientProvider: IClientProvider;
+    serviceList: ServiceListRecord[];
     tabKey: string;
 }
 
@@ -28,6 +28,7 @@ const isDigit = (singleChar: string) => {
 const ClientPage = (props: IProps) => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const clientProvider = props.clientProvider;
+    const serviceList = props.serviceList;
     const [searchText, setSearchText] = useState('');
     const debouncedSearchText = useDebounce(searchText, 300);
     const [searchDay, setSearchDay] = useState('');
@@ -218,20 +219,7 @@ const ClientPage = (props: IProps) => {
                 ) : (
                     <>
                         {activeClient && searchText.length === 0 && (
-                            <Row>
-                                <Col sm="2">
-                                    <Card border="info">
-                                        <Card.Header>{clientFullName(activeClient)}</Card.Header>
-                                        <Card.Body>DOB: {clientDOB(activeClient)}</Card.Body>
-                                    </Card>
-                                </Col>
-                                <Col sm="10">
-                                    <Card border="primary">
-                                        <Card.Header>Services for {getFormattedDate(new Date(), true)}</Card.Header>
-                                        <Card.Body>Placeholder for services selection</Card.Body>
-                                    </Card>
-                                </Col>
-                            </Row>
+                            <ClientCard activeClient={activeClient} serviceList={serviceList} />
                         )}
                     </>
                 )}
