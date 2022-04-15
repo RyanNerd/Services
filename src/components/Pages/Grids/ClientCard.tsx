@@ -32,8 +32,21 @@ const ClientCard = (props: IProps) => {
         <Row>
             <Col sm="2">
                 <Card border="info">
-                    <Card.Header>{clientFullName(activeClient)}</Card.Header>
-                    <Card.Body>DOB: {clientDOB(activeClient)}</Card.Body>
+                    <Card.Header>
+                        <span style={{backgroundColor: 'lawngreen', fontWeight: 'bold'}}>
+                            {clientFullName(activeClient)}
+                        </span>
+                    </Card.Header>
+                    <Card.Body>
+                        <ul>
+                            <li>DOB: {clientDOB(activeClient)}</li>
+                            <li>
+                                <span>
+                                    Notes: <Form.Text>{activeClient.Notes}</Form.Text>
+                                </span>
+                            </li>
+                        </ul>
+                    </Card.Body>
                 </Card>
             </Col>
             <Col sm="10">
