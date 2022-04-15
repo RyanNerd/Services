@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/Form';
 import React, {useEffect, useGlobal, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
 import {SearchKeys} from 'types/SearchTypes';
+import {useDebounce} from 'usehooks-ts';
 
 interface IProps {
     clientProvider: IClientProvider;
@@ -26,6 +27,7 @@ const ClientPage = (props: IProps) => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const clientProvider = props.clientProvider;
     const [searchText, setSearchText] = useState('');
+    const debouncedSearchText = useDebounce(searchText, 300);
     const [searchDay, setSearchDay] = useState('');
     const [searchYear, setSearchYear] = useState('');
     const [searchResults, setSearchResults] = useState<ClientRecord[]>([] as ClientRecord[]);
@@ -50,8 +52,8 @@ const ClientPage = (props: IProps) => {
          */
         const findClientsByName = async () => {
             const searchCriteria = {
-                where: [['FirstName', 'like', '%' + searchText + '%']],
-                orWhere: [['LastName', 'like', '%' + searchText]],
+                where: [['FirstName', 'like', '%' + debouncedSearchText + '%']],
+                orWhere: [['LastName', 'like', '%' + debouncedSearchText]],
                 onlyTrashed: true
             } as Record<SearchKeys, (string | number)[][] | boolean>;
             setSearchResults(await clientProvider.search(searchCriteria));
@@ -66,8 +68,8 @@ const ClientPage = (props: IProps) => {
             const searchCriteria = {onlyTrashed: true} as Record<SearchKeys, (string | number)[][] | boolean>;
 
             const searchContext = [];
-            if (searchText.length > 0 && Number.parseInt(searchText)) {
-                searchContext.push(['DOB_MONTH', '=', Number.parseInt(searchText)]);
+            if (debouncedSearchText.length > 0 && Number.parseInt(debouncedSearchText)) {
+                searchContext.push(['DOB_MONTH', '=', Number.parseInt(debouncedSearchText)]);
             }
             if (searchDay.length > 0 && Number.parseInt(searchDay)) {
                 searchContext.push(['DOB_DAY', '=', Number.parseInt(searchDay)]);
@@ -83,12 +85,12 @@ const ClientPage = (props: IProps) => {
         };
 
         // Is there text in searchText?
-        if (searchText.length > 0) {
+        if (debouncedSearchText.length > 0) {
             // Figure out if this is a DOB or name search
-            const isSearchByDOB = isDigit(searchText.slice(0, 1)) && searchText.slice(0, 1) !== '0';
+            const isSearchByDOB = isDigit(debouncedSearchText.slice(0, 1)) && debouncedSearchText.slice(0, 1) !== '0';
             setSearchByName(!isSearchByDOB);
             setSearchResults([]); // This prevents Uncaught Error: Rendered fewer hooks than expected
-            if (searchText.length > 1 || isSearchByDOB) {
+            if (debouncedSearchText.length > 1 || isSearchByDOB) {
                 if (isSearchByDOB) {
                     findClientsByDOB().catch((error: unknown) => setErrorDetails(error));
                 } else {
@@ -98,7 +100,7 @@ const ClientPage = (props: IProps) => {
         } else {
             resetSearch();
         }
-    }, [searchText, clientProvider, searchDay, searchYear, setErrorDetails]);
+    }, [debouncedSearchText, clientProvider, searchDay, searchYear, setErrorDetails]);
 
     /**
      * Add a new client
