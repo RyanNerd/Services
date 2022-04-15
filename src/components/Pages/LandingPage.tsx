@@ -34,9 +34,15 @@ const LandingPage = () => {
                     </>
                 )}
             </Tab>
+
             <Tab eventKey="client" title="Client" disabled={!signIn.apiKey}>
                 <ClientPage clientProvider={providers.clientProvider} tabKey={key} />
             </Tab>
+
+            <Tab eventKey="reports" title="Reports" disabled={!signIn.apiKey}>
+                <p>Reports place holder</p>
+            </Tab>
+
             <Tab eventKey="settings" title="Settings" disabled={!signIn.apiKey}>
                 <p>Settings</p>
             </Tab>

@@ -1,6 +1,6 @@
 import ClientSearchGrid from 'components/Pages/Grids/ClientSearchGrid';
 import {IClientProvider} from 'providers/clientProvider';
-import {Col, Row} from 'react-bootstrap';
+import {Card, Col, Row} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
@@ -8,6 +8,8 @@ import React, {useEffect, useGlobal, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
 import {SearchKeys} from 'types/SearchTypes';
 import {useDebounce} from 'usehooks-ts';
+import {clientDOB, clientFullName} from 'utilities/clientFormatting';
+import getFormattedDate from 'utilities/getFormattedDate';
 
 interface IProps {
     clientProvider: IClientProvider;
@@ -32,6 +34,7 @@ const ClientPage = (props: IProps) => {
     const [searchYear, setSearchYear] = useState('');
     const [searchResults, setSearchResults] = useState<ClientRecord[]>([] as ClientRecord[]);
     const [searchByName, setSearchByName] = useState(true);
+    const [activeClient, setActiveClient] = useState<ClientRecord | null>(null);
 
     /**
      * Set the search strings back to the default values
@@ -86,6 +89,7 @@ const ClientPage = (props: IProps) => {
 
         // Is there text in searchText?
         if (debouncedSearchText.length > 0) {
+            setActiveClient(null);
             // Figure out if this is a DOB or name search
             const isSearchByDOB = isDigit(debouncedSearchText.slice(0, 1)) && debouncedSearchText.slice(0, 1) !== '0';
             setSearchByName(!isSearchByDOB);
@@ -202,12 +206,34 @@ const ClientPage = (props: IProps) => {
             )}
 
             <Form.Group>
-                {searchResults.length > 0 && (
+                {searchResults.length > 0 && activeClient === null ? (
                     <ClientSearchGrid
                         searchResults={searchResults}
-                        onSelect={(c) => alert('todo: client selected: ' + c.Id)}
+                        onSelect={(c) => {
+                            setActiveClient(c);
+                            resetSearch();
+                        }}
                         onEdit={(c) => alert('todo: client edit: ' + c.Id)}
                     />
+                ) : (
+                    <>
+                        {activeClient && searchText.length === 0 && (
+                            <Row>
+                                <Col sm="2">
+                                    <Card border="info">
+                                        <Card.Header>{clientFullName(activeClient)}</Card.Header>
+                                        <Card.Body>DOB: {clientDOB(activeClient)}</Card.Body>
+                                    </Card>
+                                </Col>
+                                <Col sm="10">
+                                    <Card border="primary">
+                                        <Card.Header>Services for {getFormattedDate(new Date(), true)}</Card.Header>
+                                        <Card.Body>Placeholder for services selection</Card.Body>
+                                    </Card>
+                                </Col>
+                            </Row>
+                        )}
+                    </>
                 )}
             </Form.Group>
         </Form>
