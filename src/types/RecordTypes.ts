@@ -80,10 +80,20 @@ export type PillboxItemRecord = {
     Quantity: number;
 };
 
-export type ServiceListRecord = {
+export type ServiceRecord = {
     Id: number | null;
     ServiceName: string;
     HmisId?: null | number;
+    Updated?: null | Date;
+    Created?: null | Date;
+    deleted_at?: null | Date;
+};
+
+export type ServiceLogRecord = {
+    Id: number | null;
+    ResidentId: number;
+    ServiceId: number;
+    Notes: string;
     Updated?: null | Date;
     Created?: null | Date;
     deleted_at?: null | Date;

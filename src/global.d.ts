@@ -1,5 +1,5 @@
 import {Authenticated} from 'providers/authenticationProvider';
-import {ServiceListRecord} from 'types/RecordTypes';
+import {ServiceRecord} from 'types/RecordTypes';
 import {IProviders} from 'utilities/getInitialState';
 
 declare module 'reactn/default' {
@@ -7,6 +7,6 @@ declare module 'reactn/default' {
         errorDetails: unknown;
         providers: IProviders;
         signIn: Authenticated;
-        serviceList: ServiceListRecord[];
+        serviceList: ServiceRecord[];
     }
 }

@@ -1,17 +1,32 @@
-import {Card, Col, Row} from 'react-bootstrap';
+import {Card, Col, Form, InputGroup, Row} from 'react-bootstrap';
 import React from 'reactn';
-import {ClientRecord, ServiceListRecord} from 'types/RecordTypes';
+import {ClientRecord, ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
 import {clientDOB, clientFullName} from 'utilities/clientFormatting';
 import getFormattedDate from 'utilities/getFormattedDate';
 
 interface IProps {
     activeClient: ClientRecord;
-    serviceList: ServiceListRecord[];
+    serviceList: ServiceRecord[];
 }
 
 const ClientCard = (props: IProps) => {
     const activeClient = props.activeClient;
     const serviceList = props.serviceList;
+
+    const servicesLog = [
+        {
+            ServiceId: 1,
+            Notes: ''
+        },
+        {
+            ServiceId: 3,
+            Notes: ''
+        },
+        {
+            ServiceId: 8,
+            Notes: ''
+        }
+    ] as ServiceLogRecord[];
 
     return (
         <Row>
@@ -25,12 +40,25 @@ const ClientCard = (props: IProps) => {
                 <Card border="primary">
                     <Card.Header>Services for {getFormattedDate(new Date(), true)}</Card.Header>
                     <Card.Body>
-                        <ul>
+                        <Form>
                             {serviceList.map((s) => {
-                                // eslint-disable-next-line react/jsx-key
-                                return <li key={`service-list-item-${s.Id}`}>Service: {s.ServiceName}</li>;
+                                return (
+                                    <InputGroup key={`services-input-group-${s.Id}`}>
+                                        <Form.Check
+                                            key={`services-checkbox-${s.Id}`}
+                                            checked={servicesLog.some((sl) => sl.ServiceId === s.Id)}
+                                            id={`service-list-checkbox-${s.Id}`}
+                                            name="services"
+                                            label={s.ServiceName}
+                                            type="switch"
+                                            value={s.Id as number}
+                                        />
+
+                                        <Form.Control type="text" size="sm" className={'mx-2'} placeholder="notes" />
+                                    </InputGroup>
+                                );
                             })}
-                        </ul>
+                        </Form>
                     </Card.Body>
                 </Card>
             </Col>

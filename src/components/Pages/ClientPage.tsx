@@ -6,13 +6,13 @@ import Button from 'react-bootstrap/Button';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import React, {useEffect, useGlobal, useState} from 'reactn';
-import {ClientRecord, ServiceListRecord} from 'types/RecordTypes';
+import {ClientRecord, ServiceRecord} from 'types/RecordTypes';
 import {SearchKeys} from 'types/SearchTypes';
 import {useDebounce} from 'usehooks-ts';
 
 interface IProps {
     clientProvider: IClientProvider;
-    serviceList: ServiceListRecord[];
+    serviceList: ServiceRecord[];
     tabKey: string;
 }
 
