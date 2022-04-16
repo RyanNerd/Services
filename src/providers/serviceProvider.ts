@@ -18,7 +18,6 @@ export interface IServiceProvider {
     load: () => Promise<ServiceRecord[]>;
     update: (residentInfo: ServiceRecord) => Promise<ServiceRecord>;
     read: (id: number) => Promise<ServiceRecord>;
-    restore: (serviceId: number) => Promise<ServiceRecord>;
     search: (options: Record<string, unknown>) => Promise<ServiceRecord[]>;
     setApiKey: (apiKey: string) => void;
 }
@@ -66,22 +65,6 @@ const serviceProvider = (url: string): IServiceProvider => {
          */
         search: async (options: Record<string, unknown>): Promise<ServiceRecord[]> => {
             return await _search(options);
-        },
-
-        /**
-         * Service Restore
-         * @param {number} serviceId PK of the Service table
-         * @returns {Promise<ServiceRecord>} A service record
-         */
-        restore: async (serviceId: number): Promise<ServiceRecord> => {
-            const uri = _baseUrl + 'service/restore?api_key=' + _apiKey;
-            const body = {restore_id: serviceId};
-            const response = await _frak.post<RecordResponse>(uri, body);
-            if (response.success) {
-                return response.data as ServiceRecord;
-            } else {
-                throw response;
-            }
         },
 
         /**
