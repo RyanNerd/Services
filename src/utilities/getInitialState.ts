@@ -1,10 +1,13 @@
 import authenticationProvider, {IAuthenticationProvider} from 'providers/authenticationProvider';
 import clientProvider, {IClientProvider} from 'providers/clientProvider';
+import serviceProvider, {IServiceProvider} from 'providers/serviceProvider';
 import {State} from 'reactn/default';
+import {ServiceRecord} from 'types/RecordTypes';
 
 export interface IProviders {
     authenticationProvider: IAuthenticationProvider;
     clientProvider: IClientProvider;
+    serviceProvider: IServiceProvider;
     setApi: (apiKey: string) => Promise<void>;
 }
 
@@ -18,8 +21,10 @@ const getInitialState = () => {
     const providers = {
         authenticationProvider: authenticationProvider(baseUrl),
         clientProvider: clientProvider(baseUrl),
+        serviceProvider: serviceProvider(baseUrl),
         setApi: async (apiKey: string): Promise<void> => {
             await providers.clientProvider.setApiKey(apiKey);
+            await providers.serviceProvider.setApiKey(apiKey);
         }
     } as IProviders;
 
@@ -27,52 +32,7 @@ const getInitialState = () => {
         errorDetails: undefined,
         providers,
         signIn: {apiKey: null, organization: null, success: null},
-        serviceList: [
-            {
-                Id: 1,
-                ServiceName: 'Computer Lab'
-            },
-            {
-                Id: 2,
-                ServiceName: 'DI Vouchers - Emergency Services'
-            },
-            {
-                Id: 3,
-                ServiceName: 'Donations Closet'
-            },
-            {
-                Id: 4,
-                ServiceName: 'Emergency Fund Used'
-            },
-            {
-                Id: 5,
-                ServiceName: 'Food'
-            },
-            {
-                Id: 6,
-                ServiceName: 'Hot Meal'
-            },
-            {
-                Id: 7,
-                ServiceName: 'Laundry'
-            },
-            {
-                Id: 8,
-                ServiceName: 'Pet Supplies'
-            },
-            {
-                Id: 9,
-                ServiceName: 'Sack Meal'
-            },
-            {
-                Id: 10,
-                ServiceName: 'Shower'
-            },
-            {
-                Id: 11,
-                ServiceName: 'Voucher SP Thrift Store'
-            }
-        ]
+        serviceList: [] as ServiceRecord[]
     } as State;
 };
 

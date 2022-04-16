@@ -13,20 +13,47 @@ const ClientCard = (props: IProps) => {
     const activeClient = props.activeClient;
     const serviceList = props.serviceList;
 
-    const servicesLog = [
+    const serviceLog = [
         {
+            Id: 1,
+            ResidentId: 12,
             ServiceId: 1,
             Notes: ''
         },
         {
+            Id: 2,
+            ResidentId: 12,
             ServiceId: 3,
             Notes: ''
         },
         {
+            Id: 3,
+            ResidentId: 12,
             ServiceId: 8,
             Notes: ''
         }
     ] as ServiceLogRecord[];
+
+    const handleSwitchChange = (serviceRecord: ServiceRecord) => {
+        for (const [slIndex, sl] of serviceLog.entries()) {
+            // TODO: handle this via the API - PoC right now
+            if (sl.ServiceId === serviceRecord.Id) {
+                // eslint-disable-next-line no-console
+                console.log('serviceLog before', serviceLog);
+                serviceLog.splice(slIndex, 1);
+                // delete serviceLog[slIndex];
+                // eslint-disable-next-line no-console
+                console.log('serviceLog after', serviceLog);
+            } else {
+                serviceLog.push({
+                    Id: serviceLog.length + 1,
+                    ResidentId: 0,
+                    ServiceId: serviceRecord.Id as number,
+                    Notes: ''
+                });
+            }
+        }
+    };
 
     return (
         <Row>
@@ -59,7 +86,8 @@ const ClientCard = (props: IProps) => {
                                     <InputGroup key={`services-input-group-${s.Id}`}>
                                         <Form.Check
                                             key={`services-checkbox-${s.Id}`}
-                                            checked={servicesLog.some((sl) => sl.ServiceId === s.Id)}
+                                            checked={serviceLog.some((sl) => sl.ServiceId === s.Id)}
+                                            onChange={() => handleSwitchChange(s)}
                                             id={`service-list-checkbox-${s.Id}`}
                                             name="services"
                                             label={s.ServiceName}

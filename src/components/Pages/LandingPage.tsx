@@ -11,13 +11,20 @@ const LandingPage = () => {
     const [signIn, setSignIn] = useGlobal('signIn');
     const [providers] = useGlobal('providers');
     const [key, setKey] = useState('login');
-    const [serviceList] = useGlobal('serviceList');
+    const [serviceList, setServiceList] = useGlobal('serviceList');
+    const [, setErrorDetails] = useGlobal('errorDetails');
 
     const handleSignIn = async (authenticated: Authenticated) => {
         if (authenticated.apiKey) {
-            await setSignIn(authenticated);
-            await providers.setApi(authenticated.apiKey);
-            setKey('client');
+            try {
+                await setSignIn(authenticated);
+                await providers.setApi(authenticated.apiKey);
+                const serviceList = await providers.serviceProvider.load();
+                await setServiceList(serviceList);
+                setKey('client');
+            } catch (error: unknown) {
+                setErrorDetails(error);
+            }
         }
     };
 
