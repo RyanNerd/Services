@@ -2,9 +2,9 @@ import ClientPage from 'components/Pages/ClientPage';
 import LoginPage from 'components/Pages/LoginPage';
 import {Authenticated} from 'providers/authenticationProvider';
 import Button from 'react-bootstrap/Button';
-import React, {useGlobal, useState} from 'reactn';
-import Tabs from 'react-bootstrap/Tabs';
 import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+import React, {useGlobal, useState} from 'reactn';
 import TabContent from 'styles/common.css';
 
 const LandingPage = () => {
@@ -44,7 +44,7 @@ const LandingPage = () => {
             </Tab>
 
             <Tab eventKey="client" title="Client" disabled={!signIn.apiKey}>
-                <ClientPage clientProvider={providers.clientProvider} serviceList={serviceList} tabKey={key} />
+                <ClientPage providers={providers} serviceList={serviceList} tabKey={key} />
             </Tab>
 
             <Tab eventKey="reports" title="Reports" disabled={!signIn.apiKey}>

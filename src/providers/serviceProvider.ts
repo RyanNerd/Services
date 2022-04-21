@@ -1,5 +1,5 @@
 import Frak from 'frak/lib/components/Frak';
-import {ClientRecord, ServiceRecord} from 'types/RecordTypes';
+import {ServiceRecord} from 'types/RecordTypes';
 
 type DeleteResponse = {success: boolean};
 type RecordResponse = {
@@ -10,13 +10,14 @@ type RecordResponse = {
 
 type LoadResponse = {
     data: ServiceRecord[];
+    status: number;
     success: boolean;
 };
 
 export interface IServiceProvider {
     delete: (residentId: number) => Promise<DeleteResponse>;
     load: () => Promise<ServiceRecord[]>;
-    update: (residentInfo: ServiceRecord) => Promise<ServiceRecord>;
+    update: (serviceInfo: ServiceRecord) => Promise<ServiceRecord>;
     read: (id: number) => Promise<ServiceRecord>;
     search: (options: Record<string, unknown>) => Promise<ServiceRecord[]>;
     setApiKey: (apiKey: string) => void;
@@ -59,9 +60,9 @@ const serviceProvider = (url: string): IServiceProvider => {
         },
 
         /**
-         * Client Search
+         * Service Search
          * @param {object} options Multi shaped object for the fetch request
-         * @returns {Promise<ClientRecord[]>} An array of client records
+         * @returns {Promise<ServiceRecord[]>} An array of service records
          */
         search: async (options: Record<string, unknown>): Promise<ServiceRecord[]> => {
             return await _search(options);
@@ -103,7 +104,7 @@ const serviceProvider = (url: string): IServiceProvider => {
          * @returns {Promise<DeleteResponse>} Success: true/false
          */
         delete: async (serviceId: number): Promise<DeleteResponse> => {
-            const uri = _baseUrl + 'resident/' + serviceId + '?api_key=' + _apiKey;
+            const uri = _baseUrl + 'service/' + serviceId + '?api_key=' + _apiKey;
             const response = await _frak.delete<DeleteResponse>(uri);
             if (response.success) {
                 return response;
@@ -122,6 +123,9 @@ const serviceProvider = (url: string): IServiceProvider => {
             if (response.success) {
                 return response.data;
             } else {
+                if (response.status === 404) {
+                    return [] as ServiceRecord[];
+                }
                 throw response;
             }
         }

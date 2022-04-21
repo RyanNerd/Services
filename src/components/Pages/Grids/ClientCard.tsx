@@ -1,57 +1,64 @@
 import {Card, Col, Form, InputGroup, Row} from 'react-bootstrap';
-import React from 'reactn';
+import React, {useEffect, useState} from 'reactn';
 import {ClientRecord, ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
 import {clientDOB, clientFullName} from 'utilities/clientFormatting';
 import getFormattedDate from 'utilities/getFormattedDate';
+import {IProviders} from 'utilities/getInitialState';
 
 interface IProps {
     activeClient: ClientRecord;
+    providers: IProviders;
     serviceList: ServiceRecord[];
 }
 
 const ClientCard = (props: IProps) => {
-    const activeClient = props.activeClient;
     const serviceList = props.serviceList;
+    const providers = props.providers;
+    const [serviceLogList, setServiceLogList] = useState<ServiceLogRecord[]>([]);
+    const [activeClient, setActiveClient] = useState(props.activeClient);
+    useEffect(() => {
+        const populatedServiceLog = async () => {
+            setServiceLogList(await providers.serviceLogProvider.load(props.activeClient.Id as number));
+        };
+        setActiveClient(props.activeClient);
+        populatedServiceLog();
+    }, [props.activeClient, providers.serviceLogProvider]);
 
-    const serviceLog = [
-        {
-            Id: 1,
-            ResidentId: 12,
-            ServiceId: 1,
-            Notes: ''
-        },
-        {
-            Id: 2,
-            ResidentId: 12,
-            ServiceId: 3,
-            Notes: ''
-        },
-        {
-            Id: 3,
-            ResidentId: 12,
-            ServiceId: 8,
-            Notes: ''
-        }
-    ] as ServiceLogRecord[];
-
+    /**
+     * Handle when the toggle switch is changed
+     * @param {ServiceRecord} serviceRecord The service record being changed
+     */
     const handleSwitchChange = (serviceRecord: ServiceRecord) => {
-        for (const [slIndex, sl] of serviceLog.entries()) {
-            // TODO: handle this via the API - PoC right now
-            if (sl.ServiceId === serviceRecord.Id) {
-                // eslint-disable-next-line no-console
-                console.log('serviceLog before', serviceLog);
-                serviceLog.splice(slIndex, 1);
-                // delete serviceLog[slIndex];
-                // eslint-disable-next-line no-console
-                console.log('serviceLog after', serviceLog);
-            } else {
-                serviceLog.push({
-                    Id: serviceLog.length + 1,
-                    ResidentId: 0,
-                    ServiceId: serviceRecord.Id as number,
-                    Notes: ''
-                });
-            }
+        /**
+         * Add a serviceLog entry when the service switch is set to true
+         * @returns {Promise<void>}
+         */
+        const addServiceLog = async () => {
+            await providers.serviceLogProvider.update({
+                Id: null,
+                ResidentId: activeClient.Id as number,
+                ServiceId: serviceRecord.Id as number,
+                Notes: ''
+            });
+            setServiceLogList(await providers.serviceLogProvider.load(activeClient.Id as number));
+        };
+
+        /**
+         * Remove the serviceLog entry when the service switch is set to false
+         * @param {number} serviceLogId The service record Id
+         * @returns {Promise<void>}
+         */
+        const removeServiceLog = async (serviceLogId: number) => {
+            await providers.serviceLogProvider.delete(serviceLogId, true);
+            setServiceLogList(await providers.serviceLogProvider.load(activeClient.Id as number));
+        };
+
+        const currentServiceLogRecord = serviceLogList?.find((sl) => sl.ServiceId === serviceRecord.Id);
+        // Is there an existing service log record? If so then remove it, otherwise add a new record.
+        if (currentServiceLogRecord && currentServiceLogRecord.Id) {
+            removeServiceLog(currentServiceLogRecord.Id);
+        } else {
+            addServiceLog();
         }
     };
 
@@ -78,28 +85,44 @@ const ClientCard = (props: IProps) => {
             </Col>
             <Col sm="10">
                 <Card border="primary">
-                    <Card.Header>Services for {getFormattedDate(new Date(), true)}</Card.Header>
+                    <Card.Header>
+                        Services for{' '}
+                        <span style={{backgroundColor: 'lawngreen', fontWeight: 'bold'}}>
+                            {clientFullName(activeClient)}
+                        </span>{' '}
+                        on {getFormattedDate(new Date(), true)}
+                    </Card.Header>
                     <Card.Body>
-                        <Form>
-                            {serviceList.map((s) => {
+                        <>
+                            {serviceList.map((serviceRecord) => {
+                                const isChecked = serviceLogList?.some(
+                                    (serviceLogRecord) => serviceLogRecord.ServiceId === serviceRecord.Id
+                                );
+
                                 return (
-                                    <InputGroup key={`services-input-group-${s.Id}`}>
+                                    <InputGroup key={`services-input-group-${serviceRecord.Id}`}>
                                         <Form.Check
-                                            key={`services-checkbox-${s.Id}`}
-                                            checked={serviceLog.some((sl) => sl.ServiceId === s.Id)}
-                                            onChange={() => handleSwitchChange(s)}
-                                            id={`service-list-checkbox-${s.Id}`}
+                                            key={`services-checkbox-${serviceRecord.Id}`}
+                                            checked={isChecked}
+                                            onChange={() => handleSwitchChange(serviceRecord)}
+                                            id={`service-list-checkbox-${serviceRecord.Id}`}
                                             name="services"
-                                            label={s.ServiceName}
+                                            label={serviceRecord.ServiceName}
                                             type="switch"
-                                            value={s.Id as number}
+                                            value={serviceRecord.Id as number}
                                         />
 
-                                        <Form.Control type="text" size="sm" className={'mx-2'} placeholder="notes" />
+                                        <Form.Control
+                                            disabled={!isChecked}
+                                            type="text"
+                                            size="sm"
+                                            className={'mx-2'}
+                                            placeholder="notes"
+                                        />
                                     </InputGroup>
                                 );
                             })}
-                        </Form>
+                        </>
                     </Card.Body>
                 </Card>
             </Col>

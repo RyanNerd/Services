@@ -94,6 +94,7 @@ export type ServiceLogRecord = {
     ResidentId: number;
     ServiceId: number;
     Notes: string;
+    Recorded?: null | Date;
     Updated?: null | Date;
     Created?: null | Date;
     deleted_at?: null | Date;

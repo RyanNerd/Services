@@ -1,6 +1,5 @@
 import ClientCard from 'components/Pages/Grids/ClientCard';
 import ClientSearchGrid from 'components/Pages/Grids/ClientSearchGrid';
-import {IClientProvider} from 'providers/clientProvider';
 import {Col, Row} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
@@ -9,9 +8,10 @@ import React, {useEffect, useGlobal, useState} from 'reactn';
 import {ClientRecord, ServiceRecord} from 'types/RecordTypes';
 import {SearchKeys} from 'types/SearchTypes';
 import {useDebounce} from 'usehooks-ts';
+import {IProviders} from 'utilities/getInitialState';
 
 interface IProps {
-    clientProvider: IClientProvider;
+    providers: IProviders;
     serviceList: ServiceRecord[];
     tabKey: string;
 }
@@ -27,7 +27,7 @@ const isDigit = (singleChar: string) => {
 
 const ClientPage = (props: IProps) => {
     const [, setErrorDetails] = useGlobal('errorDetails');
-    const clientProvider = props.clientProvider;
+    const clientProvider = props.providers.clientProvider;
     const serviceList = props.serviceList;
     const [searchText, setSearchText] = useState('');
     const debouncedSearchText = useDebounce(searchText, 300);
@@ -112,6 +112,15 @@ const ClientPage = (props: IProps) => {
      */
     const addClient = () => {
         alert('todo: Add client logic');
+    };
+
+    /**
+     * Handle when a client is selected
+     * @param {ClientRecord} c The client record to make active
+     */
+    const handleClientSelected = (c: ClientRecord) => {
+        setActiveClient(c);
+        resetSearch();
     };
 
     if (props.tabKey !== 'client') return null;
@@ -210,16 +219,17 @@ const ClientPage = (props: IProps) => {
                 {searchResults.length > 0 && activeClient === null ? (
                     <ClientSearchGrid
                         searchResults={searchResults}
-                        onSelect={(c) => {
-                            setActiveClient(c);
-                            resetSearch();
-                        }}
+                        onSelect={(c) => handleClientSelected(c)}
                         onEdit={(c) => alert('todo: client edit: ' + c.Id)}
                     />
                 ) : (
                     <>
                         {activeClient && searchText.length === 0 && (
-                            <ClientCard activeClient={activeClient} serviceList={serviceList} />
+                            <ClientCard
+                                activeClient={activeClient}
+                                providers={props.providers}
+                                serviceList={serviceList}
+                            />
                         )}
                     </>
                 )}
