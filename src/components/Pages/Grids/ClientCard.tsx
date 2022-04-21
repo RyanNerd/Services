@@ -1,5 +1,4 @@
 import {Card, Col, Form, InputGroup, Row} from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
 import React, {useEffect, useState} from 'reactn';
 import {ClientRecord, ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
 import {clientDOB, clientFullName} from 'utilities/clientFormatting';
@@ -63,16 +62,33 @@ const ClientCard = (props: IProps) => {
         }
     };
 
+    /**
+     * Fires as the user changes the notes field
+     * @param {React.ChangeEvent} changeEvent The onChange event
+     * @param {ServiceLogRecord} serviceLogRecord The service log record notes to change
+     */
     const handleOnChange = (changeEvent: React.ChangeEvent, serviceLogRecord: ServiceLogRecord) => {
         const target = changeEvent.target as HTMLInputElement;
         const value = target.value;
         const cloneServiceLogList = [...serviceLogList];
         for (const [cloneIndex, clonedServiceLog] of cloneServiceLogList.entries()) {
-            if (clonedServiceLog.Id === serviceLogRecord.Id) {
+            if (clonedServiceLog.Id === serviceLogRecord.Id && cloneServiceLogList[cloneIndex].Notes !== value) {
                 cloneServiceLogList[cloneIndex].Notes = value;
+                setServiceLogList(cloneServiceLogList);
             }
         }
-        setServiceLogList(cloneServiceLogList);
+    };
+
+    /**
+     * Fires when the focus is moved from the notes field
+     * @param {ServiceLogRecord} serviceLogRecord The serviceLogRecord to update
+     */
+    const saveNoteChanges = (serviceLogRecord: ServiceLogRecord) => {
+        const updateServiceLog = async () => {
+            await providers.serviceLogProvider.update(serviceLogRecord);
+            setServiceLogList(await providers.serviceLogProvider.load(activeClient.Id as number));
+        };
+        updateServiceLog();
     };
 
     return (
@@ -129,29 +145,13 @@ const ClientCard = (props: IProps) => {
                                                     onChange={(changeEvent) =>
                                                         handleOnChange(changeEvent, serviceLogRecord)
                                                     }
+                                                    onBlur={() => saveNoteChanges(serviceLogRecord)}
                                                     type="text"
                                                     size="sm"
                                                     className="mx-2"
                                                     placeholder="Notes"
                                                     value={serviceLogRecord.Notes}
                                                 />
-
-                                                <Button
-                                                    disabled={serviceLogRecord.Notes.length === 0}
-                                                    size="sm"
-                                                    variant="outline-primary"
-                                                >
-                                                    Save
-                                                </Button>
-
-                                                <Button
-                                                    disabled={serviceLogRecord.Notes.length === 0}
-                                                    className="mx-1"
-                                                    size="sm"
-                                                    variant="outline-secondary"
-                                                >
-                                                    Cancel
-                                                </Button>
                                             </>
                                         )}
                                     </InputGroup>
