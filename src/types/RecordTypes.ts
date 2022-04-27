@@ -5,6 +5,7 @@ export type ClientRecord = {
     DOB_MONTH: number | string;
     DOB_YEAR: number | string;
     FirstName: string;
+    HMIS: string;
     Id: null | number;
     LastName: string;
     Nickname: string;
@@ -125,7 +126,7 @@ export const newDrugLogRecord = {
 } as DrugLogRecord;
 
 // Default empty Resident (Client) record
-export const newResidentRecord = {
+export const newClientRecord = {
     Id: null,
     FirstName: '',
     LastName: '',

@@ -1,11 +1,12 @@
 import ClientCard from 'components/Pages/Grids/ClientCard';
 import ClientSearchGrid from 'components/Pages/Grids/ClientSearchGrid';
+import ClientEdit from 'components/Pages/Modals/ClientEdit';
 import {Col, Row} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import React, {useEffect, useGlobal, useState} from 'reactn';
-import {ClientRecord, ServiceRecord} from 'types/RecordTypes';
+import {ClientRecord, newClientRecord, ServiceRecord} from 'types/RecordTypes';
 import {SearchKeys} from 'types/SearchTypes';
 import {useDebounce} from 'usehooks-ts';
 import {IProviders} from 'utilities/getInitialState';
@@ -36,6 +37,7 @@ const ClientPage = (props: IProps) => {
     const [searchResults, setSearchResults] = useState<ClientRecord[]>([] as ClientRecord[]);
     const [searchByName, setSearchByName] = useState(true);
     const [activeClient, setActiveClient] = useState<ClientRecord | null>(null);
+    const [clientInfo, setClientInfo] = useState<ClientRecord | null>(null);
 
     /**
      * Set the search strings back to the default values
@@ -108,10 +110,12 @@ const ClientPage = (props: IProps) => {
     }, [debouncedSearchText, clientProvider, searchDay, searchYear, setErrorDetails]);
 
     /**
-     * Add a new client
+     * Edit existing client or add a new client
+     * @param {ClientRecord} clientRecord The client record to add or edit
      */
-    const addClient = () => {
-        alert('todo: Add client logic');
+    const addEditClient = (clientRecord: ClientRecord | null) => {
+        if (clientRecord !== null) setClientInfo(clientRecord);
+        else setClientInfo({...newClientRecord});
     };
 
     /**
@@ -148,7 +152,7 @@ const ClientPage = (props: IProps) => {
                     </Form.Group>
 
                     <Form.Group as={Col} controlId="dob-year" sm="2">
-                        <Button className="my-3 mx-2" size="sm" variant="info" onClick={() => addClient()}>
+                        <Button className="my-3 mx-2" size="sm" variant="info" onClick={() => addEditClient(null)}>
                             + Add Client
                         </Button>
                     </Form.Group>
@@ -219,8 +223,8 @@ const ClientPage = (props: IProps) => {
                 {searchResults.length > 0 && activeClient === null ? (
                     <ClientSearchGrid
                         searchResults={searchResults}
-                        onSelect={(c) => handleClientSelected(c)}
-                        onEdit={(c) => alert('todo: client edit: ' + c.Id)}
+                        onSelect={(c) => handleClientSelected({...c})}
+                        onEdit={(c) => addEditClient(c)}
                     />
                 ) : (
                     <>
@@ -234,6 +238,16 @@ const ClientPage = (props: IProps) => {
                     </>
                 )}
             </Form.Group>
+
+            <ClientEdit
+                clientInfo={clientInfo as ClientRecord}
+                clientProvider={props.providers.clientProvider}
+                onClose={(cr) => {
+                    alert('todo: handle on close for client: ' + JSON.stringify(cr));
+                    setClientInfo(null);
+                }}
+                show={clientInfo !== null}
+            />
         </Form>
     );
 };
