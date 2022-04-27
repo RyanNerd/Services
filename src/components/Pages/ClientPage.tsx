@@ -123,8 +123,8 @@ const ClientPage = (props: IProps) => {
      * @param {ClientRecord} c The client record to make active
      */
     const handleClientSelected = (c: ClientRecord) => {
-        setActiveClient(c);
         resetSearch();
+        setActiveClient(c);
     };
 
     if (props.tabKey !== 'client') return null;
@@ -243,11 +243,10 @@ const ClientPage = (props: IProps) => {
                 clientInfo={clientInfo as ClientRecord}
                 clientProvider={props.providers.clientProvider}
                 onClose={(cr) => {
-                    if (cr !== null) {
-                        resetSearch();
-                        setSearchText(cr.LastName);
-                    }
                     setClientInfo(null);
+                    if (cr !== null) {
+                        handleClientSelected(cr);
+                    }
                 }}
                 show={clientInfo !== null}
             />
