@@ -243,7 +243,10 @@ const ClientPage = (props: IProps) => {
                 clientInfo={clientInfo as ClientRecord}
                 clientProvider={props.providers.clientProvider}
                 onClose={(cr) => {
-                    alert('todo: handle on close for client: ' + JSON.stringify(cr));
+                    if (cr !== null) {
+                        resetSearch();
+                        setSearchText(cr.LastName);
+                    }
                     setClientInfo(null);
                 }}
                 show={clientInfo !== null}

@@ -1,5 +1,6 @@
 import Frak from 'frak/lib/components/Frak';
 import {ClientRecord, TClient} from 'types/RecordTypes';
+import {SearchKeys} from 'types/SearchTypes';
 
 type DeleteResponse = {success: boolean};
 type RecordResponse = {
@@ -19,7 +20,7 @@ export interface IClientProvider {
     update: (residentInfo: ClientRecord) => Promise<ClientRecord>;
     read: (id: number) => Promise<ClientRecord>;
     restore: (residentId: number) => Promise<ClientRecord>;
-    search: (options: Record<string, unknown>) => Promise<ClientRecord[]>;
+    search: (options: Record<SearchKeys, (string | number)[][] | boolean>) => Promise<ClientRecord[]>;
     loadList: () => Promise<ClientRecord[]>;
     setApiKey: (apiKey: string) => void;
 }
@@ -85,12 +86,12 @@ const clientProvider = (url: string): IClientProvider => {
 
         /**
          * Client Restore
-         * @param {number} residentId PK of the Resident table
+         * @param {number} clientId PK of the Resident table
          * @returns {Promise<ClientRecord>} A client record
          */
-        restore: async (residentId: number): Promise<ClientRecord> => {
-            const uri = _baseUrl + 'resident/restore?api_key=' + _apiKey;
-            const body = {restore_id: residentId};
+        restore: async (clientId: number): Promise<ClientRecord> => {
+            const uri = _baseUrl + 'client/restore?api_key=' + _apiKey;
+            const body = {id: clientId};
             const response = await _frak.post<RecordResponse>(uri, body);
             if (response.success) {
                 return response.data as ClientRecord;
@@ -116,12 +117,12 @@ const clientProvider = (url: string): IClientProvider => {
 
         /**
          * Client Update
-         * @param {ClientRecord} residentInfo The client object
+         * @param {ClientRecord} clientRecord The client object
          * @returns {Promise<ClientRecord>} A client record
          */
-        update: async (residentInfo: ClientRecord): Promise<ClientRecord> => {
+        update: async (clientRecord: ClientRecord): Promise<ClientRecord> => {
             const uri = _baseUrl + 'resident?api_key=' + _apiKey;
-            const response = await _frak.post<RecordResponse>(uri, residentInfo);
+            const response = await _frak.post<RecordResponse>(uri, clientRecord);
             if (response.success) {
                 return response.data as ClientRecord;
             } else {

@@ -7,6 +7,7 @@ import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import React, {useEffect, useRef, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
+import {SearchKeys} from 'types/SearchTypes';
 import clientFullName from './../../../utilities/clientFullName';
 import getFormattedDate from './../../../utilities/getFormattedDate';
 
@@ -61,10 +62,12 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
         const name = target.name;
         clientInfo[name] = value;
         setClientInfo({...clientInfo});
+        if (isDupe) setIsDupe(false);
     };
 
     /**
      * Called before saving
+     * @returns {boolean} true if there are dupes, false otherwise
      */
     const checkForDuplicates = async () => {
         const searchCriteria = {
@@ -77,7 +80,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                 ['Id', '<>', clientInfo.Id]
             ],
             withTrashed: true
-        };
+        } as Record<SearchKeys, (string | number)[][] | boolean>;
         const dupe = await clientProvider.search(searchCriteria);
         setIsDupe(dupe.length > 0);
         return dupe.length > 0;
@@ -90,12 +93,20 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     const handleHide = async (shouldSave: boolean) => {
         if (shouldSave) {
             if (!(await checkForDuplicates())) {
-                onClose({...clientInfo});
+                // We do some hokey-pokey because we are using soft delete as a marker for non-resident clients
+                if (clientInfo.Id !== null) {
+                    await clientProvider.restore(clientInfo.Id);
+                }
+                const savedClient = await clientProvider.update({...clientInfo});
+                if (savedClient.deleted_at === null || clientInfo.Id == null)
+                    await clientProvider.delete(savedClient.Id as number);
+                onClose({...savedClient});
+                setShow(false);
             }
         } else {
             onClose(null);
+            setShow(false);
         }
-        setShow(false);
     };
 
     /**
