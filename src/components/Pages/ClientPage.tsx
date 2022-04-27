@@ -233,6 +233,7 @@ const ClientPage = (props: IProps) => {
                                 activeClient={activeClient}
                                 providers={props.providers}
                                 serviceList={serviceList}
+                                onEditClient={(cl) => addEditClient(cl)}
                             />
                         )}
                     </>

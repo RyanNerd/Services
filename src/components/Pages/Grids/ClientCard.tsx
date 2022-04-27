@@ -1,4 +1,5 @@
 import {Card, Col, Form, InputGroup, Row} from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 import React, {useEffect, useState} from 'reactn';
 import {ClientRecord, ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
 import {clientDOB, clientFullName} from 'utilities/clientFormatting';
@@ -9,11 +10,13 @@ interface IProps {
     activeClient: ClientRecord;
     providers: IProviders;
     serviceList: ServiceRecord[];
+    onEditClient: (activeClient: ClientRecord) => void;
 }
 
 const ClientCard = (props: IProps) => {
     const serviceList = props.serviceList;
     const providers = props.providers;
+    const editClient = props.onEditClient;
     const [serviceLogList, setServiceLogList] = useState<ServiceLogRecord[]>([]);
     const [activeClient, setActiveClient] = useState(props.activeClient);
     useEffect(() => {
@@ -109,6 +112,9 @@ const ClientCard = (props: IProps) => {
                                 </span>
                             </li>
                         </ul>
+                        <Button variant="info" size="sm" onClick={() => editClient(activeClient)}>
+                            Edit {clientFullName(activeClient)}
+                        </Button>
                     </Card.Body>
                 </Card>
             </Col>
