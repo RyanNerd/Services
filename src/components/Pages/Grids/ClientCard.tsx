@@ -1,5 +1,4 @@
-import {Card, Col, Form, InputGroup, Row} from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
+import {Card, Col, Form, InputGroup, ListGroup, Row} from 'react-bootstrap';
 import React, {useEffect, useState} from 'reactn';
 import {ClientRecord, ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
 import {clientDOB, clientFullName} from 'utilities/clientFormatting';
@@ -104,17 +103,18 @@ const ClientCard = (props: IProps) => {
                         </span>
                     </Card.Header>
                     <Card.Body>
-                        <ul>
-                            <li>DOB: {clientDOB(activeClient)}</li>
-                            <li>
-                                <span>
-                                    Notes: <Form.Text>{activeClient.Notes}</Form.Text>
+                        <ListGroup>
+                            <ListGroup.Item>DOB: {clientDOB(activeClient)}</ListGroup.Item>
+                            <ListGroup.Item>
+                                Notes: <Form.Text>{activeClient.Notes}</Form.Text>
+                            </ListGroup.Item>
+                            <ListGroup.Item action onClick={() => editClient(activeClient)} variant="info">
+                                Edit{' '}
+                                <span style={{fontWeight: 'bold', backgroundColor: 'lawngreen'}}>
+                                    {clientFullName(activeClient)}
                                 </span>
-                            </li>
-                        </ul>
-                        <Button variant="info" size="sm" onClick={() => editClient(activeClient)}>
-                            Edit {clientFullName(activeClient)}
-                        </Button>
+                            </ListGroup.Item>
+                        </ListGroup>
                     </Card.Body>
                 </Card>
             </Col>
