@@ -39,7 +39,7 @@ const LoginPage = (props: IProps) => {
     };
 
     return (
-        <>
+        <Form>
             <FloatingLabel label="Username" controlId="userLogin" className="mb-3">
                 <Form.Control
                     autoFocus
@@ -72,7 +72,7 @@ const LoginPage = (props: IProps) => {
             <Button disabled={username.length === 0 || password.length === 0} onClick={() => authenticate()}>
                 Login
             </Button>
-        </>
+        </Form>
     );
 };
 

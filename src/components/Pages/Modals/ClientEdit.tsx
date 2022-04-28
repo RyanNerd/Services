@@ -27,16 +27,14 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     const [isDupe, setIsDupe] = useState(false);
     const [clientInfo, setClientInfo] = useState<ClientRecord>(props.clientInfo);
     useEffect(() => {
-        if (props.clientInfo) {
-            const info = {...props.clientInfo};
-            if (info.Notes === null) info.Notes = '';
-            if (info.Nickname === null) info.Nickname = '';
-            if (info.HMIS === null) info.HMIS = '';
-            info.DOB_DAY = typeof info.DOB_DAY === 'string' ? Number.parseInt(info.DOB_DAY) : info.DOB_DAY;
-            info.DOB_MONTH = typeof info.DOB_MONTH === 'string' ? Number.parseInt(info.DOB_MONTH) : info.DOB_MONTH;
-            info.DOB_YEAR = typeof info.DOB_YEAR === 'string' ? Number.parseInt(info.DOB_YEAR) : info.DOB_YEAR;
-            setClientInfo(info);
-        }
+        const info = {...props.clientInfo};
+        if (info.Notes === null) info.Notes = '';
+        if (info.Nickname === null) info.Nickname = '';
+        if (info.HMIS === null) info.HMIS = '';
+        info.DOB_DAY = typeof info.DOB_DAY === 'string' ? Number.parseInt(info.DOB_DAY) : info.DOB_DAY;
+        info.DOB_MONTH = typeof info.DOB_MONTH === 'string' ? Number.parseInt(info.DOB_MONTH) : info.DOB_MONTH;
+        info.DOB_YEAR = typeof info.DOB_YEAR === 'string' ? Number.parseInt(info.DOB_YEAR) : info.DOB_YEAR;
+        setClientInfo(info);
     }, [props.clientInfo]);
 
     const [show, setShow] = useState(props.show);

@@ -3,7 +3,6 @@ import React, {useGlobal} from 'reactn';
 
 interface IProps {
     children: ReactNode | undefined;
-    callback: () => void;
 }
 
 /**

@@ -9,21 +9,21 @@ interface IProps {
     activeClient: ClientRecord;
     providers: IProviders;
     serviceList: ServiceRecord[];
-    onEditClient: (activeClient: ClientRecord) => void;
+    onEdit: (activeClient: ClientRecord) => void;
 }
 
 const ClientCard = (props: IProps) => {
     const serviceList = props.serviceList;
     const providers = props.providers;
-    const editClient = props.onEditClient;
+    const onEditClient = props.onEdit;
     const [serviceLogList, setServiceLogList] = useState<ServiceLogRecord[]>([]);
     const [activeClient, setActiveClient] = useState(props.activeClient);
     useEffect(() => {
-        const populateServiceLog = async () => {
-            setServiceLogList(await providers.serviceLogProvider.load(props.activeClient.Id as number));
+        const populateServiceLog = async (clientId: number) => {
+            setServiceLogList(await providers.serviceLogProvider.load(clientId));
         };
         setActiveClient(props.activeClient);
-        populateServiceLog();
+        populateServiceLog(props.activeClient.Id as number);
     }, [props.activeClient, providers.serviceLogProvider]);
 
     /**
@@ -108,7 +108,7 @@ const ClientCard = (props: IProps) => {
                             <ListGroup.Item>
                                 Notes: <Form.Text>{activeClient.Notes}</Form.Text>
                             </ListGroup.Item>
-                            <ListGroup.Item action onClick={() => editClient(activeClient)} variant="info">
+                            <ListGroup.Item action onClick={() => onEditClient(activeClient)} variant="info">
                                 Edit{' '}
                                 <span style={{fontWeight: 'bold', backgroundColor: 'lawngreen'}}>
                                     {clientFullName(activeClient)}

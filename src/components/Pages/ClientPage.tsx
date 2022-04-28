@@ -113,10 +113,6 @@ const ClientPage = (props: IProps) => {
      * Handle when a client is selected
      * @param {ClientRecord} c The client record to make active
      */
-    const handleClientSelected = (c: ClientRecord) => {
-        resetSearch();
-        setActiveClient(c);
-    };
 
     if (props.tabKey !== 'client') return null;
 
@@ -219,7 +215,10 @@ const ClientPage = (props: IProps) => {
                 {searchResults.length > 0 && activeClient === null ? (
                     <ClientSearchGrid
                         searchResults={searchResults}
-                        onSelect={(c) => handleClientSelected(c)}
+                        onSelect={(c) => {
+                            resetSearch();
+                            setActiveClient(c);
+                        }}
                         onEdit={(c) => setClientInfo(c)}
                     />
                 ) : (
@@ -229,22 +228,27 @@ const ClientPage = (props: IProps) => {
                                 activeClient={activeClient}
                                 providers={props.providers}
                                 serviceList={serviceList}
-                                onEditClient={(cl) => setClientInfo(cl)}
+                                onEdit={(c) => setClientInfo(c)}
                             />
                         )}
                     </>
                 )}
             </Form.Group>
 
-            <ClientEdit
-                clientInfo={clientInfo as ClientRecord}
-                clientProvider={props.providers.clientProvider}
-                onClose={(cr) => {
-                    setClientInfo(null);
-                    if (cr !== null) handleClientSelected(cr);
-                }}
-                show={clientInfo !== null}
-            />
+            {clientInfo !== null && (
+                <ClientEdit
+                    clientInfo={clientInfo as ClientRecord}
+                    clientProvider={clientProvider}
+                    onClose={(cr) => {
+                        setClientInfo(null);
+                        if (cr !== null) {
+                            resetSearch();
+                            setActiveClient(cr);
+                        }
+                    }}
+                    show={true}
+                />
+            )}
         </Form>
     );
 };
