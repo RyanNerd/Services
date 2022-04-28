@@ -110,15 +110,6 @@ const ClientPage = (props: IProps) => {
     }, [debouncedSearchText, clientProvider, searchDay, searchYear, setErrorDetails]);
 
     /**
-     * Edit existing client or add a new client
-     * @param {ClientRecord} clientRecord The client record to add or edit
-     */
-    const addEditClient = (clientRecord: ClientRecord | null) => {
-        if (clientRecord !== null) setClientInfo(clientRecord);
-        else setClientInfo({...newClientRecord});
-    };
-
-    /**
      * Handle when a client is selected
      * @param {ClientRecord} c The client record to make active
      */
@@ -152,7 +143,12 @@ const ClientPage = (props: IProps) => {
                     </Form.Group>
 
                     <Form.Group as={Col} controlId="dob-year" sm="2">
-                        <Button className="my-3 mx-2" size="sm" variant="info" onClick={() => addEditClient(null)}>
+                        <Button
+                            className="my-3 mx-2"
+                            size="sm"
+                            variant="info"
+                            onClick={() => setClientInfo({...newClientRecord})}
+                        >
                             + Add Client
                         </Button>
                     </Form.Group>
@@ -223,8 +219,8 @@ const ClientPage = (props: IProps) => {
                 {searchResults.length > 0 && activeClient === null ? (
                     <ClientSearchGrid
                         searchResults={searchResults}
-                        onSelect={(c) => handleClientSelected({...c})}
-                        onEdit={(c) => addEditClient(c)}
+                        onSelect={(c) => handleClientSelected(c)}
+                        onEdit={(c) => setClientInfo(c)}
                     />
                 ) : (
                     <>
@@ -233,7 +229,7 @@ const ClientPage = (props: IProps) => {
                                 activeClient={activeClient}
                                 providers={props.providers}
                                 serviceList={serviceList}
-                                onEditClient={(cl) => addEditClient(cl)}
+                                onEditClient={(cl) => setClientInfo(cl)}
                             />
                         )}
                     </>
@@ -245,9 +241,7 @@ const ClientPage = (props: IProps) => {
                 clientProvider={props.providers.clientProvider}
                 onClose={(cr) => {
                     setClientInfo(null);
-                    if (cr !== null) {
-                        handleClientSelected(cr);
-                    }
+                    if (cr !== null) handleClientSelected(cr);
                 }}
                 show={clientInfo !== null}
             />

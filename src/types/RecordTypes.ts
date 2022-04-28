@@ -100,30 +100,11 @@ export type ServiceLogRecord = {
     Created?: null | Date;
     deleted_at?: null | Date;
 };
-
-// Default empty Medication record
-export const newMedicineRecord = {
-    Barcode: '',
-    Directions: '',
-    Drug: '',
-    OtherNames: '',
+// Default empty Service record
+export const newServiceRecord = {
     Id: null,
-    Notes: '',
-    Active: true,
-    ResidentId: null,
-    Strength: ''
-} as MedicineRecord;
-
-// Default empty MedHistory record
-export const newDrugLogRecord = {
-    Id: null,
-    MedicineId: 0,
-    Notes: '',
-    In: null,
-    Out: null,
-    PillboxItemId: null,
-    ResidentId: 0
-} as DrugLogRecord;
+    ServiceName: ''
+} as ServiceRecord;
 
 // Default empty Resident (Client) record
 export const newClientRecord = {
@@ -136,23 +117,6 @@ export const newClientRecord = {
     DOB_DAY: '',
     Notes: ''
 } as ClientRecord;
-
-// Default empty Pillbox record
-export const newPillboxRecord = {
-    Id: null,
-    ResidentId: 0,
-    Name: '',
-    Notes: null
-} as PillboxRecord;
-
-// Default empty PillboxItem record
-export const newPillboxItemRecord = {
-    Id: null,
-    ResidentId: 0,
-    PillboxId: 0,
-    MedicineId: 0,
-    Quantity: 1
-} as PillboxItemRecord;
 
 // Global Client Type for the activeClient
 export type TClient = {

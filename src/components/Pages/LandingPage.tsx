@@ -1,5 +1,6 @@
 import ClientPage from 'components/Pages/ClientPage';
 import LoginPage from 'components/Pages/LoginPage';
+import ServicesPage from 'components/Pages/ServicesPage';
 import {Authenticated} from 'providers/authenticationProvider';
 import Button from 'react-bootstrap/Button';
 import Tab from 'react-bootstrap/Tab';
@@ -23,7 +24,7 @@ const LandingPage = () => {
                 await setServiceList(serviceList);
                 setKey('client');
             } catch (error: unknown) {
-                setErrorDetails(error);
+                await setErrorDetails(error);
             }
         }
     };
@@ -51,8 +52,8 @@ const LandingPage = () => {
                 <p>Reports place holder</p>
             </Tab>
 
-            <Tab eventKey="settings" title="Settings" disabled={!signIn.apiKey}>
-                <p>Settings</p>
+            <Tab eventKey="services" title="Services" disabled={!signIn.apiKey}>
+                <ServicesPage providers={providers} />
             </Tab>
         </Tabs>
     );
