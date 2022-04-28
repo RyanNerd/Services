@@ -38,7 +38,7 @@ const LandingPage = () => {
                     />
                 ) : (
                     <>
-                        <Button onClick={() => alert('todo: Logic to sign out')}>Logout</Button>
+                        <Button onClick={() => location.reload()}>Logout</Button>
                     </>
                 )}
             </Tab>
