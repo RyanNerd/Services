@@ -27,14 +27,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     const [isDupe, setIsDupe] = useState(false);
     const [clientInfo, setClientInfo] = useState<ClientRecord>(props.clientInfo);
     useEffect(() => {
-        const info = {...props.clientInfo};
-        if (info.Notes === null) info.Notes = '';
-        if (info.Nickname === null) info.Nickname = '';
-        if (info.HMIS === null) info.HMIS = '';
-        info.DOB_DAY = typeof info.DOB_DAY === 'string' ? Number.parseInt(info.DOB_DAY) : info.DOB_DAY;
-        info.DOB_MONTH = typeof info.DOB_MONTH === 'string' ? Number.parseInt(info.DOB_MONTH) : info.DOB_MONTH;
-        info.DOB_YEAR = typeof info.DOB_YEAR === 'string' ? Number.parseInt(info.DOB_YEAR) : info.DOB_YEAR;
-        setClientInfo(info);
+        setClientInfo({...props.clientInfo});
     }, [props.clientInfo]);
 
     const [show, setShow] = useState(props.show);
@@ -132,7 +125,17 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     if (!clientInfo) return null;
 
     return (
-        <Modal backdrop="static" centered onEntered={() => focusReference?.current?.focus()} show={show} size="lg">
+        <Modal
+            backdrop="static"
+            centered
+            onEntered={() => focusReference?.current?.focus()}
+            show={show}
+            size="lg"
+            onExited={() => {
+                // eslint-disable-next-line no-console
+                console.log('exited');
+            }}
+        >
             <Modal.Header closeButton>
                 <Modal.Title>
                     {clientInfo.Id ? 'Edit ' : 'Add '}

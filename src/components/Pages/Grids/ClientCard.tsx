@@ -1,4 +1,5 @@
 import {Card, Col, Form, InputGroup, ListGroup, Row} from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 import React, {useEffect, useState} from 'reactn';
 import {ClientRecord, ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
 import {clientDOB, clientFullName} from 'utilities/clientFormatting';
@@ -95,30 +96,35 @@ const ClientCard = (props: IProps) => {
 
     return (
         <Row>
-            <Col sm="2">
+            <Col sm="3">
                 <Card border="info">
                     <Card.Header>
                         <span style={{backgroundColor: 'lawngreen', fontWeight: 'bold'}}>
-                            {clientFullName(activeClient)}
+                            {clientFullName(activeClient, true)}
                         </span>
                     </Card.Header>
                     <Card.Body>
                         <ListGroup>
-                            <ListGroup.Item>DOB: {clientDOB(activeClient)}</ListGroup.Item>
                             <ListGroup.Item>
-                                Notes: <Form.Text>{activeClient.Notes}</Form.Text>
+                                <span style={{fontWeight: 'bold'}}>DOB: </span> {clientDOB(activeClient)}
                             </ListGroup.Item>
-                            <ListGroup.Item action onClick={() => onEditClient(activeClient)} variant="info">
-                                Edit{' '}
-                                <span style={{fontWeight: 'bold', backgroundColor: 'lawngreen'}}>
-                                    {clientFullName(activeClient)}
-                                </span>
+                            <ListGroup.Item>
+                                <span style={{fontWeight: 'bold'}}>Notes: </span>
+                                <Form.Text>{activeClient.Notes}</Form.Text>
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                <Button onClick={() => onEditClient(activeClient)} variant="info">
+                                    Edit{' '}
+                                    <span style={{fontWeight: 'bold', backgroundColor: 'lawngreen'}}>
+                                        {clientFullName(activeClient)}
+                                    </span>
+                                </Button>
                             </ListGroup.Item>
                         </ListGroup>
                     </Card.Body>
                 </Card>
             </Col>
-            <Col sm="10">
+            <Col sm="9">
                 <Card border="primary">
                     <Card.Header>
                         Services for{' '}

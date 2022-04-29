@@ -112,9 +112,9 @@ export const newClientRecord = {
     FirstName: '',
     LastName: '',
     Nickname: '',
-    DOB_YEAR: '',
-    DOB_MONTH: '',
-    DOB_DAY: '',
+    DOB_YEAR: 0,
+    DOB_MONTH: 0,
+    DOB_DAY: 0,
     Notes: ''
 } as ClientRecord;
 

@@ -110,9 +110,19 @@ const ClientPage = (props: IProps) => {
     }, [debouncedSearchText, clientProvider, searchDay, searchYear, setErrorDetails]);
 
     /**
-     * Handle when a client is selected
-     * @param {ClientRecord} c The client record to make active
+     * Prior to showing the ClientEdit modal change transform the data to illimanate nulls
+     * @param {ClientRecord} clientRecord The client record to make active
      */
+    const transformClientRecord = (clientRecord: ClientRecord) => {
+        const info = {...clientRecord};
+        if (info.Notes === null) info.Notes = '';
+        if (info.Nickname === null) info.Nickname = '';
+        if (info.HMIS === null) info.HMIS = '';
+        info.DOB_DAY = typeof info.DOB_DAY === 'string' ? Number.parseInt(info.DOB_DAY) : info.DOB_DAY;
+        info.DOB_MONTH = typeof info.DOB_MONTH === 'string' ? Number.parseInt(info.DOB_MONTH) : info.DOB_MONTH;
+        info.DOB_YEAR = typeof info.DOB_YEAR === 'string' ? Number.parseInt(info.DOB_YEAR) : info.DOB_YEAR;
+        return info;
+    };
 
     if (props.tabKey !== 'client') return null;
 
@@ -219,7 +229,7 @@ const ClientPage = (props: IProps) => {
                             resetSearch();
                             setActiveClient(c);
                         }}
-                        onEdit={(c) => setClientInfo(c)}
+                        onEdit={(c) => setClientInfo(transformClientRecord(c))}
                     />
                 ) : (
                     <>
@@ -228,7 +238,7 @@ const ClientPage = (props: IProps) => {
                                 activeClient={activeClient}
                                 providers={props.providers}
                                 serviceList={serviceList}
-                                onEdit={(c) => setClientInfo(c)}
+                                onEdit={(c) => setClientInfo(transformClientRecord(c))}
                             />
                         )}
                     </>
@@ -239,11 +249,11 @@ const ClientPage = (props: IProps) => {
                 <ClientEdit
                     clientInfo={clientInfo as ClientRecord}
                     clientProvider={clientProvider}
-                    onClose={(cr) => {
+                    onClose={(clientRecord) => {
                         setClientInfo(null);
-                        if (cr !== null) {
+                        if (clientRecord !== null) {
                             resetSearch();
-                            setActiveClient(cr);
+                            setActiveClient(clientRecord);
                         }
                     }}
                     show={true}
