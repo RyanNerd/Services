@@ -84,7 +84,7 @@ export type PillboxItemRecord = {
 export type ServiceRecord = {
     Id: number | null;
     ServiceName: string;
-    HmisId?: null | number;
+    HmisId?: null | string;
     Updated?: null | Date;
     Created?: null | Date;
     deleted_at?: null | Date;

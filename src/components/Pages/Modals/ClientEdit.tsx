@@ -131,10 +131,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
             onEntered={() => focusReference?.current?.focus()}
             show={show}
             size="lg"
-            onExited={() => {
-                // eslint-disable-next-line no-console
-                console.log('exited');
-            }}
+            onHide={() => handleHide(false)}
         >
             <Modal.Header closeButton>
                 <Modal.Title>

@@ -14,11 +14,6 @@ const ServicesPage = (props: IProps) => {
     const serviceProvider = props.providers.serviceProvider;
     const [showServiceEdit, setShowServiceEdit] = useState<ServiceRecord | null>(null);
 
-    const addEditService = async (serviceRecord: ServiceRecord) => {
-        await serviceProvider.update(serviceRecord);
-        await setServiceList(await serviceProvider.load());
-    };
-
     return (
         <>
             <Card border="info">
@@ -51,9 +46,12 @@ const ServicesPage = (props: IProps) => {
             </Card>
 
             <ServiceEdit
-                onClose={(serviceRecord) => {
+                onClose={async (serviceRecord) => {
                     setShowServiceEdit(null);
-                    if (serviceRecord !== null) addEditService(serviceRecord);
+                    if (serviceRecord !== null) {
+                        await serviceProvider.update(serviceRecord);
+                        await setServiceList(await serviceProvider.load());
+                    }
                 }}
                 show={showServiceEdit !== null}
                 serviceInfo={showServiceEdit as ServiceRecord}
