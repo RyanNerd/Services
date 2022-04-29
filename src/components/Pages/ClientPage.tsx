@@ -59,7 +59,7 @@ const ClientPage = (props: IProps) => {
         const findClientsByName = async () => {
             const searchCriteria = {
                 where: [['FirstName', 'like', '%' + debouncedSearchText + '%']],
-                orWhere: [['LastName', 'like', '%' + debouncedSearchText]],
+                orWhere: [['LastName', 'like', '%' + debouncedSearchText + '%']],
                 onlyTrashed: true
             } as Record<SearchKeys, (string | number)[][] | boolean>;
             setSearchResults(await clientProvider.search(searchCriteria));
