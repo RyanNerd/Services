@@ -13,7 +13,11 @@ interface IProps {
 }
 
 const ClientCard = (props: IProps) => {
-    const serviceList = props.serviceList;
+    const [serviceList, setServiceList] = useState(props.serviceList);
+    useEffect(() => {
+        setServiceList(props.serviceList);
+    }, [props.serviceList]);
+
     const providers = props.providers;
     const onEditClient = props.onEdit;
     const [serviceLogList, setServiceLogList] = useState<ServiceLogRecord[]>([]);
