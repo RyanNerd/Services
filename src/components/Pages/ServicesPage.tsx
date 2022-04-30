@@ -16,13 +16,13 @@ const ServicesPage = (props: IProps) => {
 
     return (
         <>
-            <Card border="info">
+            <Card border="info" style={{width: '35%'}}>
                 <Card.Header>
-                    {'Services List '}{' '}
+                    {'Services List'}
                     <Button
                         size="sm"
                         variant="info"
-                        className="mx-1"
+                        className="mx-2"
                         onClick={() => setShowServiceEdit({...newServiceRecord})}
                     >
                         + Add Service
@@ -37,7 +37,7 @@ const ServicesPage = (props: IProps) => {
                                     onClick={() => setShowServiceEdit({...sl})}
                                     key={`service-list-item-${sl.Id}`}
                                 >
-                                    {sl.ServiceName}
+                                    <span>{`${sl.ServiceName} - HMIS# ${sl.HmisId}`}</span>
                                 </ListGroup.Item>
                             );
                         })}

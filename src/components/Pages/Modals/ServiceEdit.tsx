@@ -60,13 +60,16 @@ const ServiceEdit = (props: IProps) => {
                     <FloatingLabel label="HMIS #" controlId="hmis-number" className="mb-3">
                         <Form.Control
                             autoComplete="off"
+                            className={serviceInfo.HmisId !== null && serviceInfo.HmisId !== '' ? '' : 'is-invalid'}
                             type="text"
                             onChange={(changeEvent) =>
                                 setServiceInfo({...serviceInfo, HmisId: changeEvent.target.value})
                             }
                             placeholder="hmis-number"
+                            required
                             value={serviceInfo.HmisId as string}
                         />
+                        <Form.Control.Feedback type="invalid">HMIS # can not be blank.</Form.Control.Feedback>
                     </FloatingLabel>
                 </Form>
             </Modal.Body>
