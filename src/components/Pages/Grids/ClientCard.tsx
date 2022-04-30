@@ -20,7 +20,7 @@ const ClientCard = (props: IProps) => {
     const [activeClient, setActiveClient] = useState(props.activeClient);
     useEffect(() => {
         const populateServiceLog = async (clientId: number) => {
-            setServiceLogList(await providers.serviceLogProvider.load(clientId));
+            setServiceLogList(await providers.serviceLogProvider.loadToday(clientId));
         };
         setActiveClient(props.activeClient);
         populateServiceLog(props.activeClient.Id as number);
@@ -43,7 +43,7 @@ const ClientCard = (props: IProps) => {
                 ServiceId: serviceRecord.Id as number,
                 Notes: ''
             });
-            setServiceLogList(await providers.serviceLogProvider.load(activeClient.Id as number));
+            setServiceLogList(await providers.serviceLogProvider.loadToday(activeClient.Id as number));
         };
 
         /**
@@ -53,7 +53,7 @@ const ClientCard = (props: IProps) => {
          */
         const removeServiceLog = async (serviceLogId: number) => {
             await providers.serviceLogProvider.delete(serviceLogId, true);
-            setServiceLogList(await providers.serviceLogProvider.load(activeClient.Id as number));
+            setServiceLogList(await providers.serviceLogProvider.loadToday(activeClient.Id as number));
         };
 
         // Is there an existing service log record? If so then remove it, otherwise add a new record.
@@ -88,7 +88,7 @@ const ClientCard = (props: IProps) => {
     const saveNoteChanges = (serviceLogRecord: ServiceLogRecord) => {
         const updateServiceLog = async () => {
             await providers.serviceLogProvider.update(serviceLogRecord);
-            setServiceLogList(await providers.serviceLogProvider.load(activeClient.Id as number));
+            setServiceLogList(await providers.serviceLogProvider.loadToday(activeClient.Id as number));
         };
         updateServiceLog();
     };
