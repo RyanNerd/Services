@@ -24,8 +24,12 @@ interface IProps {
  */
 const ClientEdit = (props: IProps): JSX.Element | null => {
     const clientProvider = props.clientProvider;
+    const onClose = props.onClose;
+
     const [isDupe, setIsDupe] = useState(false);
     const [isDobValid, setIsDobValid] = useState(false);
+    const focusReference = useRef<HTMLInputElement>(null);
+
     const [clientInfo, setClientInfo] = useState<ClientRecord>(props.clientInfo);
     useEffect(() => {
         setClientInfo({...props.clientInfo});
@@ -48,9 +52,6 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
         setIsDobValid(dobCompare);
         setCanSave(noInvalid && dobCompare);
     }, [clientInfo, clientInfo.DOB_DAY, clientInfo.DOB_MONTH, clientInfo.DOB_YEAR]);
-
-    const onClose = props.onClose;
-    const focusReference = useRef<HTMLInputElement>(null);
 
     /**
      * Fires when a text field or checkbox is changing.
@@ -94,9 +95,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
         if (shouldSave) {
             if (!(await checkForDuplicates())) {
                 // We do some hokey-pokey because we are using soft delete as a marker for non-resident clients
-                if (clientInfo.Id !== null) {
-                    await clientProvider.restore(clientInfo.Id);
-                }
+                if (clientInfo.Id !== null) await clientProvider.restore(clientInfo.Id);
                 const savedClient = await clientProvider.update({...clientInfo});
                 if (savedClient.deleted_at === null || clientInfo.Id == null)
                     await clientProvider.delete(savedClient.Id as number);
@@ -109,7 +108,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
         }
     };
 
-    // Prevent render if there is no data.
+    // Prevent render if there is no data
     if (!clientInfo) return null;
 
     return (
@@ -117,9 +116,9 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
             backdrop="static"
             centered
             onEntered={() => focusReference?.current?.focus()}
+            onHide={() => handleHide(false)}
             show={show}
             size="lg"
-            onHide={() => handleHide(false)}
         >
             <Modal.Header closeButton>
                 <Modal.Title>
