@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import ToggleButton from 'react-bootstrap/ToggleButton';
@@ -17,13 +18,13 @@ interface IProps {
  * @param {IProps} props The props for this component
  */
 const ClientSearchGrid = (props: IProps) => {
+    const onSelect = props.onSelect;
+    const onEdit = props.onEdit;
+
     const [searchResults, setSearchResults] = useState(props.searchResults);
     useEffect(() => {
         setSearchResults(props.searchResults);
     }, [props.searchResults]);
-
-    const onSelect = props.onSelect;
-    const onEdit = props.onEdit;
 
     // https://stackoverflow.com/questions/57901725/react-creating-dynamically-refs-with-typescript
     const references = useRef(Array.from({length: searchResults.length}, () => createRef<HTMLTableRowElement>()));
@@ -36,17 +37,22 @@ const ClientSearchGrid = (props: IProps) => {
      */
     const ClientSelectionRow = (clientRecord: ClientRecord, index: number) => {
         const domId = clientRecord.Id ? clientRecord.Id : randomString();
-        const dob = clientRecord.DOB_MONTH + '/' + clientRecord.DOB_DAY + '/' + clientRecord.DOB_YEAR;
+        const dob = new Date(
+            clientRecord.DOB_YEAR as number,
+            clientRecord.DOB_MONTH as number,
+            clientRecord.DOB_DAY as number
+        );
+        const clientDob = dayjs(dob);
         const hoverReference = references.current[index];
         const isHover = useHover(hoverReference); // https://usehooks-ts.com/react-hook/use-hover
 
         return (
             <tr
-                key={`client-selection-grid-row-${domId}`}
                 id={`client-selection-grid-row-${domId}`}
+                key={`client-selection-grid-row-${domId}`}
+                onClick={() => onSelect(clientRecord)}
                 ref={references.current[index]}
                 style={{fontWeight: isHover ? 'bold' : undefined}}
-                onClick={() => onSelect(clientRecord)}
             >
                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <ToggleButton
@@ -59,16 +65,16 @@ const ClientSearchGrid = (props: IProps) => {
                 </td>
                 <td style={{cursor: 'pointer'}}>{clientRecord.FirstName}</td>
                 <td style={{cursor: 'pointer'}}>{clientRecord.LastName}</td>
-                <td style={{cursor: 'pointer'}}>{dob}</td>
+                <td style={{cursor: 'pointer'}}>{clientDob.format('MM/DD/YYYY')}</td>
                 <td>
                     <Button
-                        type="button"
-                        variant="primary"
-                        size="sm"
                         onClick={(mouseEvent) => {
                             mouseEvent.stopPropagation();
                             onEdit(clientRecord);
                         }}
+                        size="sm"
+                        type="button"
+                        variant="primary"
                     >
                         Edit
                     </Button>
@@ -87,7 +93,7 @@ const ClientSearchGrid = (props: IProps) => {
             style={{
                 width: 'fit-content',
                 borderCollapse: 'collapse',
-                height: '500px',
+                height: '600px',
                 overflowY: 'auto',
                 overflowX: 'auto'
             }}
