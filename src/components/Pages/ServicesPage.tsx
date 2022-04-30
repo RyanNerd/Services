@@ -13,6 +13,17 @@ const ServicesPage = (props: IProps) => {
     const [serviceList, setServiceList] = useGlobal('serviceList');
     const serviceProvider = props.providers.serviceProvider;
     const [showServiceEdit, setShowServiceEdit] = useState<ServiceRecord | null>(null);
+    const [deleteAllowed, setDeleteAllowed] = useState(false);
+
+    const addEditService = async (serviceRecord: ServiceRecord) => {
+        if (serviceRecord.Id !== null) {
+            const serviceLogList = await serviceProvider.serviceLogs(serviceRecord.Id);
+            setDeleteAllowed(serviceLogList.length === 0);
+        } else {
+            setDeleteAllowed(false);
+        }
+        setShowServiceEdit(serviceRecord);
+    };
 
     return (
         <>
@@ -23,7 +34,7 @@ const ServicesPage = (props: IProps) => {
                         size="sm"
                         variant="info"
                         className="mx-2"
-                        onClick={() => setShowServiceEdit({...newServiceRecord})}
+                        onClick={() => addEditService({...newServiceRecord})}
                     >
                         + Add Service
                     </Button>
@@ -34,7 +45,7 @@ const ServicesPage = (props: IProps) => {
                             return (
                                 <ListGroup.Item
                                     action
-                                    onClick={() => setShowServiceEdit({...sl})}
+                                    onClick={() => addEditService({...sl})}
                                     key={`service-list-item-${sl.Id}`}
                                 >
                                     <span>{`${sl.ServiceName} - HMIS# ${sl.HmisId}`}</span>
@@ -49,11 +60,18 @@ const ServicesPage = (props: IProps) => {
                 onClose={async (serviceRecord) => {
                     setShowServiceEdit(null);
                     if (serviceRecord !== null) {
-                        await serviceProvider.update(serviceRecord);
-                        await setServiceList(await serviceProvider.load());
+                        // If the serviceRecord.Id is negative then it indicates the record should be destroyed
+                        if (serviceRecord.Id === null || serviceRecord.Id > 0) {
+                            await serviceProvider.update(serviceRecord);
+                            await setServiceList(await serviceProvider.load());
+                        } else {
+                            await serviceProvider.delete(Math.abs(serviceRecord.Id as number));
+                            await setServiceList(await serviceProvider.load());
+                        }
                     }
                 }}
                 show={showServiceEdit !== null}
+                deleteAllowed={deleteAllowed}
                 serviceInfo={showServiceEdit as ServiceRecord}
             />
         </>

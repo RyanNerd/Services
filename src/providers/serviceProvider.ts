@@ -1,5 +1,5 @@
 import Frak from 'frak/lib/components/Frak';
-import {ServiceRecord} from 'types/RecordTypes';
+import {ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
 
 type DeleteResponse = {success: boolean};
 type RecordResponse = {
@@ -14,12 +14,19 @@ type LoadResponse = {
     success: boolean;
 };
 
+type ServiceLogResponse = {
+    data: ServiceLogRecord[];
+    status: number;
+    success: boolean;
+};
+
 export interface IServiceProvider {
     delete: (residentId: number) => Promise<DeleteResponse>;
     load: () => Promise<ServiceRecord[]>;
     update: (serviceInfo: ServiceRecord) => Promise<ServiceRecord>;
     read: (id: number) => Promise<ServiceRecord>;
     search: (options: Record<string, unknown>) => Promise<ServiceRecord[]>;
+    serviceLogs: (serviceId: number) => Promise<ServiceLogRecord[]>;
     setApiKey: (apiKey: string) => void;
 }
 
@@ -125,6 +132,19 @@ const serviceProvider = (url: string): IServiceProvider => {
             } else {
                 if (response.status === 404) {
                     return [] as ServiceRecord[];
+                }
+                throw response;
+            }
+        },
+
+        serviceLogs: async (serviceId: number): Promise<ServiceLogRecord[]> => {
+            const uri = `${_baseUrl}service-logs/${serviceId}?api_key=${_apiKey}`;
+            const response = await _frak.get<ServiceLogResponse>(uri);
+            if (response.success) {
+                return response.data;
+            } else {
+                if (response.status === 404) {
+                    return [] as ServiceLogRecord[];
                 }
                 throw response;
             }

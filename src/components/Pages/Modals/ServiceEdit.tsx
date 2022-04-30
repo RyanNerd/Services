@@ -6,6 +6,7 @@ import React, {useEffect, useState} from 'reactn';
 import {ServiceRecord} from 'types/RecordTypes';
 
 interface IProps {
+    deleteAllowed: boolean;
     onClose: (serviceRecord: ServiceRecord | null) => void;
     show: boolean;
     serviceInfo: ServiceRecord;
@@ -31,6 +32,8 @@ const ServiceEdit = (props: IProps) => {
     useEffect(() => {
         setCanSave(document.querySelectorAll('.is-invalid')?.length === 0);
     }, [serviceInfo]);
+
+    const deleteAllowed = props.deleteAllowed;
 
     if (!serviceInfo) return null;
 
@@ -74,6 +77,20 @@ const ServiceEdit = (props: IProps) => {
                 </Form>
             </Modal.Body>
             <Modal.Footer>
+                {deleteAllowed && (
+                    <Button
+                        className="mx-5"
+                        variant="danger"
+                        onClick={() => {
+                            setShow(false);
+                            const info = {...serviceInfo};
+                            info.Id = -(info.Id as number);
+                            onClose(info);
+                        }}
+                    >
+                        Delete
+                    </Button>
+                )}
                 <Button
                     variant="secondary"
                     onClick={() => {
@@ -83,6 +100,7 @@ const ServiceEdit = (props: IProps) => {
                 >
                     Cancel
                 </Button>
+
                 <Button
                     disabled={!canSave}
                     onClick={() => {
