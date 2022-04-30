@@ -13,22 +13,23 @@ interface IProps {
 }
 
 const ClientCard = (props: IProps) => {
+    const serviceLogProvider = props.providers.serviceLogProvider;
+    const onEditClient = props.onEdit;
+    const [serviceLogList, setServiceLogList] = useState<ServiceLogRecord[]>([]);
+
     const [serviceList, setServiceList] = useState(props.serviceList);
     useEffect(() => {
         setServiceList(props.serviceList);
     }, [props.serviceList]);
 
-    const providers = props.providers;
-    const onEditClient = props.onEdit;
-    const [serviceLogList, setServiceLogList] = useState<ServiceLogRecord[]>([]);
     const [activeClient, setActiveClient] = useState(props.activeClient);
     useEffect(() => {
         const populateServiceLog = async (clientId: number) => {
-            setServiceLogList(await providers.serviceLogProvider.loadToday(clientId));
+            setServiceLogList(await serviceLogProvider.loadToday(clientId));
         };
         setActiveClient(props.activeClient);
         populateServiceLog(props.activeClient.Id as number);
-    }, [props.activeClient, providers.serviceLogProvider]);
+    }, [props.activeClient, serviceLogProvider]);
 
     /**
      * Handle when the toggle switch is changed
@@ -41,13 +42,13 @@ const ClientCard = (props: IProps) => {
          * @returns {Promise<void>}
          */
         const addServiceLog = async () => {
-            await providers.serviceLogProvider.update({
+            await serviceLogProvider.update({
                 Id: null,
                 ResidentId: activeClient.Id as number,
                 ServiceId: serviceRecord.Id as number,
                 Notes: ''
             });
-            setServiceLogList(await providers.serviceLogProvider.loadToday(activeClient.Id as number));
+            setServiceLogList(await serviceLogProvider.loadToday(activeClient.Id as number));
         };
 
         /**
@@ -56,8 +57,8 @@ const ClientCard = (props: IProps) => {
          * @returns {Promise<void>}
          */
         const removeServiceLog = async (serviceLogId: number) => {
-            await providers.serviceLogProvider.delete(serviceLogId, true);
-            setServiceLogList(await providers.serviceLogProvider.loadToday(activeClient.Id as number));
+            await serviceLogProvider.delete(serviceLogId, true);
+            setServiceLogList(await serviceLogProvider.loadToday(activeClient.Id as number));
         };
 
         // Is there an existing service log record? If so then remove it, otherwise add a new record.
@@ -91,8 +92,8 @@ const ClientCard = (props: IProps) => {
      */
     const saveNoteChanges = (serviceLogRecord: ServiceLogRecord) => {
         const updateServiceLog = async () => {
-            await providers.serviceLogProvider.update(serviceLogRecord);
-            setServiceLogList(await providers.serviceLogProvider.loadToday(activeClient.Id as number));
+            await serviceLogProvider.update(serviceLogRecord);
+            setServiceLogList(await serviceLogProvider.loadToday(activeClient.Id as number));
         };
         updateServiceLog();
     };
