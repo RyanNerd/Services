@@ -25,6 +25,7 @@ interface IProps {
 const ClientEdit = (props: IProps): JSX.Element | null => {
     const clientProvider = props.clientProvider;
     const [isDupe, setIsDupe] = useState(false);
+    const [isDobValid, setIsDobValid] = useState(false);
     const [clientInfo, setClientInfo] = useState<ClientRecord>(props.clientInfo);
     useEffect(() => {
         setClientInfo({...props.clientInfo});
@@ -37,8 +38,16 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
 
     const [canSave, setCanSave] = useState(true);
     useEffect(() => {
-        setCanSave(document.querySelectorAll('.is-invalid')?.length === 0);
-    }, [clientInfo, setClientInfo]);
+        const noInvalid = document.querySelectorAll('.is-invalid')?.length === 0;
+        const now = dayjs();
+        const day = clientInfo.DOB_DAY as number;
+        const month = (clientInfo.DOB_MONTH as number) - 1;
+        const year = clientInfo.DOB_YEAR as number;
+        const dob = new Date(year, month, day);
+        const dobCompare = dob.getFullYear() > 1900 && dob.getFullYear() <= now.year() && dob.getMonth() === month;
+        setIsDobValid(dobCompare);
+        setCanSave(noInvalid && dobCompare);
+    }, [clientInfo, clientInfo.DOB_DAY, clientInfo.DOB_MONTH, clientInfo.DOB_YEAR]);
 
     const onClose = props.onClose;
     const focusReference = useRef<HTMLInputElement>(null);
@@ -98,27 +107,6 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
             onClose(null);
             setShow(false);
         }
-    };
-
-    /**
-     * Verify the DOB
-     * @returns {boolean} true if valid, otherwise false
-     */
-    const isDobValid = (): boolean => {
-        const dobYear = clientInfo.DOB_YEAR.toString();
-        const dobMonth = clientInfo.DOB_MONTH.toString();
-        const dobDay = clientInfo.DOB_DAY.toString();
-        if (dobYear === '' || dobMonth === '' || dobDay === '') return false;
-        const dob = new Date(
-            clientInfo.DOB_YEAR as number,
-            clientInfo.DOB_MONTH as number,
-            clientInfo.DOB_DAY as number
-        );
-        const clientDob = dayjs(dob);
-        if (clientDob.isValid()) {
-            return !clientDob.isAfter(dayjs());
-        }
-        return false;
     };
 
     // Prevent render if there is no data.
@@ -197,7 +185,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
 
                     <Form.Group as={Row} className="my-1">
                         <Form.Label column sm="2">
-                            <span className={isDobValid() ? '' : 'is-invalid'}>DOB</span>
+                            <span className={isDobValid ? '' : 'is-invalid'}>DOB</span>
                             <Form.Control.Feedback type="invalid">Invalid Date of Birth</Form.Control.Feedback>
                         </Form.Label>
                         <Form.Label column sm={1}>
@@ -294,6 +282,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                 <Button onClick={() => handleHide(false)} variant="secondary">
                     Cancel
                 </Button>
+
                 <Button
                     className={isDupe ? 'is-invalid' : ''}
                     disabled={!canSave}
