@@ -39,7 +39,7 @@ const ClientSearchGrid = (props: IProps) => {
         const domId = clientRecord.Id ? clientRecord.Id : randomString();
         const dob = new Date(
             clientRecord.DOB_YEAR as number,
-            clientRecord.DOB_MONTH as number,
+            (clientRecord.DOB_MONTH as number) - 1,
             clientRecord.DOB_DAY as number
         );
         const clientDob = dayjs(dob);
