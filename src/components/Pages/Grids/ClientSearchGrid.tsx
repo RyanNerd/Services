@@ -66,6 +66,7 @@ const ClientSearchGrid = (props: IProps) => {
                 <td style={{cursor: 'pointer'}}>{clientRecord.FirstName}</td>
                 <td style={{cursor: 'pointer'}}>{clientRecord.LastName}</td>
                 <td style={{cursor: 'pointer'}}>{clientDob.format('MM/DD/YYYY')}</td>
+                <td style={{cursor: 'pointer'}}>{clientRecord.Notes || ''}</td>
                 <td>
                     <Button
                         onClick={(mouseEvent) => {
@@ -104,6 +105,7 @@ const ClientSearchGrid = (props: IProps) => {
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>DOB</th>
+                    <th>Notes</th>
                     <th> </th>
                 </tr>
             </thead>
