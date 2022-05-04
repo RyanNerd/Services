@@ -8,11 +8,14 @@ import {ServiceRecord} from 'types/RecordTypes';
 interface IProps {
     deleteAllowed: boolean;
     onClose: (serviceRecord: ServiceRecord | null) => void;
-    show: boolean;
     serviceInfo: ServiceRecord;
+    show: boolean;
 }
 
 const ServiceEdit = (props: IProps) => {
+    const deleteAllowed = props.deleteAllowed;
+    const [canSave, setCanSave] = useState(false);
+
     const [show, setShow] = useState(props.show);
     useEffect(() => {
         setShow(props.show);
@@ -28,12 +31,9 @@ const ServiceEdit = (props: IProps) => {
         }
     }, [props.serviceInfo]);
 
-    const [canSave, setCanSave] = useState(true);
     useEffect(() => {
         setCanSave(document.querySelectorAll('.is-invalid')?.length === 0);
     }, [serviceInfo]);
-
-    const deleteAllowed = props.deleteAllowed;
 
     if (!serviceInfo) return null;
 
@@ -46,8 +46,8 @@ const ServiceEdit = (props: IProps) => {
                 <Form noValidate>
                     <FloatingLabel label="Service Name" controlId="serviceName" className="mb-3">
                         <Form.Control
-                            autoFocus
                             autoComplete="off"
+                            autoFocus
                             className={serviceInfo.ServiceName !== '' ? '' : 'is-invalid'}
                             type="text"
                             onChange={(changeEvent) =>
@@ -64,12 +64,12 @@ const ServiceEdit = (props: IProps) => {
                         <Form.Control
                             autoComplete="off"
                             className={serviceInfo.HmisId !== null && serviceInfo.HmisId !== '' ? '' : 'is-invalid'}
-                            type="text"
                             onChange={(changeEvent) =>
                                 setServiceInfo({...serviceInfo, HmisId: changeEvent.target.value})
                             }
                             placeholder="hmis-number"
                             required
+                            type="text"
                             value={serviceInfo.HmisId as string}
                         />
                         <Form.Control.Feedback type="invalid">HMIS # can not be blank.</Form.Control.Feedback>
@@ -80,23 +80,23 @@ const ServiceEdit = (props: IProps) => {
                 {deleteAllowed && (
                     <Button
                         className="mx-5"
-                        variant="danger"
                         onClick={() => {
                             setShow(false);
                             const info = {...serviceInfo};
                             info.Id = -(info.Id as number);
                             onClose(info);
                         }}
+                        variant="danger"
                     >
                         Delete
                     </Button>
                 )}
                 <Button
-                    variant="secondary"
                     onClick={() => {
                         setShow(false);
                         onClose(null);
                     }}
+                    variant="secondary"
                 >
                     Cancel
                 </Button>

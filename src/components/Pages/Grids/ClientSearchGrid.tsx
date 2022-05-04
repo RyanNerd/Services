@@ -8,9 +8,9 @@ import {useHover} from 'usehooks-ts';
 import {randomString} from 'utilities/randomString';
 
 interface IProps {
-    searchResults: ClientRecord[];
     onEdit: (client: ClientRecord) => void;
     onSelect: (client: ClientRecord) => void;
+    searchResults: ClientRecord[];
 }
 
 /**

@@ -7,9 +7,9 @@ import {IProviders} from 'utilities/getInitialState';
 
 interface IProps {
     activeClient: ClientRecord;
+    onEdit: (activeClient: ClientRecord) => void;
     providers: IProviders;
     serviceList: ServiceRecord[];
-    onEdit: (activeClient: ClientRecord) => void;
 }
 
 const ClientCard = (props: IProps) => {
