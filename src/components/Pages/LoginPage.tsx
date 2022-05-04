@@ -1,8 +1,9 @@
 import {Authenticated, IAuthenticationProvider} from 'providers/authenticationProvider';
-import {Alert, Button} from 'react-bootstrap';
+import {Alert, Button, Image} from 'react-bootstrap';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import React, {useEffect, useGlobal, useRef, useState} from 'reactn';
+import Waiter from './../../styles/waiter.svg';
 
 interface IProps {
     authenticationProvider: IAuthenticationProvider;
@@ -43,7 +44,14 @@ const LoginPage = (props: IProps) => {
 
     return (
         <Form>
-            <FloatingLabel label="Username" controlId="userLogin" className="mb-3">
+            <Form.Group>
+                {/* compress SVG images using https://jakearchibald.github.io/svgomg/ */}
+                <Image src={Waiter} height="165px" width="135px" />
+                <span style={{color: '#6c757d', fontSize: '.950rem'}}>Log into Drop-in Services</span>
+                <Image src={Waiter} height="165px" width="135px" />
+            </Form.Group>
+
+            <FloatingLabel label="Username" controlId="userLogin" className="mb-3 mx-5">
                 <Form.Control
                     autoComplete="off"
                     autoFocus
@@ -58,7 +66,7 @@ const LoginPage = (props: IProps) => {
                 {invalidPassword && <Form.Text muted>Password or username is invalid</Form.Text>}
             </FloatingLabel>
 
-            <FloatingLabel controlId="userPassword" label="Password" className="mb-3">
+            <FloatingLabel controlId="userPassword" label="Password" className="mb-3 mx-5">
                 <Form.Control
                     onChange={(changeEvent) => setPassword(changeEvent.target.value)}
                     onKeyUp={async (keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
@@ -74,13 +82,14 @@ const LoginPage = (props: IProps) => {
             </FloatingLabel>
 
             <Button
+                className="mx-5"
                 disabled={username.length === 0 || password.length === 0}
                 onClick={async () => await authenticate()}
             >
                 Login
             </Button>
 
-            <Alert variant="warning" show={invalidPassword} className="my-3 mx-1" style={{width: '20%'}}>
+            <Alert variant="warning" show={invalidPassword} className="my-3 mx-5" style={{width: '20%'}}>
                 The Username or Password is invalid
             </Alert>
         </Form>
