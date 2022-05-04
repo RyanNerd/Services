@@ -27,17 +27,17 @@ const isDigit = (singleChar: string) => {
 };
 
 const ClientPage = (props: IProps) => {
-    const [, setErrorDetails] = useGlobal('errorDetails');
     const clientProvider = props.providers.clientProvider;
     const serviceList = props.serviceList;
-    const [searchText, setSearchText] = useState('');
-    const debouncedSearchText = useDebounce(searchText, 300);
-    const [searchDay, setSearchDay] = useState('');
-    const [searchYear, setSearchYear] = useState('');
-    const [searchResults, setSearchResults] = useState<ClientRecord[]>([] as ClientRecord[]);
-    const [searchByName, setSearchByName] = useState(true);
+    const [, setErrorDetails] = useGlobal('errorDetails');
     const [activeClient, setActiveClient] = useState<ClientRecord | null>(null);
     const [clientInfo, setClientInfo] = useState<ClientRecord | null>(null);
+    const [searchByName, setSearchByName] = useState(true);
+    const [searchDay, setSearchDay] = useState('');
+    const [searchResults, setSearchResults] = useState<ClientRecord[]>([] as ClientRecord[]);
+    const [searchYear, setSearchYear] = useState('');
+    const [searchText, setSearchText] = useState('');
+    const debouncedSearchText = useDebounce(searchText, 300);
 
     /**
      * Set the search strings back to the default values
@@ -110,10 +110,12 @@ const ClientPage = (props: IProps) => {
     }, [debouncedSearchText, clientProvider, searchDay, searchYear, setErrorDetails]);
 
     /**
-     * Prior to showing the ClientEdit modal change transform the data to illimanate nulls
-     * @param {ClientRecord} clientRecord The client record to make active
+     * Handle when the user wants to edit a client
+     * Prior to showing the ClientEdit modal transform the data to eliminate nulls,
+     * also convert the DOB fields to numeric type
+     * @param {ClientRecord} clientRecord The client record to transform
      */
-    const transformClientRecord = (clientRecord: ClientRecord) => {
+    const handleOnEdit = (clientRecord: ClientRecord) => {
         const info = {...clientRecord};
         if (info.Notes === null) info.Notes = '';
         if (info.Nickname === null) info.Nickname = '';
@@ -121,9 +123,10 @@ const ClientPage = (props: IProps) => {
         info.DOB_DAY = typeof info.DOB_DAY === 'string' ? Number.parseInt(info.DOB_DAY) : info.DOB_DAY;
         info.DOB_MONTH = typeof info.DOB_MONTH === 'string' ? Number.parseInt(info.DOB_MONTH) : info.DOB_MONTH;
         info.DOB_YEAR = typeof info.DOB_YEAR === 'string' ? Number.parseInt(info.DOB_YEAR) : info.DOB_YEAR;
-        return info;
+        setClientInfo(info);
     };
 
+    // If the client tab isn't active then don't render anything
     if (props.tabKey !== 'client') return null;
 
     return (
@@ -151,9 +154,9 @@ const ClientPage = (props: IProps) => {
                     <Form.Group as={Col} controlId="dob-year" sm="2">
                         <Button
                             className="my-3 mx-2"
+                            onClick={() => setClientInfo({...newClientRecord})}
                             size="sm"
                             variant="info"
-                            onClick={() => setClientInfo({...newClientRecord})}
                         >
                             + Add Client
                         </Button>
@@ -214,7 +217,7 @@ const ClientPage = (props: IProps) => {
                     </Form.Group>
 
                     <Form.Group as={Col} controlId="dob-year" sm="1">
-                        <Button className="my-3" size="sm" variant="outline-info" onClick={() => resetSearch()}>
+                        <Button className="my-3" onClick={() => resetSearch()} size="sm" variant="outline-info">
                             Search by Name
                         </Button>
                     </Form.Group>
@@ -224,21 +227,21 @@ const ClientPage = (props: IProps) => {
             <Form.Group>
                 {searchResults.length > 0 && activeClient === null ? (
                     <ClientSearchGrid
-                        searchResults={searchResults}
+                        onEdit={(c) => handleOnEdit(c)}
                         onSelect={(c) => {
                             resetSearch();
                             setActiveClient(c);
                         }}
-                        onEdit={(c) => setClientInfo(transformClientRecord(c))}
+                        searchResults={searchResults}
                     />
                 ) : (
                     <>
                         {activeClient && searchText.length === 0 && (
                             <ClientCard
                                 activeClient={activeClient}
+                                onEdit={(c) => handleOnEdit(c)}
                                 providers={props.providers}
                                 serviceList={serviceList}
-                                onEdit={(c) => setClientInfo(transformClientRecord(c))}
                             />
                         )}
                     </>
