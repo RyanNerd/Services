@@ -123,7 +123,7 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
             <Modal.Header closeButton>
                 <Modal.Title>
                     {clientInfo.Id ? 'Edit ' : 'Add '}
-                    <span style={{backgroundColor: 'yellow'}}>{clientFullName(clientInfo)}</span>
+                    <span style={{backgroundColor: 'lawngreen'}}>{clientFullName(clientInfo)}</span>
                 </Modal.Title>
             </Modal.Header>
 
