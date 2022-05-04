@@ -35,7 +35,6 @@ const getInitialState = () => {
     return {
         errorDetails: undefined,
         providers,
-        signIn: {apiKey: null, organization: null, success: null},
         serviceList: [] as ServiceRecord[]
     } as State;
 };

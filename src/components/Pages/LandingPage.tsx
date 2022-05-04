@@ -13,7 +13,7 @@ const LandingPage = () => {
     const [key, setKey] = useState('login');
     const [providers] = useGlobal('providers');
     const [serviceList, setServiceList] = useGlobal('serviceList');
-    const [signIn, setSignIn] = useGlobal('signIn');
+    const [signIn, setSignIn] = useState<Authenticated>({apiKey: null, organization: null, success: null});
 
     /**
      * Handle when the user has successfully logged in by setting the API and loading the global serviceList
@@ -22,7 +22,7 @@ const LandingPage = () => {
     const handleSignIn = async (authenticated: Authenticated): Promise<void> => {
         if (authenticated.apiKey) {
             try {
-                await setSignIn(authenticated);
+                setSignIn(authenticated);
                 await providers.setApi(authenticated.apiKey);
                 const serviceList = await providers.serviceProvider.load();
                 await setServiceList(serviceList);
