@@ -10,15 +10,21 @@ interface IProps {
 }
 
 const ServicesPage = (props: IProps) => {
-    const [serviceList, setServiceList] = useGlobal('serviceList');
     const serviceProvider = props.providers.serviceProvider;
-    const [showServiceEdit, setShowServiceEdit] = useState<ServiceRecord | null>(null);
     const [deleteAllowed, setDeleteAllowed] = useState(false);
+    const [serviceList, setServiceList] = useGlobal('serviceList');
+    const [showServiceEdit, setShowServiceEdit] = useState<ServiceRecord | null>(null);
 
+    /**
+     * Fires when the user is editing an existing service or adding a new service
+     * @param {ServiceRecord} serviceRecord The service record object to add or edit
+     */
     const addEditService = async (serviceRecord: ServiceRecord) => {
+        // Is this is an existing Service?
         if (serviceRecord.Id !== null) {
+            // Check if there are any service log records to determine if service can be deleted
             const serviceLogList = await serviceProvider.serviceLogs(serviceRecord.Id);
-            setDeleteAllowed(serviceLogList.length === 0);
+            setDeleteAllowed(serviceLogList.length === 0); // Delete
         } else {
             setDeleteAllowed(false);
         }
@@ -31,10 +37,10 @@ const ServicesPage = (props: IProps) => {
                 <Card.Header>
                     {'Services List'}
                     <Button
-                        size="sm"
-                        variant="info"
                         className="mx-2"
                         onClick={() => addEditService({...newServiceRecord})}
+                        size="sm"
+                        variant="info"
                     >
                         + Add Service
                     </Button>
@@ -45,8 +51,9 @@ const ServicesPage = (props: IProps) => {
                             return (
                                 <ListGroup.Item
                                     action
-                                    onClick={() => addEditService({...sl})}
+                                    id={`service-list-item-${sl.Id}`}
                                     key={`service-list-item-${sl.Id}`}
+                                    onClick={() => addEditService({...sl})}
                                 >
                                     <span>{`${sl.ServiceName} - HMIS# ${sl.HmisId}`}</span>
                                 </ListGroup.Item>
@@ -57,6 +64,7 @@ const ServicesPage = (props: IProps) => {
             </Card>
 
             <ServiceEdit
+                deleteAllowed={deleteAllowed}
                 onClose={async (serviceRecord) => {
                     setShowServiceEdit(null);
                     if (serviceRecord !== null) {
@@ -70,9 +78,8 @@ const ServicesPage = (props: IProps) => {
                         }
                     }
                 }}
-                show={showServiceEdit !== null}
-                deleteAllowed={deleteAllowed}
                 serviceInfo={showServiceEdit as ServiceRecord}
+                show={showServiceEdit !== null}
             />
         </>
     );
