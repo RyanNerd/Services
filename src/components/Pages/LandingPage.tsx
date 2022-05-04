@@ -9,13 +9,17 @@ import React, {useGlobal, useState} from 'reactn';
 import TabContent from 'styles/common.css';
 
 const LandingPage = () => {
-    const [signIn, setSignIn] = useGlobal('signIn');
-    const [providers] = useGlobal('providers');
-    const [key, setKey] = useState('login');
-    const [serviceList, setServiceList] = useGlobal('serviceList');
     const [, setErrorDetails] = useGlobal('errorDetails');
+    const [key, setKey] = useState('login');
+    const [providers] = useGlobal('providers');
+    const [serviceList, setServiceList] = useGlobal('serviceList');
+    const [signIn, setSignIn] = useGlobal('signIn');
 
-    const handleSignIn = async (authenticated: Authenticated) => {
+    /**
+     * Handle when the user has successfully logged in by setting the API and loading the global serviceList
+     * @param {Authenticated} authenticated The authenticated object
+     */
+    const handleSignIn = async (authenticated: Authenticated): Promise<void> => {
         if (authenticated.apiKey) {
             try {
                 await setSignIn(authenticated);
@@ -44,15 +48,15 @@ const LandingPage = () => {
                 )}
             </Tab>
 
-            <Tab eventKey="client" title="Client" disabled={!signIn.apiKey}>
+            <Tab disabled={!signIn.apiKey} eventKey="client" title="Client">
                 <ClientPage providers={providers} serviceList={serviceList} tabKey={key} />
             </Tab>
 
-            <Tab eventKey="reports" title="Reports" disabled={!signIn.apiKey}>
+            <Tab disabled={!signIn.apiKey} eventKey="reports" title="Reports">
                 <p>Reports place holder</p>
             </Tab>
 
-            <Tab eventKey="services" title="Services" disabled={!signIn.apiKey}>
+            <Tab disabled={!signIn.apiKey} eventKey="services" title="Services">
                 <ServicesPage providers={providers} />
             </Tab>
         </Tabs>
