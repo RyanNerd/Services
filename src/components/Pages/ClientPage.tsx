@@ -1,7 +1,7 @@
 import ClientCard from 'components/Pages/Grids/ClientCard';
 import ClientSearchGrid from 'components/Pages/Grids/ClientSearchGrid';
 import ClientEdit from 'components/Pages/Modals/ClientEdit';
-import {Col, Row} from 'react-bootstrap';
+import {Alert, Col, Row} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
@@ -9,6 +9,7 @@ import React, {useEffect, useGlobal, useState} from 'reactn';
 import {ClientRecord, newClientRecord, ServiceRecord} from 'types/RecordTypes';
 import {SearchKeys} from 'types/SearchTypes';
 import {useDebounce} from 'usehooks-ts';
+import {clientFullName} from 'utilities/clientFormatting';
 import {IProviders} from 'utilities/getInitialState';
 
 interface IProps {
@@ -151,7 +152,7 @@ const ClientPage = (props: IProps) => {
                         </FloatingLabel>
                     </Form.Group>
 
-                    <Form.Group as={Col} controlId="dob-year" sm="2">
+                    <Form.Group as={Col} controlId="dob-year" sm="1">
                         <Button
                             className="my-3 mx-2"
                             onClick={() => setClientInfo({...newClientRecord})}
@@ -160,6 +161,17 @@ const ClientPage = (props: IProps) => {
                         >
                             + Add Client
                         </Button>
+                    </Form.Group>
+
+                    <Form.Group as={Col}>
+                        {activeClient && searchText.length === 0 && (
+                            <Alert variant="info">
+                                <span style={{fontWeight: 'bold'}}>Current Client: </span>
+                                <span style={{backgroundColor: 'lawngreen', fontWeight: 'bold', fontSize: '1.5rem'}}>
+                                    {clientFullName(activeClient)}
+                                </span>
+                            </Alert>
+                        )}
                     </Form.Group>
                 </Row>
             ) : (
