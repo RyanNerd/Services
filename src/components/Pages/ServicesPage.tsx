@@ -7,10 +7,12 @@ import {IProviders} from 'utilities/getInitialState';
 
 interface IProps {
     providers: IProviders;
+    tabKey: string;
 }
 
 const ServicesPage = (props: IProps) => {
     const serviceProvider = props.providers.serviceProvider;
+    const tabKey = props.tabKey;
     const [deleteAllowed, setDeleteAllowed] = useState(false);
     const [serviceList, setServiceList] = useGlobal('serviceList');
     const [showServiceEdit, setShowServiceEdit] = useState<ServiceRecord | null>(null);
@@ -30,6 +32,8 @@ const ServicesPage = (props: IProps) => {
         }
         setShowServiceEdit(serviceRecord);
     };
+
+    if (tabKey !== 'services') return null;
 
     return (
         <>

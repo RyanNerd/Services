@@ -16,7 +16,7 @@ type LoadResponse = {
 
 export interface IServiceLogProvider {
     delete: (residentId: number, permanentDelete?: boolean) => Promise<DeleteResponse>;
-    loadAll: (clientId: number) => Promise<ServiceLogRecord[]>;
+    loadAll: (clientId?: number) => Promise<ServiceLogRecord[]>;
     loadToday: (clientId: number) => Promise<ServiceLogRecord[]>;
     update: (serviceLogInfo: ServiceLogRecord) => Promise<ServiceLogRecord>;
     read: (id: number) => Promise<ServiceLogRecord>;
@@ -122,8 +122,10 @@ const serviceLogProvider = (url: string): IServiceLogProvider => {
          * @param {number} clientId The client PK to load all serviceLogs for
          * @returns {Promise<ServiceLogRecord[]>} Array of Service records
          */
-        loadAll: async (clientId: number): Promise<ServiceLogRecord[]> => {
-            const uri = `${_baseUrl}service-log-load/${clientId}?api_key=${_apiKey}`;
+        loadAll: async (clientId?: number): Promise<ServiceLogRecord[]> => {
+            const uri = clientId
+                ? `${_baseUrl}service-log-load/${clientId}?api_key=${_apiKey}`
+                : `${_baseUrl}service-log-load?api_key=${_apiKey}`;
             const response = await _frak.get<LoadResponse>(uri);
             if (response.success) {
                 return response.data;

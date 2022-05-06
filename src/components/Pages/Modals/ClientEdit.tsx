@@ -8,7 +8,7 @@ import Row from 'react-bootstrap/Row';
 import React, {useEffect, useRef, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
 import {SearchKeys} from 'types/SearchTypes';
-import clientFullName from './../../../utilities/clientFullName';
+import {clientFullName} from 'utilities/clientFormatting';
 import getFormattedDate from './../../../utilities/getFormattedDate';
 
 interface IProps {

@@ -18,7 +18,7 @@ export interface IClientProvider {
     delete: (residentId: number) => Promise<DeleteResponse>;
     load: (clientId: number) => Promise<TClient>;
     update: (residentInfo: ClientRecord) => Promise<ClientRecord>;
-    read: (id: number) => Promise<ClientRecord>;
+    read: (id: number) => Promise<ClientRecord | null>;
     restore: (residentId: number) => Promise<ClientRecord>;
     search: (options: Record<SearchKeys, (string | number)[][] | boolean>) => Promise<ClientRecord[]>;
     loadList: () => Promise<ClientRecord[]>;
@@ -105,12 +105,15 @@ const clientProvider = (url: string): IClientProvider => {
          * @param {number} id PK of the Resident table
          * @returns {Promise<ClientRecord>} A client record
          */
-        read: async (id: number): Promise<ClientRecord> => {
-            const uri = _baseUrl + 'resident/' + id + '?api_key=' + _apiKey;
+        read: async (id: number): Promise<ClientRecord | null> => {
+            const uri = _baseUrl + 'resident/' + id + '?with-trashed=yes&api_key=' + _apiKey;
             const response = await _frak.get<RecordResponse>(uri);
             if (response.success) {
                 return response.data as ClientRecord;
             } else {
+                if (response.status === 404) {
+                    return null;
+                }
                 throw response;
             }
         },

@@ -1,5 +1,6 @@
 import ClientPage from 'components/Pages/ClientPage';
 import LoginPage from 'components/Pages/LoginPage';
+import ReportsPage from 'components/Pages/ReportsPage';
 import ServicesPage from 'components/Pages/ServicesPage';
 import {Authenticated} from 'providers/authenticationProvider';
 import Button from 'react-bootstrap/Button';
@@ -14,6 +15,7 @@ const LandingPage = () => {
     const [providers] = useGlobal('providers');
     const [serviceList, setServiceList] = useGlobal('serviceList');
     const [signIn, setSignIn] = useState<Authenticated>({apiKey: null, organization: null, success: null});
+    const serviceProvider = providers.serviceProvider;
 
     /**
      * Handle when the user has successfully logged in by setting the API and loading the global serviceList
@@ -24,7 +26,7 @@ const LandingPage = () => {
             try {
                 setSignIn(authenticated);
                 await providers.setApi(authenticated.apiKey);
-                const serviceList = await providers.serviceProvider.load();
+                const serviceList = await serviceProvider.load();
                 await setServiceList(serviceList);
                 setKey('client');
             } catch (error: unknown) {
@@ -59,11 +61,11 @@ const LandingPage = () => {
             </Tab>
 
             <Tab disabled={!signIn.apiKey} eventKey="reports" title="Reports">
-                <p>Reports place holder</p>
+                <ReportsPage tabKey={key} providers={providers} serviceList={serviceList} />
             </Tab>
 
             <Tab disabled={!signIn.apiKey} eventKey="services" title="Services">
-                <ServicesPage providers={providers} />
+                <ServicesPage providers={providers} tabKey={key} />
             </Tab>
         </Tabs>
     );
