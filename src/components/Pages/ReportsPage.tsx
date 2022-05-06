@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import usePrevious from 'hooks/usePrevious';
 import {Card} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
@@ -21,10 +22,10 @@ type ServiceLogReportRecord = {
 };
 
 const ReportsPage = (props: IProps) => {
-    const tabKey = props.tabKey;
     const providers = props.providers;
     const clientProvider = providers.clientProvider;
     const serviceLogProvider = providers.serviceLogProvider;
+    const previousKey = usePrevious(props.tabKey);
 
     const [serviceList, setServiceList] = useState(props.serviceList);
     useEffect(() => {
@@ -69,6 +70,12 @@ const ReportsPage = (props: IProps) => {
         if (serviceLogReport === null) populateServiceLogReport();
     }, [clientProvider, serviceList, serviceLogProvider, serviceLogReport]);
 
+    const [tabKey, setTabKey] = useState(props.tabKey);
+    useEffect(() => {
+        setTabKey(props.tabKey);
+        if (props.tabKey !== previousKey && props.tabKey === 'reports') setServiceLogReport(null);
+    }, [previousKey, props.tabKey]);
+
     if (tabKey !== 'reports') return null;
 
     const ServiceLogGridRow = (serviceLogItem: ServiceLogReportRecord) => {
@@ -108,7 +115,7 @@ const ReportsPage = (props: IProps) => {
                         <tbody>{serviceLogReport.map((serviceLogItem) => ServiceLogGridRow(serviceLogItem))}</tbody>
                     </Table>
                 ) : (
-                    <Button onClick={() => setServiceLogReport(null)}>Show all services not imported into HMIS</Button>
+                    <p>No services to be imported into HMIS</p>
                 )}
             </Card.Body>
         </Card>
