@@ -7,6 +7,7 @@ import React, {useEffect, useState} from 'reactn';
 import {ClientRecord, ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
 import {clientFullName} from 'utilities/clientFormatting';
 import {IProviders} from 'utilities/getInitialState';
+import {multiSort, SortDirection} from 'utilities/multiSort';
 
 interface IProps {
     providers: IProviders;
@@ -15,7 +16,7 @@ interface IProps {
 }
 
 type ServiceLogReportRecord = {
-    clientFullName: string;
+    clientInfo: ClientRecord | null;
     service: string;
     dateOfService: string;
     serviceLogRecord: ServiceLogRecord;
@@ -49,22 +50,29 @@ const ReportsPage = (props: IProps) => {
                     if (clientRecord) {
                         clientRecordList.push(clientRecord);
                         serviceLogReportInfo.push({
-                            clientFullName: clientFullName(clientRecord),
+                            clientInfo: clientRecord,
                             service: serviceName || '<unknown service>',
                             dateOfService: dos.format('MM/DD/YYYY'),
                             serviceLogRecord
                         });
                     } else {
                         serviceLogReportInfo.push({
-                            clientFullName: '<unknown>',
+                            clientInfo: null,
                             service: serviceName || '<unknown service>',
                             dateOfService: dos.format('MM/DD/YYYY'),
                             serviceLogRecord
                         });
                     }
+                } else {
+                    serviceLogReportInfo.push({
+                        clientInfo: clientRecordList.find((c) => c.Id === serviceLogRecord.ResidentId) || null,
+                        service: serviceName || '<unknown service>',
+                        dateOfService: dos.format('MM/DD/YYYY'),
+                        serviceLogRecord
+                    });
                 }
             }
-            setServiceLogReport([...serviceLogReportInfo]);
+            setServiceLogReport([...multiSort(serviceLogReportInfo, {clientFullName: SortDirection.desc})]);
         };
 
         if (serviceLogReport === null) populateServiceLogReport();
@@ -79,9 +87,11 @@ const ReportsPage = (props: IProps) => {
     if (tabKey !== 'reports') return null;
 
     const ServiceLogGridRow = (serviceLogItem: ServiceLogReportRecord) => {
+        const clientInfo = serviceLogItem.clientInfo;
+        const clientName = clientInfo ? clientFullName(clientInfo) : '<unknown client>';
         return (
             <tr key={`service-log-report-item-${serviceLogItem.serviceLogRecord.Id as number}`}>
-                <td>{serviceLogItem.clientFullName}</td>
+                <td>{clientName}</td>
                 <td>{serviceLogItem.service}</td>
                 <td>{serviceLogItem.dateOfService}</td>
             </tr>
