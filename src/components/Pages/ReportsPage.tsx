@@ -138,6 +138,7 @@ const ReportsPage = (props: IProps) => {
                 >
                     Import all to HMIS
                 </Button>
+                <Card.Subtitle className="my-1">Click on the table headers to sort</Card.Subtitle>
             </Card.Header>
             <Card.Body>
                 {serviceLogReport !== null && serviceLogReport !== undefined && serviceLogReport.length > 0 ? (
@@ -154,6 +155,7 @@ const ReportsPage = (props: IProps) => {
                                             })
                                         ]);
                                     }}
+                                    style={{cursor: 'pointer', userSelect: 'none'}}
                                 >
                                     Client
                                 </th>
@@ -167,6 +169,7 @@ const ReportsPage = (props: IProps) => {
                                             })
                                         ]);
                                     }}
+                                    style={{cursor: 'pointer', userSelect: 'none'}}
                                 >
                                     Service
                                 </th>
@@ -179,6 +182,7 @@ const ReportsPage = (props: IProps) => {
                                             })
                                         ]);
                                     }}
+                                    style={{cursor: 'pointer', userSelect: 'none'}}
                                 >
                                     DOS
                                 </th>
