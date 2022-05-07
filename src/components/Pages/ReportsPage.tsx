@@ -22,6 +22,7 @@ type ServiceLogReportRecord = {
     clientInfo: ClientRecord | null;
     service: string;
     dateOfService: string;
+    sortDate: string;
     serviceLogRecord: ServiceLogRecord;
 };
 
@@ -30,6 +31,9 @@ const ReportsPage = (props: IProps) => {
     const clientProvider = providers.clientProvider;
     const serviceLogProvider = providers.serviceLogProvider;
     const previousKey = usePrevious(props.tabKey);
+    const [clientSortDirection, setClientSortDirection] = useState(true);
+    const [serviceSortDirection, setServiceSortDirection] = useState(true);
+    const [dosSortDirection, setDosSortDirection] = useState(true);
 
     const [serviceList, setServiceList] = useState(props.serviceList);
     useEffect(() => {
@@ -59,6 +63,7 @@ const ReportsPage = (props: IProps) => {
                             lastName: clientRecord.LastName,
                             service: serviceName || '<unknown service>',
                             dateOfService: dos.format('MM/DD/YYYY'),
+                            sortDate: dos.format('YYYY-MM-DD'),
                             serviceLogRecord
                         });
                     } else {
@@ -69,6 +74,7 @@ const ReportsPage = (props: IProps) => {
                             lastName: '<unknown>',
                             service: serviceName || '<unknown service>',
                             dateOfService: dos.format('MM/DD/YYYY'),
+                            sortDate: dos.format('YYYY-MM-DD'),
                             serviceLogRecord
                         });
                     }
@@ -84,6 +90,7 @@ const ReportsPage = (props: IProps) => {
                         lastName,
                         service: serviceName || '<unknown service>',
                         dateOfService: dos.format('MM/DD/YYYY'),
+                        sortDate: dos.format('YYYY-MM-DD'),
                         serviceLogRecord
                     });
                 }
@@ -137,9 +144,44 @@ const ReportsPage = (props: IProps) => {
                     <Table bordered hover striped>
                         <thead>
                             <tr>
-                                <th>Client</th>
-                                <th>Service</th>
-                                <th>DOS</th>
+                                <th
+                                    onClick={() => {
+                                        setClientSortDirection(!clientSortDirection);
+                                        setServiceLogReport([
+                                            ...multiSort(serviceLogReport, {
+                                                fullName: clientSortDirection ? SortDirection.desc : SortDirection.asc,
+                                                service: SortDirection.desc
+                                            })
+                                        ]);
+                                    }}
+                                >
+                                    Client
+                                </th>
+                                <th
+                                    onClick={() => {
+                                        setServiceSortDirection(!serviceSortDirection);
+                                        setServiceLogReport([
+                                            ...multiSort(serviceLogReport, {
+                                                service: serviceSortDirection ? SortDirection.desc : SortDirection.asc,
+                                                sortDate: SortDirection.desc
+                                            })
+                                        ]);
+                                    }}
+                                >
+                                    Service
+                                </th>
+                                <th
+                                    onClick={() => {
+                                        setDosSortDirection(!dosSortDirection);
+                                        setServiceLogReport([
+                                            ...multiSort(serviceLogReport, {
+                                                sortDate: dosSortDirection ? SortDirection.desc : SortDirection.asc
+                                            })
+                                        ]);
+                                    }}
+                                >
+                                    DOS
+                                </th>
                             </tr>
                         </thead>
                         <tbody>{serviceLogReport.map((serviceLogItem) => ServiceLogGridRow(serviceLogItem))}</tbody>
