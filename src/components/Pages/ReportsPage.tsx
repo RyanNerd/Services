@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import usePrevious from 'hooks/usePrevious';
-import {Card} from 'react-bootstrap';
+import {Card, Spinner} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import React, {useEffect, useState} from 'reactn';
@@ -89,9 +89,12 @@ const ReportsPage = (props: IProps) => {
     const ServiceLogGridRow = (serviceLogItem: ServiceLogReportRecord) => {
         const clientInfo = serviceLogItem.clientInfo;
         const clientName = clientInfo ? clientFullName(clientInfo) : '<unknown client>';
+        const clientStyle = clientInfo?.Id ? {color: 'blue', cursor: 'pointer'} : {};
         return (
             <tr key={`service-log-report-item-${serviceLogItem.serviceLogRecord.Id as number}`}>
-                <td>{clientName}</td>
+                <td style={clientStyle} onClick={() => alert('todo: show client modal')}>
+                    {clientName}
+                </td>
                 <td>{serviceLogItem.service}</td>
                 <td>{serviceLogItem.dateOfService}</td>
             </tr>
@@ -113,7 +116,7 @@ const ReportsPage = (props: IProps) => {
                 </Button>
             </Card.Header>
             <Card.Body>
-                {serviceLogReport !== null && serviceLogReport !== undefined ? (
+                {serviceLogReport !== null && serviceLogReport !== undefined && serviceLogReport.length > 0 ? (
                     <Table bordered hover striped>
                         <thead>
                             <tr>
@@ -125,7 +128,16 @@ const ReportsPage = (props: IProps) => {
                         <tbody>{serviceLogReport.map((serviceLogItem) => ServiceLogGridRow(serviceLogItem))}</tbody>
                     </Table>
                 ) : (
-                    <p>No services to be imported into HMIS</p>
+                    <>
+                        {serviceLogReport !== undefined && serviceLogReport?.length === 0 ? (
+                            <p>No services to be imported into HMIS</p>
+                        ) : (
+                            <span>
+                                <Spinner animation="grow" />
+                                {' Loading...'}
+                            </span>
+                        )}
+                    </>
                 )}
             </Card.Body>
         </Card>
