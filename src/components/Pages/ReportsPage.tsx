@@ -1,3 +1,4 @@
+import ClientEdit from 'components/Pages/Modals/ClientEdit';
 import dayjs from 'dayjs';
 import usePrevious from 'hooks/usePrevious';
 import {Card, Spinner} from 'react-bootstrap';
@@ -34,7 +35,7 @@ const ReportsPage = (props: IProps) => {
     const [clientSortDirection, setClientSortDirection] = useState(true);
     const [serviceSortDirection, setServiceSortDirection] = useState(true);
     const [dosSortDirection, setDosSortDirection] = useState(true);
-
+    const [clientModalInfo, setClientModalInfo] = useState<ClientRecord | null>(null);
     const [serviceList, setServiceList] = useState(props.serviceList);
     useEffect(() => {
         setServiceList(props.serviceList);
@@ -116,10 +117,16 @@ const ReportsPage = (props: IProps) => {
         const clientStyle = clientInfo?.Id ? {color: 'blue', cursor: 'pointer'} : {};
         return (
             <tr key={`service-log-report-item-${serviceLogItem.serviceLogRecord.Id as number}`}>
-                <td style={clientStyle} onClick={() => alert('todo: show client modal')}>
+                <td style={clientStyle} onClick={() => setClientModalInfo(serviceLogItem.clientInfo)}>
                     {serviceLogItem.fullName}
                 </td>
-                <td>{serviceLogItem.service}</td>
+                <td onClick={() => alert('todo: Edit Services')}>
+                    <span style={clientStyle}>
+                        {serviceLogItem.service}
+                        <br />
+                    </span>
+                    <span>{serviceLogItem.serviceLogRecord.Notes}</span>
+                </td>
                 <td>{serviceLogItem.dateOfService}</td>
             </tr>
         );
@@ -178,7 +185,8 @@ const ReportsPage = (props: IProps) => {
                                         setDosSortDirection(!dosSortDirection);
                                         setServiceLogReport([
                                             ...multiSort(serviceLogReport, {
-                                                sortDate: dosSortDirection ? SortDirection.desc : SortDirection.asc
+                                                sortDate: dosSortDirection ? SortDirection.desc : SortDirection.asc,
+                                                fullName: SortDirection.desc
                                             })
                                         ]);
                                     }}
@@ -203,6 +211,15 @@ const ReportsPage = (props: IProps) => {
                     </>
                 )}
             </Card.Body>
+
+            {clientModalInfo !== null && (
+                <ClientEdit
+                    clientInfo={clientModalInfo as ClientRecord}
+                    clientProvider={clientProvider}
+                    onClose={() => setClientModalInfo(null)}
+                    show={true}
+                />
+            )}
         </Card>
     );
 };
