@@ -16,6 +16,9 @@ interface IProps {
 }
 
 type ServiceLogReportRecord = {
+    fullName: string;
+    lastName: string;
+    firstName: string;
     clientInfo: ClientRecord | null;
     service: string;
     dateOfService: string;
@@ -51,6 +54,9 @@ const ReportsPage = (props: IProps) => {
                         clientRecordList.push(clientRecord);
                         serviceLogReportInfo.push({
                             clientInfo: clientRecord,
+                            fullName: clientFullName(clientRecord),
+                            firstName: clientRecord.FirstName,
+                            lastName: clientRecord.LastName,
                             service: serviceName || '<unknown service>',
                             dateOfService: dos.format('MM/DD/YYYY'),
                             serviceLogRecord
@@ -58,21 +64,33 @@ const ReportsPage = (props: IProps) => {
                     } else {
                         serviceLogReportInfo.push({
                             clientInfo: null,
+                            fullName: '<unknown client>',
+                            firstName: '<unknown',
+                            lastName: '<unknown>',
                             service: serviceName || '<unknown service>',
                             dateOfService: dos.format('MM/DD/YYYY'),
                             serviceLogRecord
                         });
                     }
                 } else {
+                    const clientInfo = clientRecordList.find((c) => c.Id === serviceLogRecord.ResidentId) || null;
+                    const lastName = clientInfo ? clientInfo.LastName : '<unknown>';
+                    const firstName = clientInfo ? clientInfo.FirstName : '<unknown>';
+                    const fullName = clientInfo ? clientFullName(clientInfo) : '<unknown client>';
                     serviceLogReportInfo.push({
-                        clientInfo: clientRecordList.find((c) => c.Id === serviceLogRecord.ResidentId) || null,
+                        clientInfo,
+                        fullName,
+                        firstName,
+                        lastName,
                         service: serviceName || '<unknown service>',
                         dateOfService: dos.format('MM/DD/YYYY'),
                         serviceLogRecord
                     });
                 }
             }
-            setServiceLogReport([...multiSort(serviceLogReportInfo, {clientFullName: SortDirection.desc})]);
+            setServiceLogReport([
+                ...multiSort(serviceLogReportInfo, {fullName: SortDirection.desc, service: SortDirection.desc})
+            ]);
         };
 
         if (serviceLogReport === null) populateServiceLogReport();
@@ -88,12 +106,11 @@ const ReportsPage = (props: IProps) => {
 
     const ServiceLogGridRow = (serviceLogItem: ServiceLogReportRecord) => {
         const clientInfo = serviceLogItem.clientInfo;
-        const clientName = clientInfo ? clientFullName(clientInfo) : '<unknown client>';
         const clientStyle = clientInfo?.Id ? {color: 'blue', cursor: 'pointer'} : {};
         return (
             <tr key={`service-log-report-item-${serviceLogItem.serviceLogRecord.Id as number}`}>
                 <td style={clientStyle} onClick={() => alert('todo: show client modal')}>
-                    {clientName}
+                    {serviceLogItem.fullName}
                 </td>
                 <td>{serviceLogItem.service}</td>
                 <td>{serviceLogItem.dateOfService}</td>
