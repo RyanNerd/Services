@@ -1,6 +1,7 @@
 import ServiceEdit from 'components/Pages/Modals/ServiceEdit';
 import {Card, ListGroup} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import React, {useGlobal, useState} from 'reactn';
 import {newServiceRecord, ServiceRecord} from 'types/RecordTypes';
 import {IProviders} from 'utilities/getInitialState';
@@ -37,7 +38,7 @@ const ServicesPage = (props: IProps) => {
 
     return (
         <>
-            <Card border="info" style={{width: '35%'}}>
+            <Card border="info" style={{width: '35%'}} as={Form}>
                 <Card.Header>
                     {'Services List'}
                     <Button
@@ -59,7 +60,18 @@ const ServicesPage = (props: IProps) => {
                                     key={`service-list-item-${sl.Id}`}
                                     onClick={() => addEditService({...sl})}
                                 >
-                                    <span>{`${sl.ServiceName} - HMIS# ${sl.HmisId}`}</span>
+                                    <Form.Group>
+                                        <span>{`${sl.ServiceName} - HMIS# ${sl.HmisId}`}</span>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <Form.Check
+                                            disabled={true}
+                                            type="switch"
+                                            value={sl.Id as number}
+                                            checked={sl.AllowMultiple}
+                                            label="Allow Multiple Services on the same day"
+                                        />
+                                    </Form.Group>
                                 </ListGroup.Item>
                             );
                         })}

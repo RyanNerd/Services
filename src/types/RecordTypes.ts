@@ -84,6 +84,7 @@ export type PillboxItemRecord = {
 export type ServiceRecord = {
     Id: number | null;
     ServiceName: string;
+    AllowMultiple: boolean;
     HmisId?: null | string;
     Updated?: null | Date;
     Created?: null | Date;
@@ -103,7 +104,8 @@ export type ServiceLogRecord = {
 // Default empty Service record
 export const newServiceRecord = {
     Id: null,
-    ServiceName: ''
+    ServiceName: '',
+    AllowMultiple: false
 } as ServiceRecord;
 
 // Default empty Resident (Client) record

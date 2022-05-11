@@ -74,6 +74,16 @@ const ServiceEdit = (props: IProps) => {
                         />
                         <Form.Control.Feedback type="invalid">HMIS # can not be blank.</Form.Control.Feedback>
                     </FloatingLabel>
+
+                    <Form.Check
+                        onChange={(changeEvent) =>
+                            setServiceInfo({...serviceInfo, AllowMultiple: changeEvent.target.checked})
+                        }
+                        type="switch"
+                        value={serviceInfo.Id as number}
+                        checked={serviceInfo.AllowMultiple}
+                        label="Allow Multiple Services on the same day"
+                    />
                 </Form>
             </Modal.Body>
             <Modal.Footer>
