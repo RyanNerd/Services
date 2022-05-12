@@ -109,6 +109,7 @@ const ClientCard = (props: IProps) => {
         updateServiceLog();
     };
 
+    // Build out the serviceLogInputList
     const [serviceLogInputList, setServiceLogInputList] = useState([] as ServiceLogInputRecord[]);
     useEffect(() => {
         const logInputList = [] as ServiceLogInputRecord[];

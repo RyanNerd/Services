@@ -26,7 +26,7 @@ const ServiceEdit = (props: IProps) => {
     useEffect(() => {
         if (props.serviceInfo) {
             const info = {...props.serviceInfo};
-            if (!info.HmisId) info.HmisId = '';
+            if (info.HmisId === null) info.HmisId = '';
             setServiceInfo(info);
         }
     }, [props.serviceInfo]);
