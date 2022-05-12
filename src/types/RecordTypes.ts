@@ -105,6 +105,7 @@ export type ServiceLogRecord = {
 export const newServiceRecord = {
     Id: null,
     ServiceName: '',
+    HmisId: '',
     AllowMultiple: false
 } as ServiceRecord;
 

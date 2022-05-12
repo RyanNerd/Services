@@ -27,6 +27,7 @@ const ServiceEdit = (props: IProps) => {
         if (props.serviceInfo) {
             const info = {...props.serviceInfo};
             if (info.HmisId === null) info.HmisId = '';
+            if (info.ServiceName === null) info.ServiceName = '';
             setServiceInfo(info);
         }
     }, [props.serviceInfo]);

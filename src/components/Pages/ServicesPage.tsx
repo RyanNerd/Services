@@ -43,7 +43,10 @@ const ServicesPage = (props: IProps) => {
                     {'Services List'}
                     <Button
                         className="mx-2"
-                        onClick={() => addEditService({...newServiceRecord})}
+                        onClick={(mouseEvent) => {
+                            mouseEvent.preventDefault();
+                            addEditService({...newServiceRecord});
+                        }}
                         size="sm"
                         variant="info"
                     >
@@ -58,7 +61,10 @@ const ServicesPage = (props: IProps) => {
                                     action
                                     id={`service-list-item-${sl.Id}`}
                                     key={`service-list-item-${sl.Id}`}
-                                    onClick={() => addEditService({...sl})}
+                                    onClick={(mouseEvent) => {
+                                        mouseEvent.preventDefault();
+                                        addEditService({...sl});
+                                    }}
                                 >
                                     <Form.Group>
                                         <span>{`${sl.ServiceName} - HMIS# ${sl.HmisId}`}</span>
