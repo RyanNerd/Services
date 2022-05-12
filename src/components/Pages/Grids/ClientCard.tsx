@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import {Card, Col, Form, InputGroup, ListGroup, Row} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import React, {useEffect, useState} from 'reactn';
@@ -26,21 +27,28 @@ type ServiceLogInputRecord = {
 const ClientCard = (props: IProps) => {
     const serviceLogProvider = props.providers.serviceLogProvider;
     const onEditClient = props.onEdit;
-    const [serviceLogList, setServiceLogList] = useState<ServiceLogRecord[]>([]);
 
     const [serviceList, setServiceList] = useState(props.serviceList);
     useEffect(() => {
         setServiceList(props.serviceList);
     }, [props.serviceList]);
 
+    const [serviceLogHistoryList, setServiceLogHistoryList] = useState<ServiceLogRecord[]>([]);
+    const [serviceLogList, setServiceLogList] = useState<ServiceLogRecord[]>([]);
     const [activeClient, setActiveClient] = useState(props.activeClient);
     useEffect(() => {
         const populateServiceLog = async (clientId: number) => {
             setServiceLogList(await serviceLogProvider.loadToday(clientId));
         };
+
+        const populateServiceLogHistory = async (clientId: number) => {
+            setServiceLogHistoryList(await serviceLogProvider.loadAll(clientId));
+        };
+
         setActiveClient(props.activeClient);
         populateServiceLog(props.activeClient.Id as number);
-    }, [props.activeClient, serviceLogProvider]);
+        populateServiceLogHistory(props.activeClient.Id as number);
+    }, [props.activeClient, serviceLogProvider, serviceLogList]);
 
     /**
      * Add a serviceLog entry when the service switch is set to true
@@ -146,6 +154,23 @@ const ClientCard = (props: IProps) => {
         setServiceLogInputList([...logInputList]);
     }, [serviceList, serviceLogList]);
 
+    const ServiceLogHistoryRow = (serviceLogRecord: ServiceLogRecord) => {
+        if (serviceLogRecord.Recorded === null) {
+            const serviceName = serviceList.find(
+                (serviceRecord) => serviceRecord.Id === serviceLogRecord.ServiceId
+            )?.ServiceName;
+            const dos = new Date(serviceLogRecord.Updated as Date);
+            const dateOfService = dayjs(dos).format('MM/DD/YYYY');
+            return (
+                <li key={`service-log-history-${serviceLogRecord.Id}`}>
+                    {serviceName} - {dateOfService}
+                </li>
+            );
+        } else {
+            return null;
+        }
+    };
+
     return (
         <Row>
             <Col sm="3">
@@ -177,6 +202,13 @@ const ClientCard = (props: IProps) => {
                                 <span style={{fontWeight: 'bold', backgroundColor: 'lawngreen'}}>
                                     {clientFullName(activeClient)}
                                 </span>
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                <ul>
+                                    {serviceLogHistoryList.map((serviceLogRecord) =>
+                                        ServiceLogHistoryRow(serviceLogRecord)
+                                    )}
+                                </ul>
                             </ListGroup.Item>
                         </ListGroup>
                     </Card.Body>
