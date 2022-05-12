@@ -12,6 +12,15 @@ interface IProps {
     serviceList: ServiceRecord[];
 }
 
+type ServiceLogInputRecord = {
+    Id: number;
+    ServiceLogRecord: ServiceLogRecord | null;
+    ServiceId: number;
+    ServiceName: string;
+    Notes: string | null;
+    ServiceGiven: boolean;
+};
+
 const ClientCard = (props: IProps) => {
     const serviceLogProvider = props.providers.serviceLogProvider;
     const onEditClient = props.onEdit;
@@ -33,10 +42,9 @@ const ClientCard = (props: IProps) => {
 
     /**
      * Handle when the toggle switch is changed
-     * @param {ServiceRecord} serviceRecord The service record being changed
-     * @param {ServiceLogRecord | undefined} serviceLogRecord The service log record if there is one
+     * @param {ServiceLogInputRecord} serviceLogInputRecord The ServiceLogInputRecord
      */
-    const handleSwitchChange = (serviceRecord: ServiceRecord, serviceLogRecord: ServiceLogRecord | undefined) => {
+    const handleSwitchChange = (serviceLogInputRecord: ServiceLogInputRecord) => {
         /**
          * Add a serviceLog entry when the service switch is set to true
          * @returns {Promise<void>}
@@ -45,7 +53,7 @@ const ClientCard = (props: IProps) => {
             await serviceLogProvider.update({
                 Id: null,
                 ResidentId: activeClient.Id as number,
-                ServiceId: serviceRecord.Id as number,
+                ServiceId: serviceLogInputRecord.ServiceId,
                 Notes: ''
             });
             setServiceLogList(await serviceLogProvider.loadToday(activeClient.Id as number));
@@ -62,8 +70,8 @@ const ClientCard = (props: IProps) => {
         };
 
         // Is there an existing service log record? If so then remove it, otherwise add a new record.
-        if (serviceLogRecord && serviceLogRecord.Id) {
-            removeServiceLog(serviceLogRecord.Id);
+        if (serviceLogInputRecord.ServiceGiven) {
+            removeServiceLog(serviceLogInputRecord.ServiceLogRecord?.Id as number);
         } else {
             addServiceLog();
         }
@@ -98,6 +106,40 @@ const ClientCard = (props: IProps) => {
         updateServiceLog();
     };
 
+    const [serviceLogInputList, setServiceLogInputList] = useState([] as ServiceLogInputRecord[]);
+    useEffect(() => {
+        const logInputList = [] as ServiceLogInputRecord[];
+        let count = 0;
+        for (const serviceRecord of serviceList) {
+            let found = false;
+            for (const serviceLogRecord of serviceLogList) {
+                if (serviceLogRecord.ServiceId === serviceRecord.Id) {
+                    found = true;
+                    logInputList.push({
+                        Id: count++,
+                        ServiceLogRecord: serviceLogRecord,
+                        ServiceId: serviceRecord.Id,
+                        ServiceName: serviceRecord.ServiceName,
+                        Notes: serviceLogRecord.Notes,
+                        ServiceGiven: true
+                    });
+                }
+            }
+            // Even if the service has no service log records we need to add it to the list so it can be selected
+            if (!found) {
+                logInputList.push({
+                    Id: count++,
+                    ServiceLogRecord: null,
+                    ServiceId: serviceRecord.Id as number,
+                    ServiceName: serviceRecord.ServiceName,
+                    Notes: null,
+                    ServiceGiven: false
+                });
+            }
+        }
+        setServiceLogInputList([...logInputList]);
+    }, [serviceList, serviceLogList]);
+
     return (
         <Row>
             <Col sm="3">
@@ -107,6 +149,7 @@ const ClientCard = (props: IProps) => {
                             {clientFullName(activeClient, true)}
                         </span>
                     </Card.Header>
+
                     <Card.Body>
                         <ListGroup>
                             <ListGroup.Item>
@@ -133,6 +176,7 @@ const ClientCard = (props: IProps) => {
                     </Card.Body>
                 </Card>
             </Col>
+
             <Col sm="9">
                 <Card border="primary">
                     <Card.Header>
@@ -142,36 +186,42 @@ const ClientCard = (props: IProps) => {
                         </span>{' '}
                         on {getFormattedDate(new Date(), true)}
                     </Card.Header>
+
                     <Card.Body>
                         <>
-                            {serviceList.map((serviceRecord) => {
-                                const serviceLogRecord = serviceLogList.find((s) => s.ServiceId === serviceRecord.Id);
-
+                            {serviceLogInputList.map((serviceLogInputItem) => {
                                 return (
-                                    <InputGroup key={`services-input-group-${serviceRecord.Id}`} className="my-1">
+                                    <InputGroup key={`services-input-group-${serviceLogInputItem.Id}`} className="my-1">
                                         <Form.Check
-                                            key={`services-checkbox-${serviceRecord.Id}`}
-                                            checked={serviceLogRecord !== undefined}
-                                            onChange={() => handleSwitchChange(serviceRecord, serviceLogRecord)}
-                                            id={`service-list-checkbox-${serviceRecord.Id}`}
+                                            key={`services-checkbox-${serviceLogInputItem.Id}`}
+                                            checked={serviceLogInputItem.ServiceGiven}
+                                            onChange={() => handleSwitchChange(serviceLogInputItem)}
+                                            id={`service-list-checkbox-${serviceLogInputItem.Id}`}
                                             name="services"
-                                            label={serviceRecord.ServiceName}
+                                            label={serviceLogInputItem.ServiceName}
                                             type="switch"
-                                            value={serviceRecord.Id as number}
+                                            value={serviceLogInputItem.Id as number}
                                         />
 
-                                        {serviceLogRecord !== undefined && (
+                                        {serviceLogInputItem.ServiceGiven && (
                                             <>
                                                 <Form.Control
                                                     onChange={(changeEvent) =>
-                                                        handleOnChange(changeEvent, serviceLogRecord)
+                                                        handleOnChange(
+                                                            changeEvent,
+                                                            serviceLogInputItem.ServiceLogRecord as ServiceLogRecord
+                                                        )
                                                     }
-                                                    onBlur={() => saveNoteChanges(serviceLogRecord)}
+                                                    onBlur={() =>
+                                                        saveNoteChanges(
+                                                            serviceLogInputItem.ServiceLogRecord as ServiceLogRecord
+                                                        )
+                                                    }
                                                     type="text"
                                                     size="sm"
                                                     className="mx-2"
                                                     placeholder="Notes"
-                                                    value={serviceLogRecord.Notes}
+                                                    value={serviceLogInputItem.Notes || ''}
                                                 />
                                             </>
                                         )}
