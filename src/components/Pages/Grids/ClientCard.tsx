@@ -1,4 +1,5 @@
 import {Card, Col, Form, InputGroup, ListGroup, Row} from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 import React, {useEffect, useState} from 'reactn';
 import {ClientRecord, ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
 import {clientDOB, clientFullName} from 'utilities/clientFormatting';
@@ -17,6 +18,7 @@ type ServiceLogInputRecord = {
     ServiceLogRecord: ServiceLogRecord | null;
     ServiceId: number;
     ServiceName: string;
+    AllowMultiple: boolean;
     Notes: string | null;
     ServiceGiven: boolean;
 };
@@ -41,24 +43,25 @@ const ClientCard = (props: IProps) => {
     }, [props.activeClient, serviceLogProvider]);
 
     /**
+     * Add a serviceLog entry when the service switch is set to true
+     * @param {number} serviceId The service Id
+     * @returns {Promise<void>}
+     */
+    const addServiceLog = async (serviceId: number) => {
+        await serviceLogProvider.update({
+            Id: null,
+            ResidentId: activeClient.Id as number,
+            ServiceId: serviceId,
+            Notes: ''
+        });
+        setServiceLogList(await serviceLogProvider.loadToday(activeClient.Id as number));
+    };
+
+    /**
      * Handle when the toggle switch is changed
      * @param {ServiceLogInputRecord} serviceLogInputRecord The ServiceLogInputRecord
      */
     const handleSwitchChange = (serviceLogInputRecord: ServiceLogInputRecord) => {
-        /**
-         * Add a serviceLog entry when the service switch is set to true
-         * @returns {Promise<void>}
-         */
-        const addServiceLog = async () => {
-            await serviceLogProvider.update({
-                Id: null,
-                ResidentId: activeClient.Id as number,
-                ServiceId: serviceLogInputRecord.ServiceId,
-                Notes: ''
-            });
-            setServiceLogList(await serviceLogProvider.loadToday(activeClient.Id as number));
-        };
-
         /**
          * Remove the serviceLog entry when the service switch is set to false
          * @param {number} serviceLogId The service record Id
@@ -73,7 +76,7 @@ const ClientCard = (props: IProps) => {
         if (serviceLogInputRecord.ServiceGiven) {
             removeServiceLog(serviceLogInputRecord.ServiceLogRecord?.Id as number);
         } else {
-            addServiceLog();
+            addServiceLog(serviceLogInputRecord.ServiceId);
         }
     };
 
@@ -120,6 +123,7 @@ const ClientCard = (props: IProps) => {
                         ServiceLogRecord: serviceLogRecord,
                         ServiceId: serviceRecord.Id,
                         ServiceName: serviceRecord.ServiceName,
+                        AllowMultiple: serviceRecord.AllowMultiple,
                         Notes: serviceLogRecord.Notes,
                         ServiceGiven: true
                     });
@@ -132,6 +136,7 @@ const ClientCard = (props: IProps) => {
                     ServiceLogRecord: null,
                     ServiceId: serviceRecord.Id as number,
                     ServiceName: serviceRecord.ServiceName,
+                    AllowMultiple: false,
                     Notes: null,
                     ServiceGiven: false
                 });
@@ -205,6 +210,16 @@ const ClientCard = (props: IProps) => {
 
                                         {serviceLogInputItem.ServiceGiven && (
                                             <>
+                                                {serviceLogInputItem.AllowMultiple ? (
+                                                    <Button
+                                                        className="mx-1"
+                                                        size="sm"
+                                                        onClick={() => addServiceLog(serviceLogInputItem.ServiceId)}
+                                                    >
+                                                        +
+                                                    </Button>
+                                                ) : null}
+
                                                 <Form.Control
                                                     onChange={(changeEvent) =>
                                                         handleOnChange(
