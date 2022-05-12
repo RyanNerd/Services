@@ -37,14 +37,24 @@ const ClientCard = (props: IProps) => {
     const [serviceLogList, setServiceLogList] = useState<ServiceLogRecord[]>([]);
     const [activeClient, setActiveClient] = useState(props.activeClient);
     useEffect(() => {
+        /**
+         * Given the clientId set the service log list with today's entries
+         * @param {number} clientId The client id
+         */
         const populateServiceLog = async (clientId: number) => {
             setServiceLogList(await serviceLogProvider.loadToday(clientId));
         };
 
+        /**
+         * Given the clientId set the service log history list
+         * @param {number} clientId The client id
+         */
         const populateServiceLogHistory = async (clientId: number) => {
             setServiceLogHistoryList(await serviceLogProvider.loadAll(clientId));
         };
 
+        // Note: Even though serviceLogList isn't directly modified it's included in the effect array
+        // so history will be updated
         setActiveClient(props.activeClient);
         populateServiceLog(props.activeClient.Id as number);
         populateServiceLogHistory(props.activeClient.Id as number);
