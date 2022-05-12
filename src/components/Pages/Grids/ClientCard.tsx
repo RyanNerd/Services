@@ -212,9 +212,10 @@ const ClientCard = (props: IProps) => {
                                             <>
                                                 {serviceLogInputItem.AllowMultiple ? (
                                                     <Button
-                                                        className="mx-1"
+                                                        className="mx-2"
                                                         size="sm"
                                                         onClick={() => addServiceLog(serviceLogInputItem.ServiceId)}
+                                                        variant="outline-info"
                                                     >
                                                         +
                                                     </Button>
