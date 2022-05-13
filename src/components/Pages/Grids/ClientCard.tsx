@@ -2,10 +2,12 @@ import dayjs from 'dayjs';
 import {Card, Col, Form, InputGroup, ListGroup, Row} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import React, {useEffect, useState} from 'reactn';
+import 'styles/list-item-marker.css';
 import {ClientRecord, ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
 import {clientDOB, clientFullName} from 'utilities/clientFormatting';
 import getFormattedDate from 'utilities/getFormattedDate';
 import {IProviders} from 'utilities/getInitialState';
+import {multiSort, SortDirection} from 'utilities/multiSort';
 
 interface IProps {
     activeClient: ClientRecord;
@@ -45,25 +47,26 @@ const ClientCard = (props: IProps) => {
             setServiceLogList(await serviceLogProvider.loadToday(clientId));
         };
 
+        setActiveClient(props.activeClient);
+        populateServiceLog(props.activeClient.Id as number);
+    }, [props.activeClient, serviceLogProvider]);
+
+    useEffect(() => {
         /**
          * Given the clientId set the service log history list
          * @param {number} clientId The client id
          */
         const populateServiceLogHistory = async (clientId: number) => {
-            setServiceLogHistoryList(await serviceLogProvider.loadAll(clientId));
+            const serviceLogHistoryResponse = await serviceLogProvider.loadAll(clientId);
+            setServiceLogHistoryList([...multiSort(serviceLogHistoryResponse, {Updated: SortDirection.asc})]);
         };
 
-        // Note: Even though serviceLogList isn't directly modified it's included in the effect array
-        // so history will be updated
-        setActiveClient(props.activeClient);
-        populateServiceLog(props.activeClient.Id as number);
-        populateServiceLogHistory(props.activeClient.Id as number);
-    }, [props.activeClient, serviceLogProvider, serviceLogList]);
+        if (props.activeClient.Id && serviceLogList.length >= 0) populateServiceLogHistory(props.activeClient.Id);
+    }, [props.activeClient.Id, serviceLogList.length, serviceLogProvider]);
 
     /**
      * Add a serviceLog entry when the service switch is set to true
      * @param {number} serviceId The service Id
-     * @returns {Promise<void>}
      */
     const addServiceLog = async (serviceId: number) => {
         await serviceLogProvider.update({
@@ -208,17 +211,19 @@ const ClientCard = (props: IProps) => {
                                 }}
                                 variant="info"
                             >
-                                Edit{' '}
                                 <span style={{fontWeight: 'bold', backgroundColor: 'lawngreen'}}>
                                     {clientFullName(activeClient)}
                                 </span>
+                                <span className="mx-1">(click to edit)</span>
                             </ListGroup.Item>
                             <ListGroup.Item>
-                                <ul>
-                                    {serviceLogHistoryList.map((serviceLogRecord) =>
-                                        ServiceLogHistoryRow(serviceLogRecord)
-                                    )}
-                                </ul>
+                                <div className="list-section">
+                                    <ul style={{height: '450px', overflowY: 'auto'}}>
+                                        {serviceLogHistoryList.map((serviceLogRecord) =>
+                                            ServiceLogHistoryRow(serviceLogRecord)
+                                        )}
+                                    </ul>
+                                </div>
                             </ListGroup.Item>
                         </ListGroup>
                     </Card.Body>
