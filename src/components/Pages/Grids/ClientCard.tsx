@@ -236,8 +236,9 @@ const ClientCard = (props: IProps) => {
                         Services for{' '}
                         <span style={{backgroundColor: 'lawngreen', fontWeight: 'bold'}}>
                             {clientFullName(activeClient)}
-                        </span>{' '}
-                        on {getFormattedDate(new Date(), true)}
+                        </span>
+                        <span> for today </span>
+                        <span style={{fontWeight: 'bold'}}>{getFormattedDate(new Date(), true)}</span>
                     </Card.Header>
 
                     <Card.Body>
