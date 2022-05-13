@@ -27,15 +27,14 @@ type ServiceLogInputRecord = {
 };
 
 const ClientCard = (props: IProps) => {
-    const serviceLogProvider = props.providers.serviceLogProvider;
     const onEditClient = props.onEdit;
+    const serviceLogProvider = props.providers.serviceLogProvider;
 
     const [serviceList, setServiceList] = useState(props.serviceList);
     useEffect(() => {
         setServiceList(props.serviceList);
     }, [props.serviceList]);
 
-    const [serviceLogHistoryList, setServiceLogHistoryList] = useState<ServiceLogRecord[]>([]);
     const [serviceLogList, setServiceLogList] = useState<ServiceLogRecord[]>([]);
     const [activeClient, setActiveClient] = useState(props.activeClient);
     useEffect(() => {
@@ -51,6 +50,7 @@ const ClientCard = (props: IProps) => {
         populateServiceLog(props.activeClient.Id as number);
     }, [props.activeClient, serviceLogProvider]);
 
+    const [serviceLogHistoryList, setServiceLogHistoryList] = useState<ServiceLogRecord[]>([]);
     useEffect(() => {
         /**
          * Given the clientId set the service log history list
@@ -167,6 +167,10 @@ const ClientCard = (props: IProps) => {
         setServiceLogInputList([...logInputList]);
     }, [serviceList, serviceLogList]);
 
+    /**
+     * Service Log History Item
+     * @param {ServiceLogRecord} serviceLogRecord The service log record
+     */
     const ServiceLogHistoryRow = (serviceLogRecord: ServiceLogRecord) => {
         if (serviceLogRecord.Recorded === null) {
             const serviceName = serviceList.find(
