@@ -17,13 +17,13 @@ interface IProps {
 }
 
 type ServiceLogInputRecord = {
-    Id: number;
-    ServiceLogRecord: ServiceLogRecord | null;
-    ServiceId: number;
-    ServiceName: string;
     AllowMultiple: boolean;
+    Id: number;
     Notes: string | null;
     ServiceGiven: boolean;
+    ServiceId: number;
+    ServiceLogRecord: ServiceLogRecord | null;
+    ServiceName: string;
 };
 
 const ClientCard = (props: IProps) => {
@@ -141,26 +141,26 @@ const ClientCard = (props: IProps) => {
                 if (serviceLogRecord.ServiceId === serviceRecord.Id) {
                     found = true;
                     logInputList.push({
-                        Id: count++,
-                        ServiceLogRecord: serviceLogRecord,
-                        ServiceId: serviceRecord.Id,
-                        ServiceName: serviceRecord.ServiceName,
                         AllowMultiple: serviceRecord.AllowMultiple,
+                        Id: count++,
                         Notes: serviceLogRecord.Notes,
-                        ServiceGiven: true
+                        ServiceGiven: true,
+                        ServiceId: serviceRecord.Id,
+                        ServiceLogRecord: serviceLogRecord,
+                        ServiceName: serviceRecord.ServiceName
                     });
                 }
             }
             // Even if the service has no service log records we need to add it to the list so it can be selected
             if (!found) {
                 logInputList.push({
-                    Id: count++,
-                    ServiceLogRecord: null,
-                    ServiceId: serviceRecord.Id as number,
-                    ServiceName: serviceRecord.ServiceName,
                     AllowMultiple: false,
+                    Id: count++,
                     Notes: null,
-                    ServiceGiven: false
+                    ServiceGiven: false,
+                    ServiceId: serviceRecord.Id as number,
+                    ServiceLogRecord: null,
+                    ServiceName: serviceRecord.ServiceName
                 });
             }
         }

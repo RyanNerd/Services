@@ -17,14 +17,14 @@ interface IProps {
 }
 
 type ServiceLogReportRecord = {
+    clientInfo: ClientRecord | null;
+    dateOfService: string;
+    firstName: string;
     fullName: string;
     lastName: string;
-    firstName: string;
-    clientInfo: ClientRecord | null;
     service: string;
-    dateOfService: string;
-    sortDate: string;
     serviceLogRecord: ServiceLogRecord;
+    sortDate: string;
 };
 
 const ReportsPage = (props: IProps) => {
@@ -32,10 +32,11 @@ const ReportsPage = (props: IProps) => {
     const clientProvider = providers.clientProvider;
     const serviceLogProvider = providers.serviceLogProvider;
     const previousKey = usePrevious(props.tabKey);
-    const [clientSortDirection, setClientSortDirection] = useState(true);
-    const [serviceSortDirection, setServiceSortDirection] = useState(true);
-    const [dosSortDirection, setDosSortDirection] = useState(true);
     const [clientModalInfo, setClientModalInfo] = useState<ClientRecord | null>(null);
+    const [clientSortDirection, setClientSortDirection] = useState(true);
+    const [dosSortDirection, setDosSortDirection] = useState(true);
+    const [serviceSortDirection, setServiceSortDirection] = useState(true);
+
     const [serviceList, setServiceList] = useState(props.serviceList);
     useEffect(() => {
         setServiceList(props.serviceList);
@@ -59,24 +60,24 @@ const ReportsPage = (props: IProps) => {
                         clientRecordList.push(clientRecord);
                         serviceLogReportInfo.push({
                             clientInfo: clientRecord,
-                            fullName: clientFullName(clientRecord),
+                            dateOfService: dos.format('MM/DD/YYYY'),
                             firstName: clientRecord.FirstName,
+                            fullName: clientFullName(clientRecord),
                             lastName: clientRecord.LastName,
                             service: serviceName || '<unknown service>',
-                            dateOfService: dos.format('MM/DD/YYYY'),
-                            sortDate: dos.format('YYYY-MM-DD'),
-                            serviceLogRecord
+                            serviceLogRecord,
+                            sortDate: dos.format('YYYY-MM-DD')
                         });
                     } else {
                         serviceLogReportInfo.push({
                             clientInfo: null,
-                            fullName: '<unknown client>',
+                            dateOfService: dos.format('MM/DD/YYYY'),
                             firstName: '<unknown',
+                            fullName: '<unknown client>',
                             lastName: '<unknown>',
                             service: serviceName || '<unknown service>',
-                            dateOfService: dos.format('MM/DD/YYYY'),
-                            sortDate: dos.format('YYYY-MM-DD'),
-                            serviceLogRecord
+                            serviceLogRecord,
+                            sortDate: dos.format('YYYY-MM-DD')
                         });
                     }
                 } else {
@@ -86,13 +87,13 @@ const ReportsPage = (props: IProps) => {
                     const fullName = clientInfo ? clientFullName(clientInfo) : '<unknown client>';
                     serviceLogReportInfo.push({
                         clientInfo,
-                        fullName,
+                        dateOfService: dos.format('MM/DD/YYYY'),
                         firstName,
+                        fullName,
                         lastName,
                         service: serviceName || '<unknown service>',
-                        dateOfService: dos.format('MM/DD/YYYY'),
-                        sortDate: dos.format('YYYY-MM-DD'),
-                        serviceLogRecord
+                        serviceLogRecord,
+                        sortDate: dos.format('YYYY-MM-DD')
                     });
                 }
             }
@@ -112,6 +113,10 @@ const ReportsPage = (props: IProps) => {
 
     if (tabKey !== 'reports') return null;
 
+    /**
+     * Service Log Row
+     * @param {ServiceLogReportRecord} serviceLogItem The service log report record to render
+     */
     const ServiceLogGridRow = (serviceLogItem: ServiceLogReportRecord) => {
         const clientInfo = serviceLogItem.clientInfo;
         const clientStyle = clientInfo?.Id ? {color: 'blue', cursor: 'pointer'} : {};
