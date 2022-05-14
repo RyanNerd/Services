@@ -130,7 +130,7 @@ const ClientPage = (props: IProps) => {
     return (
         <Form>
             <Row>
-                {!isDigit(searchText.slice(0, 1)) && (
+                {!isDigit(searchText.slice(0, 1)) ? (
                     <Form.Group as={Col} sm="2">
                         <FloatingLabel label="Search by name or DOB">
                             <Form.Control
@@ -148,9 +148,7 @@ const ClientPage = (props: IProps) => {
                             />
                         </FloatingLabel>
                     </Form.Group>
-                )}
-
-                {isDigit(searchText.slice(0, 1)) && searchText.slice(0, 1) !== '0' && (
+                ) : (
                     <>
                         <Form.Group as={Col} controlId="dob-month" sm="1">
                             <FloatingLabel label="DOB Month">
