@@ -33,7 +33,6 @@ const ClientPage = (props: IProps) => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [activeClient, setActiveClient] = useState<ClientRecord | null>(null);
     const [clientInfo, setClientInfo] = useState<ClientRecord | null>(null);
-    const [searchByName, setSearchByName] = useState(true);
     const [searchDay, setSearchDay] = useState('');
     const [searchResults, setSearchResults] = useState<ClientRecord[]>([] as ClientRecord[]);
     const [searchYear, setSearchYear] = useState('');
@@ -44,7 +43,6 @@ const ClientPage = (props: IProps) => {
      * Set the search strings back to the default values
      */
     const resetSearch = () => {
-        setSearchByName(true);
         setSearchText('');
         setSearchDay('');
         setSearchYear('');
@@ -93,10 +91,9 @@ const ClientPage = (props: IProps) => {
 
         // Is there text in searchText?
         if (debouncedSearchText.length > 0) {
-            setActiveClient(null);
             // Figure out if this is a DOB or name search
             const isSearchByDOB = isDigit(debouncedSearchText.slice(0, 1)) && debouncedSearchText.slice(0, 1) !== '0';
-            setSearchByName(!isSearchByDOB);
+
             setSearchResults([]); // This prevents Uncaught Error: Rendered fewer hooks than expected
             if (debouncedSearchText.length > 1 || isSearchByDOB) {
                 if (isSearchByDOB) {
@@ -108,7 +105,7 @@ const ClientPage = (props: IProps) => {
         } else {
             resetSearch();
         }
-    }, [debouncedSearchText, clientProvider, searchDay, searchYear, setErrorDetails]);
+    }, [debouncedSearchText, clientProvider, searchDay, searchYear, setErrorDetails, activeClient]);
 
     /**
      * Handle when the user wants to edit a client
@@ -132,8 +129,8 @@ const ClientPage = (props: IProps) => {
 
     return (
         <Form>
-            {searchByName ? (
-                <Row>
+            <Row>
+                {!isDigit(searchText.slice(0, 1)) && (
                     <Form.Group as={Col} sm="2">
                         <FloatingLabel label="Search by name or DOB">
                             <Form.Control
@@ -151,93 +148,95 @@ const ClientPage = (props: IProps) => {
                             />
                         </FloatingLabel>
                     </Form.Group>
+                )}
 
-                    <Form.Group as={Col} controlId="dob-year" sm="1">
-                        <Button
-                            className="my-3 mx-2"
-                            onClick={() => setClientInfo({...newClientRecord})}
-                            size="sm"
-                            variant="info"
-                        >
-                            + Add Client
-                        </Button>
-                    </Form.Group>
+                {isDigit(searchText.slice(0, 1)) && searchText.slice(0, 1) !== '0' && (
+                    <>
+                        <Form.Group as={Col} controlId="dob-month" sm="1">
+                            <FloatingLabel label="DOB Month">
+                                <Form.Control
+                                    autoComplete="off"
+                                    autoFocus
+                                    className="my-3"
+                                    id="client-page-search-month"
+                                    onChange={(changeEvent) => setSearchText(changeEvent.target.value)}
+                                    onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
+                                        if (keyboardEvent.key === 'Enter') keyboardEvent.preventDefault();
+                                    }}
+                                    style={{width: '90px'}}
+                                    type="number"
+                                    value={searchText}
+                                />
+                            </FloatingLabel>
+                        </Form.Group>
 
-                    <Form.Group as={Col}>
-                        {activeClient && searchText.length === 0 && (
-                            <Alert variant="info">
-                                <span style={{fontWeight: 'bold'}}>Current Client: </span>
-                                <span style={{backgroundColor: 'lawngreen', fontWeight: 'bold', fontSize: '1.5rem'}}>
-                                    {clientFullName(activeClient)}
-                                </span>
-                            </Alert>
-                        )}
-                    </Form.Group>
-                </Row>
-            ) : (
-                <Row>
-                    <Form.Group as={Col} controlId="dob-month" sm="1">
-                        <FloatingLabel label="DOB Month">
-                            <Form.Control
-                                autoComplete="off"
-                                autoFocus
-                                className="my-3"
-                                id="client-page-search-month"
-                                onChange={(changeEvent) => setSearchText(changeEvent.target.value)}
-                                onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
-                                    if (keyboardEvent.key === 'Enter') keyboardEvent.preventDefault();
-                                }}
-                                style={{width: '90px'}}
-                                type="number"
-                                value={searchText}
-                            />
-                        </FloatingLabel>
-                    </Form.Group>
+                        <Form.Group as={Col} controlId="dob-day" sm="1">
+                            <FloatingLabel label="DOB Day">
+                                <Form.Control
+                                    autoComplete="off"
+                                    className="my-3"
+                                    id="client-page-search-day"
+                                    onChange={(changeEvent) => setSearchDay(changeEvent.target.value)}
+                                    onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
+                                        if (keyboardEvent.key === 'Enter') keyboardEvent.preventDefault();
+                                    }}
+                                    style={{width: '90px'}}
+                                    type="number"
+                                    value={searchDay}
+                                />
+                            </FloatingLabel>
+                        </Form.Group>
 
-                    <Form.Group as={Col} controlId="dob-day" sm="1">
-                        <FloatingLabel label="DOB Day">
-                            <Form.Control
-                                autoComplete="off"
-                                className="my-3"
-                                id="client-page-search-day"
-                                onChange={(changeEvent) => setSearchDay(changeEvent.target.value)}
-                                onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
-                                    if (keyboardEvent.key === 'Enter') keyboardEvent.preventDefault();
-                                }}
-                                style={{width: '90px'}}
-                                type="number"
-                                value={searchDay}
-                            />
-                        </FloatingLabel>
-                    </Form.Group>
+                        <Form.Group as={Col} controlId="dob-year" sm="1">
+                            <FloatingLabel label="DOB Year">
+                                <Form.Control
+                                    autoComplete="off"
+                                    className="my-3"
+                                    id="client-page-search-year"
+                                    onChange={(changeEvent) => setSearchYear(changeEvent.target.value)}
+                                    onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
+                                        if (keyboardEvent.key === 'Enter') keyboardEvent.preventDefault();
+                                    }}
+                                    style={{width: '90px'}}
+                                    type="number"
+                                    value={searchYear}
+                                />
+                            </FloatingLabel>
+                        </Form.Group>
 
-                    <Form.Group as={Col} controlId="dob-year" sm="1">
-                        <FloatingLabel label="DOB Year">
-                            <Form.Control
-                                autoComplete="off"
-                                className="my-3"
-                                id="client-page-search-year"
-                                onChange={(changeEvent) => setSearchYear(changeEvent.target.value)}
-                                onKeyDown={(keyboardEvent: React.KeyboardEvent<HTMLElement>) => {
-                                    if (keyboardEvent.key === 'Enter') keyboardEvent.preventDefault();
-                                }}
-                                style={{width: '90px'}}
-                                type="number"
-                                value={searchYear}
-                            />
-                        </FloatingLabel>
-                    </Form.Group>
+                        <Form.Group as={Col} controlId="dob-year" sm="1">
+                            <Button className="my-3" onClick={() => resetSearch()} size="sm" variant="outline-info">
+                                Search by Name
+                            </Button>
+                        </Form.Group>
+                    </>
+                )}
 
-                    <Form.Group as={Col} controlId="dob-year" sm="1">
-                        <Button className="my-3" onClick={() => resetSearch()} size="sm" variant="outline-info">
-                            Search by Name
-                        </Button>
-                    </Form.Group>
-                </Row>
-            )}
+                <Form.Group as={Col} controlId="add-client-btn" sm="1">
+                    <Button
+                        className="my-3 mx-2"
+                        onClick={() => setClientInfo({...newClientRecord})}
+                        size="sm"
+                        variant="info"
+                    >
+                        + Add Client
+                    </Button>
+                </Form.Group>
+
+                <Form.Group as={Col}>
+                    {activeClient && searchText.length === 0 && (
+                        <Alert variant="info">
+                            <span style={{fontWeight: 'bold'}}>Current Client: </span>
+                            <span style={{backgroundColor: 'lawngreen', fontWeight: 'bold', fontSize: '1.5rem'}}>
+                                {clientFullName(activeClient)}
+                            </span>
+                        </Alert>
+                    )}
+                </Form.Group>
+            </Row>
 
             <Form.Group>
-                {searchResults.length > 0 && activeClient === null ? (
+                {searchResults.length > 0 ? (
                     <ClientSearchGrid
                         onEdit={(c) => handleOnEdit(c)}
                         onSelect={(c) => {
