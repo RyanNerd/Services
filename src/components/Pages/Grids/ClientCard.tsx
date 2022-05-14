@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {Card, Col, Form, InputGroup, ListGroup, Row} from 'react-bootstrap';
+import {Card, Col, Form, InputGroup, ListGroup} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import React, {useEffect, useState} from 'reactn';
 import 'styles/list-item-marker.css';
@@ -189,7 +189,7 @@ const ClientCard = (props: IProps) => {
     };
 
     return (
-        <Row>
+        <>
             <Col sm="3">
                 <Card border="info">
                     <Card.Header>
@@ -246,62 +246,60 @@ const ClientCard = (props: IProps) => {
                     </Card.Header>
 
                     <Card.Body>
-                        <>
-                            {serviceLogInputList.map((serviceLogInputItem) => {
-                                return (
-                                    <InputGroup key={`services-input-group-${serviceLogInputItem.Id}`} className="my-1">
-                                        <Form.Check
-                                            key={`services-checkbox-${serviceLogInputItem.Id}`}
-                                            checked={serviceLogInputItem.ServiceGiven}
-                                            onChange={() => handleSwitchChange(serviceLogInputItem)}
-                                            id={`service-list-checkbox-${serviceLogInputItem.Id}`}
-                                            name="services"
-                                            label={serviceLogInputItem.ServiceName}
-                                            type="switch"
-                                            value={serviceLogInputItem.Id as number}
-                                        />
+                        {serviceLogInputList.map((serviceLogInputItem) => {
+                            return (
+                                <InputGroup key={`services-input-group-${serviceLogInputItem.Id}`} className="my-1">
+                                    <Form.Check
+                                        key={`services-checkbox-${serviceLogInputItem.Id}`}
+                                        checked={serviceLogInputItem.ServiceGiven}
+                                        onChange={() => handleSwitchChange(serviceLogInputItem)}
+                                        id={`service-list-checkbox-${serviceLogInputItem.Id}`}
+                                        name="services"
+                                        label={serviceLogInputItem.ServiceName}
+                                        type="switch"
+                                        value={serviceLogInputItem.Id as number}
+                                    />
 
-                                        {serviceLogInputItem.ServiceGiven && (
-                                            <>
-                                                {serviceLogInputItem.AllowMultiple ? (
-                                                    <Button
-                                                        className="mx-2"
-                                                        size="sm"
-                                                        onClick={() => addServiceLog(serviceLogInputItem.ServiceId)}
-                                                        variant="outline-info"
-                                                    >
-                                                        +
-                                                    </Button>
-                                                ) : null}
-
-                                                <Form.Control
-                                                    onChange={(changeEvent) =>
-                                                        handleOnChange(
-                                                            changeEvent,
-                                                            serviceLogInputItem.ServiceLogRecord as ServiceLogRecord
-                                                        )
-                                                    }
-                                                    onBlur={() =>
-                                                        saveNoteChanges(
-                                                            serviceLogInputItem.ServiceLogRecord as ServiceLogRecord
-                                                        )
-                                                    }
-                                                    type="text"
-                                                    size="sm"
+                                    {serviceLogInputItem.ServiceGiven && (
+                                        <>
+                                            {serviceLogInputItem.AllowMultiple ? (
+                                                <Button
                                                     className="mx-2"
-                                                    placeholder="Notes"
-                                                    value={serviceLogInputItem.Notes || ''}
-                                                />
-                                            </>
-                                        )}
-                                    </InputGroup>
-                                );
-                            })}
-                        </>
+                                                    size="sm"
+                                                    onClick={() => addServiceLog(serviceLogInputItem.ServiceId)}
+                                                    variant="outline-info"
+                                                >
+                                                    +
+                                                </Button>
+                                            ) : null}
+
+                                            <Form.Control
+                                                onChange={(changeEvent) =>
+                                                    handleOnChange(
+                                                        changeEvent,
+                                                        serviceLogInputItem.ServiceLogRecord as ServiceLogRecord
+                                                    )
+                                                }
+                                                onBlur={() =>
+                                                    saveNoteChanges(
+                                                        serviceLogInputItem.ServiceLogRecord as ServiceLogRecord
+                                                    )
+                                                }
+                                                type="text"
+                                                size="sm"
+                                                className="mx-2"
+                                                placeholder="Notes"
+                                                value={serviceLogInputItem.Notes || ''}
+                                            />
+                                        </>
+                                    )}
+                                </InputGroup>
+                            );
+                        })}
                     </Card.Body>
                 </Card>
             </Col>
-        </Row>
+        </>
     );
 };
 

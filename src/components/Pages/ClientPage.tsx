@@ -244,7 +244,7 @@ const ClientPage = (props: IProps) => {
                         searchResults={searchResults}
                     />
                 ) : (
-                    <>
+                    <Row>
                         {activeClient && searchText.length === 0 && (
                             <ClientCard
                                 activeClient={activeClient}
@@ -253,7 +253,7 @@ const ClientPage = (props: IProps) => {
                                 serviceList={serviceList}
                             />
                         )}
-                    </>
+                    </Row>
                 )}
             </Form.Group>
 
