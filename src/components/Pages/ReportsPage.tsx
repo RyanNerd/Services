@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import usePrevious from 'hooks/usePrevious';
 import {Card, Spinner} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import Table from 'react-bootstrap/Table';
 import React, {useEffect, useState} from 'reactn';
 import {ClientRecord, ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
@@ -21,10 +22,14 @@ type ServiceLogReportRecord = {
     dateOfService: string;
     firstName: string;
     fullName: string;
+    id: number;
     lastName: string;
-    service: string;
+    selected: boolean;
+    serviceName: string;
+    serviceHmisId: string;
     serviceLogRecord: ServiceLogRecord;
     sortDate: string;
+    [key: string]: unknown;
 };
 
 const ReportsPage = (props: IProps) => {
@@ -35,6 +40,7 @@ const ReportsPage = (props: IProps) => {
     const [clientModalInfo, setClientModalInfo] = useState<ClientRecord | null>(null);
     const [clientSortDirection, setClientSortDirection] = useState(true);
     const [dosSortDirection, setDosSortDirection] = useState(true);
+    const [serviceLogSelectAll, setServiceLogSelectAll] = useState(false);
     const [serviceSortDirection, setServiceSortDirection] = useState(true);
 
     const [serviceList, setServiceList] = useState(props.serviceList);
@@ -51,9 +57,11 @@ const ReportsPage = (props: IProps) => {
             for (const serviceLogRecord of serviceLogLoad) {
                 const serviceLogUpdated = serviceLogRecord.Updated ?? '';
                 const dos = dayjs(new Date(serviceLogUpdated));
-                const serviceName = serviceList.find(
+                const serviceRecord = serviceList.find(
                     (serviceRecord) => serviceRecord.Id === serviceLogRecord.ServiceId
-                )?.ServiceName;
+                );
+                const serviceName = serviceRecord?.ServiceName;
+                const serviceHmisId = serviceRecord?.HmisId || '';
                 if (!clientRecordList.some((c) => c.Id === serviceLogRecord.ResidentId)) {
                     const clientRecord = await clientProvider.read(serviceLogRecord.ResidentId);
                     if (clientRecord) {
@@ -63,8 +71,11 @@ const ReportsPage = (props: IProps) => {
                             dateOfService: dos.format('MM/DD/YYYY'),
                             firstName: clientRecord.FirstName,
                             fullName: clientFullName(clientRecord),
+                            id: serviceLogRecord.Id as number,
                             lastName: clientRecord.LastName,
-                            service: serviceName || '<unknown service>',
+                            selected: false,
+                            serviceHmisId,
+                            serviceName: serviceName || '<unknown service>',
                             serviceLogRecord,
                             sortDate: dos.format('YYYY-MM-DD')
                         });
@@ -75,7 +86,10 @@ const ReportsPage = (props: IProps) => {
                             firstName: '<unknown',
                             fullName: '<unknown client>',
                             lastName: '<unknown>',
-                            service: serviceName || '<unknown service>',
+                            id: serviceLogRecord.Id as number,
+                            selected: false,
+                            serviceHmisId,
+                            serviceName: serviceName || '<unknown service>',
                             serviceLogRecord,
                             sortDate: dos.format('YYYY-MM-DD')
                         });
@@ -91,7 +105,10 @@ const ReportsPage = (props: IProps) => {
                         firstName,
                         fullName,
                         lastName,
-                        service: serviceName || '<unknown service>',
+                        id: serviceLogRecord.Id as number,
+                        selected: false,
+                        serviceHmisId,
+                        serviceName: serviceName || '<unknown service>',
                         serviceLogRecord,
                         sortDate: dos.format('YYYY-MM-DD')
                     });
@@ -120,14 +137,35 @@ const ReportsPage = (props: IProps) => {
     const ServiceLogGridRow = (serviceLogItem: ServiceLogReportRecord) => {
         const clientInfo = serviceLogItem.clientInfo;
         const clientStyle = clientInfo?.Id ? {color: 'blue', cursor: 'pointer'} : {};
+        const serviceLogId = serviceLogItem.id;
         return (
-            <tr key={`service-log-report-item-${serviceLogItem.serviceLogRecord.Id as number}`}>
+            <tr key={`service-log-report-item-${serviceLogId}`}>
+                <td>
+                    <Form.Check
+                        disabled={serviceLogItem.serviceHmisId?.length === 0}
+                        type="switch"
+                        value={serviceLogId}
+                        checked={serviceLogItem.selected}
+                        onChange={() => {
+                            if (serviceLogReport) {
+                                const cloneServiceLogReport = [...serviceLogReport];
+                                for (const serviceLogReportItem of cloneServiceLogReport) {
+                                    if (serviceLogReportItem.id === serviceLogId) {
+                                        serviceLogReportItem.selected = !serviceLogReportItem.selected;
+                                        setServiceLogReport([...cloneServiceLogReport]);
+                                        break;
+                                    }
+                                }
+                            }
+                        }}
+                    />
+                </td>
                 <td style={clientStyle} onClick={() => setClientModalInfo(serviceLogItem.clientInfo)}>
                     {serviceLogItem.fullName}
                 </td>
                 <td onClick={() => alert('todo: Edit Services')}>
                     <span style={clientStyle}>
-                        {serviceLogItem.service}
+                        {serviceLogItem.serviceName}
                         <br />
                     </span>
                     <span>{serviceLogItem.serviceLogRecord.Notes}</span>
@@ -157,6 +195,19 @@ const ReportsPage = (props: IProps) => {
                     <Table bordered hover striped>
                         <thead>
                             <tr>
+                                <th>
+                                    <Form.Check
+                                        checked={serviceLogSelectAll}
+                                        label="Select"
+                                        onChange={() => {
+                                            for (const [, serviceLogReportRecord] of serviceLogReport.entries())
+                                                serviceLogReportRecord.selected = !serviceLogSelectAll;
+                                            setServiceLogSelectAll(!serviceLogSelectAll);
+                                        }}
+                                        type="switch"
+                                        value={serviceLogSelectAll ? 1 : 0}
+                                    />
+                                </th>
                                 <th
                                     onClick={() => {
                                         setClientSortDirection(!clientSortDirection);
