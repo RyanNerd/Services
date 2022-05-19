@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import Frak from 'frak/lib/components/Frak';
 import {ServiceLogRecord} from 'types/RecordTypes';
 
@@ -17,7 +18,7 @@ type LoadResponse = {
 export interface IServiceLogProvider {
     delete: (residentId: number, permanentDelete?: boolean) => Promise<DeleteResponse>;
     loadAll: (clientId?: number) => Promise<ServiceLogRecord[]>;
-    loadToday: (clientId: number) => Promise<ServiceLogRecord[]>;
+    loadForDate: (clientId: number, dateOfService: Date) => Promise<ServiceLogRecord[]>;
     update: (serviceLogInfo: ServiceLogRecord) => Promise<ServiceLogRecord>;
     read: (id: number) => Promise<ServiceLogRecord>;
     search: (options: Record<string, unknown>) => Promise<ServiceLogRecord[]>;
@@ -140,10 +141,12 @@ const serviceLogProvider = (url: string): IServiceLogProvider => {
         /**
          * Load serviceLog records for today's date given a client id
          * @param {number} clientId The client PK to load all serviceLogs for
-         * @returns {Promise<ServiceLogRecord[]>} Array of Service records
+         * @param {Date} dateOfService The date of service to filter the results
+         * @returns {Promise<ServiceLogRecord[]>} Array of Service Log records
          */
-        loadToday: async (clientId: number): Promise<ServiceLogRecord[]> => {
-            const uri = `${_baseUrl}service-log-load/${clientId}?today=yes&api_key=${_apiKey}`;
+        loadForDate: async (clientId: number, dateOfService: Date): Promise<ServiceLogRecord[]> => {
+            const dos = dayjs(dateOfService).format('YYYY-MM-DD');
+            const uri = `${_baseUrl}service-log-load/${clientId}?dos=${dos}&api_key=${_apiKey}`;
             const response = await _frak.get<LoadResponse>(uri);
             if (response.success) {
                 return response.data;
