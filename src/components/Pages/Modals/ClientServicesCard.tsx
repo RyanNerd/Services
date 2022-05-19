@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import 'dayjs/plugin/isToday';
 import {IServiceLogProvider} from 'providers/serviceLogProvider';
 import {Card, Form, InputGroup} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
