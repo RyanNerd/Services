@@ -128,6 +128,16 @@ const ReportsPage = (props: IProps) => {
         if (props.tabKey !== previousKey && props.tabKey === 'reports') setServiceLogReport(null);
     }, [previousKey, props.tabKey]);
 
+    const [allowImport, setAllowImport] = useState(false);
+    useEffect(() => {
+        if (serviceLogReport) {
+            setAllowImport(serviceLogReport.some((serviceLogReportRecord) => serviceLogReportRecord.selected));
+        } else {
+            setServiceLogSelectAll(false);
+            setAllowImport(false);
+        }
+    }, [serviceLogReport, serviceLogSelectAll]);
+
     if (tabKey !== 'reports') return null;
 
     /**
@@ -179,13 +189,7 @@ const ReportsPage = (props: IProps) => {
         <Card border="info">
             <Card.Header>
                 <span>Service Logs</span>
-                <Button
-                    className="mx-3"
-                    disabled={
-                        serviceLogReport === undefined || serviceLogReport === null || serviceLogReport.length === 0
-                    }
-                    onClick={() => alert('todo: Perform Import')}
-                >
+                <Button className="mx-3" disabled={!allowImport} onClick={() => alert('todo: Perform Import')}>
                     Import all to HMIS
                 </Button>
                 <Card.Subtitle className="my-1">Click on the table headers to sort</Card.Subtitle>
