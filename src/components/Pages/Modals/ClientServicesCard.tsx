@@ -5,7 +5,6 @@ import Button from 'react-bootstrap/Button';
 import React, {useEffect, useState} from 'reactn';
 import {ClientRecord, ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
 import {clientFullName} from 'utilities/clientFormatting';
-import getFormattedDate from 'utilities/getFormattedDate';
 
 interface IProps {
     activeClient: ClientRecord;
@@ -29,7 +28,10 @@ const ClientServicesCard = (props: IProps) => {
     const serviceLogProvider = props.serviceLogProvider;
     const serviceLogUpdated = props.serviceLogUpdated;
 
-    dayjs(props.dateOfService);
+    const [dateOfService, setDateOfService] = useState(dayjs(props.dateOfService));
+    useEffect(() => {
+        setDateOfService(dayjs(props.dateOfService));
+    }, [props.dateOfService]);
 
     const [serviceList, setServiceList] = useState(props.serviceList);
     useEffect(() => {
@@ -40,16 +42,16 @@ const ClientServicesCard = (props: IProps) => {
     const [activeClient, setActiveClient] = useState(props.activeClient);
     useEffect(() => {
         /**
-         * Given the clientId set the service log list with today's entries
+         * Given the clientId set the service log list with the DoS entries
          * @param {number} clientId The client id
          */
         const populateServiceLog = async (clientId: number) => {
-            setServiceLogList(await serviceLogProvider.loadForDate(clientId, dayjs().toDate()));
+            setServiceLogList(await serviceLogProvider.loadForDate(clientId, dateOfService.toDate()));
         };
 
         setActiveClient(props.activeClient);
         populateServiceLog(props.activeClient.Id as number);
-    }, [props.activeClient, serviceLogProvider]);
+    }, [dateOfService, props.activeClient, serviceLogProvider]);
 
     useEffect(() => {
         if (serviceLogList && serviceLogUpdated) {
@@ -105,7 +107,7 @@ const ClientServicesCard = (props: IProps) => {
             ServiceId: serviceId,
             Notes: ''
         });
-        setServiceLogList(await serviceLogProvider.loadForDate(activeClient.Id as number, dayjs().toDate()));
+        setServiceLogList(await serviceLogProvider.loadForDate(activeClient.Id as number, dateOfService.toDate()));
     };
 
     /**
@@ -115,7 +117,7 @@ const ClientServicesCard = (props: IProps) => {
      */
     const removeServiceLog = async (serviceLogId: number) => {
         await serviceLogProvider.delete(serviceLogId, true);
-        setServiceLogList(await serviceLogProvider.loadForDate(activeClient.Id as number, dayjs().toDate()));
+        setServiceLogList(await serviceLogProvider.loadForDate(activeClient.Id as number, dateOfService.toDate()));
     };
 
     /**
@@ -152,7 +154,7 @@ const ClientServicesCard = (props: IProps) => {
     const saveNoteChanges = (serviceLogRecord: ServiceLogRecord) => {
         const updateServiceLog = async () => {
             await serviceLogProvider.update(serviceLogRecord);
-            setServiceLogList(await serviceLogProvider.loadForDate(activeClient.Id as number, dayjs().toDate()));
+            setServiceLogList(await serviceLogProvider.loadForDate(activeClient.Id as number, dateOfService.toDate()));
         };
         updateServiceLog();
     };
@@ -162,8 +164,8 @@ const ClientServicesCard = (props: IProps) => {
             <Card.Header>
                 Services for{' '}
                 <span style={{backgroundColor: 'lawngreen', fontWeight: 'bold'}}>{clientFullName(activeClient)}</span>
-                <span> for today </span>
-                <span style={{fontWeight: 'bold'}}>{getFormattedDate(new Date(), true)}</span>
+                <span> for </span>
+                <span style={{fontWeight: 'bold'}}>{dateOfService.format('MM/DD/YYYY')}</span>
             </Card.Header>
 
             <Card.Body>

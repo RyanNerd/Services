@@ -1,4 +1,5 @@
 import ClientEdit from 'components/Pages/Modals/ClientEdit';
+import ClientServicesModal from 'components/Pages/Modals/ClientServicesModal';
 import dayjs from 'dayjs';
 import usePrevious from 'hooks/usePrevious';
 import {Card, Spinner} from 'react-bootstrap';
@@ -42,6 +43,7 @@ const ReportsPage = (props: IProps) => {
     const [dosSortDirection, setDosSortDirection] = useState(true);
     const [serviceLogSelectAll, setServiceLogSelectAll] = useState(false);
     const [serviceSortDirection, setServiceSortDirection] = useState(true);
+    const [showServiceLogModal, setsShowServiceLogModal] = useState<ServiceLogReportRecord | null>(null);
 
     const [serviceList, setServiceList] = useState(props.serviceList);
     useEffect(() => {
@@ -173,7 +175,7 @@ const ReportsPage = (props: IProps) => {
                 <td style={clientStyle} onClick={() => setClientModalInfo(serviceLogItem.clientInfo)}>
                     {serviceLogItem.fullName}
                 </td>
-                <td onClick={() => alert('todo: Edit Services')}>
+                <td onClick={() => setsShowServiceLogModal(serviceLogItem)}>
                     <span style={clientStyle}>
                         {serviceLogItem.serviceName}
                         <br />
@@ -190,7 +192,7 @@ const ReportsPage = (props: IProps) => {
             <Card.Header>
                 <span>Service Logs</span>
                 <Button className="mx-3" disabled={!allowImport} onClick={() => alert('todo: Perform Import')}>
-                    Import all to HMIS
+                    Import into HMIS
                 </Button>
                 <Card.Subtitle className="my-1">Click on the table headers to sort</Card.Subtitle>
             </Card.Header>
@@ -278,6 +280,17 @@ const ReportsPage = (props: IProps) => {
                     clientProvider={clientProvider}
                     onClose={() => setClientModalInfo(null)}
                     show={true}
+                />
+            )}
+
+            {showServiceLogModal !== null && showServiceLogModal.serviceLogRecord.Updated && (
+                <ClientServicesModal
+                    show={true}
+                    onClose={() => setsShowServiceLogModal(null)}
+                    activeClient={showServiceLogModal.clientInfo as ClientRecord}
+                    dateOfService={showServiceLogModal.serviceLogRecord.Updated}
+                    serviceList={serviceList}
+                    serviceLogProvider={serviceLogProvider}
                 />
             )}
         </Card>
