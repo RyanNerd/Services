@@ -97,7 +97,8 @@ const ClientServicesCard = (props: IProps) => {
             Id: null,
             ResidentId: activeClient.Id as number,
             ServiceId: serviceId,
-            Notes: ''
+            Notes: '',
+            DateOfService: dateOfService.toDate()
         });
         setServiceLogList(await serviceLogProvider.loadForDate(activeClient.Id as number, dateOfService.toDate()));
     };

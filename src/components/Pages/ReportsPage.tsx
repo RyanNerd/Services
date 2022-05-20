@@ -288,7 +288,7 @@ const ReportsPage = (props: IProps) => {
                     show={true}
                     onClose={() => setShowServiceLogModal(null)}
                     activeClient={showServiceLogModal.clientInfo as ClientRecord}
-                    dateOfService={showServiceLogModal.serviceLogRecord.Updated}
+                    dateOfService={showServiceLogModal.serviceLogRecord.DateOfService}
                     serviceList={serviceList}
                     serviceLogProvider={serviceLogProvider}
                 />
