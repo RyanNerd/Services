@@ -19,7 +19,6 @@ const ClientServicesModal = (props: IProps) => {
     const onClose = props.onClose;
     const serviceLogProvider = props.serviceLogProvider;
     const serviceList = props.serviceList;
-
     const [show, setShow] = useState(props.show);
     useEffect(() => {
         setShow(props.show);

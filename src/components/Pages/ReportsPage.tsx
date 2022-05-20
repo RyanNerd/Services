@@ -43,7 +43,7 @@ const ReportsPage = (props: IProps) => {
     const [dosSortDirection, setDosSortDirection] = useState(true);
     const [serviceLogSelectAll, setServiceLogSelectAll] = useState(false);
     const [serviceSortDirection, setServiceSortDirection] = useState(true);
-    const [showServiceLogModal, setsShowServiceLogModal] = useState<ServiceLogReportRecord | null>(null);
+    const [showServiceLogModal, setShowServiceLogModal] = useState<ServiceLogReportRecord | null>(null);
 
     const [serviceList, setServiceList] = useState(props.serviceList);
     useEffect(() => {
@@ -175,7 +175,7 @@ const ReportsPage = (props: IProps) => {
                 <td style={clientStyle} onClick={() => setClientModalInfo(serviceLogItem.clientInfo)}>
                     {serviceLogItem.fullName}
                 </td>
-                <td onClick={() => setsShowServiceLogModal(serviceLogItem)}>
+                <td onClick={() => setShowServiceLogModal(serviceLogItem)}>
                     <span style={clientStyle}>
                         {serviceLogItem.serviceName}
                         <br />
@@ -286,7 +286,7 @@ const ReportsPage = (props: IProps) => {
             {showServiceLogModal !== null && showServiceLogModal.serviceLogRecord.Updated && (
                 <ClientServicesModal
                     show={true}
-                    onClose={() => setsShowServiceLogModal(null)}
+                    onClose={() => setShowServiceLogModal(null)}
                     activeClient={showServiceLogModal.clientInfo as ClientRecord}
                     dateOfService={showServiceLogModal.serviceLogRecord.Updated}
                     serviceList={serviceList}

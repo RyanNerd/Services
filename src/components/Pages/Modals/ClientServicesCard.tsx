@@ -10,7 +10,6 @@ interface IProps {
     activeClient: ClientRecord;
     dateOfService: Date;
     serviceList: ServiceRecord[];
-    serviceLogUpdated?: () => void;
     serviceLogProvider: IServiceLogProvider;
 }
 
@@ -26,7 +25,6 @@ type ServiceLogInputRecord = {
 
 const ClientServicesCard = (props: IProps) => {
     const serviceLogProvider = props.serviceLogProvider;
-    const serviceLogUpdated = props.serviceLogUpdated;
 
     const [dateOfService, setDateOfService] = useState(dayjs(props.dateOfService));
     useEffect(() => {
@@ -52,12 +50,6 @@ const ClientServicesCard = (props: IProps) => {
         setActiveClient(props.activeClient);
         populateServiceLog(props.activeClient.Id as number);
     }, [dateOfService, props.activeClient, serviceLogProvider]);
-
-    useEffect(() => {
-        if (serviceLogList && serviceLogUpdated) {
-            serviceLogUpdated();
-        }
-    }, [serviceLogList, serviceLogUpdated]);
 
     // Build out the serviceLogInputList
     const [serviceLogInputList, setServiceLogInputList] = useState([] as ServiceLogInputRecord[]);

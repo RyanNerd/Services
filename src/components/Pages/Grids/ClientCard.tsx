@@ -115,12 +115,6 @@ const ClientCard = (props: IProps) => {
                     activeClient={activeClient}
                     dateOfService={new Date()}
                     serviceList={serviceList}
-                    serviceLogUpdated={async () => {
-                        const serviceLogHistoryResponse = await serviceLogProvider.loadAll(activeClient.Id as number);
-                        setServiceLogHistoryList([
-                            ...multiSort(serviceLogHistoryResponse, {Updated: SortDirection.asc})
-                        ]);
-                    }}
                     serviceLogProvider={serviceLogProvider}
                 />
             </Col>
