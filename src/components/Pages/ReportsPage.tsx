@@ -286,7 +286,10 @@ const ReportsPage = (props: IProps) => {
             {showServiceLogModal !== null && showServiceLogModal.serviceLogRecord.Updated && (
                 <ClientServicesModal
                     show={true}
-                    onClose={() => setShowServiceLogModal(null)}
+                    onClose={(reloadNeeded) => {
+                        setShowServiceLogModal(null);
+                        if (reloadNeeded) setServiceLogReport(null);
+                    }}
                     activeClient={showServiceLogModal.clientInfo as ClientRecord}
                     dateOfService={showServiceLogModal.serviceLogRecord.DateOfService}
                     serviceList={serviceList}

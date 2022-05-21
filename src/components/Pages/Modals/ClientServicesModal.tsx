@@ -7,7 +7,7 @@ import {ClientRecord, ServiceRecord} from 'types/RecordTypes';
 interface IProps {
     activeClient: ClientRecord;
     dateOfService: Date;
-    onClose: () => void;
+    onClose: (serviceLogChanged: boolean) => void;
     serviceList: ServiceRecord[];
     serviceLogProvider: IServiceLogProvider;
     show: boolean;
@@ -19,6 +19,7 @@ const ClientServicesModal = (props: IProps) => {
     const onClose = props.onClose;
     const serviceLogProvider = props.serviceLogProvider;
     const serviceList = props.serviceList;
+    const [serviceLogChanged, setServiceLogChanged] = useState(false);
 
     const [show, setShow] = useState(props.show);
     useEffect(() => {
@@ -30,15 +31,18 @@ const ClientServicesModal = (props: IProps) => {
             show={show}
             onHide={() => {
                 setShow(false);
-                onClose();
+                onClose(serviceLogChanged);
             }}
+            backdrop="static"
         >
+            <Modal.Header closeButton />
             <Modal.Body>
                 <ClientServicesCard
                     activeClient={activeClient}
                     dateOfService={dateOfService}
                     serviceList={serviceList}
                     serviceLogProvider={serviceLogProvider}
+                    serviceLogListUpdated={() => setServiceLogChanged(true)}
                 />
             </Modal.Body>
         </Modal>
