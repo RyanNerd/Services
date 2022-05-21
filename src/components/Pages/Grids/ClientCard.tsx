@@ -116,6 +116,7 @@ const ClientCard = (props: IProps) => {
                     dateOfService={new Date()}
                     serviceList={serviceList}
                     serviceLogProvider={serviceLogProvider}
+                    serviceLogListUpdated={(updatedServiceLog) => setServiceLogHistoryList(updatedServiceLog)}
                 />
             </Col>
         </>

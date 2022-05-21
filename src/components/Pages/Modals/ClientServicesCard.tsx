@@ -11,6 +11,7 @@ interface IProps {
     dateOfService: Date;
     serviceList: ServiceRecord[];
     serviceLogProvider: IServiceLogProvider;
+    serviceLogListUpdated?: (serviceLogs: ServiceLogRecord[]) => void;
 }
 
 type ServiceLogInputRecord = {
@@ -25,6 +26,7 @@ type ServiceLogInputRecord = {
 
 const ClientServicesCard = (props: IProps) => {
     const serviceLogProvider = props.serviceLogProvider;
+    const serviceLogListUpdated = props.serviceLogListUpdated;
 
     const [dateOfService, setDateOfService] = useState(dayjs(props.dateOfService));
     useEffect(() => {
@@ -44,12 +46,25 @@ const ClientServicesCard = (props: IProps) => {
          * @param {number} clientId The client id
          */
         const populateServiceLog = async (clientId: number) => {
-            setServiceLogList(await serviceLogProvider.loadForDate(clientId, dateOfService.toDate()));
+            const updatedServiceLogList = await serviceLogProvider.loadForDate(clientId, dateOfService.toDate());
+            setServiceLogList(updatedServiceLogList);
         };
 
         setActiveClient(props.activeClient);
         populateServiceLog(props.activeClient.Id as number);
-    }, [dateOfService, props.activeClient, serviceLogProvider]);
+    }, [dateOfService, props.activeClient, serviceLogListUpdated, serviceLogProvider]);
+
+    /**
+     * Rehydrate the serviceLogList and invoke the serviceLogListUpdated() c/b if passed in as a prop
+     */
+    const populateServiceLog = async () => {
+        const updatedServiceLogList = await serviceLogProvider.loadForDate(
+            activeClient.Id as number,
+            dateOfService.toDate()
+        );
+        setServiceLogList(updatedServiceLogList);
+        if (serviceLogListUpdated) serviceLogListUpdated(updatedServiceLogList);
+    };
 
     // Build out the serviceLogInputList
     const [serviceLogInputList, setServiceLogInputList] = useState([] as ServiceLogInputRecord[]);
@@ -100,7 +115,7 @@ const ClientServicesCard = (props: IProps) => {
             Notes: '',
             DateOfService: dateOfService.toDate()
         });
-        setServiceLogList(await serviceLogProvider.loadForDate(activeClient.Id as number, dateOfService.toDate()));
+        await populateServiceLog();
     };
 
     /**
@@ -110,7 +125,7 @@ const ClientServicesCard = (props: IProps) => {
      */
     const removeServiceLog = async (serviceLogId: number) => {
         await serviceLogProvider.delete(serviceLogId, true);
-        setServiceLogList(await serviceLogProvider.loadForDate(activeClient.Id as number, dateOfService.toDate()));
+        await populateServiceLog();
     };
 
     /**
@@ -147,7 +162,7 @@ const ClientServicesCard = (props: IProps) => {
     const saveNoteChanges = (serviceLogRecord: ServiceLogRecord) => {
         const updateServiceLog = async () => {
             await serviceLogProvider.update(serviceLogRecord);
-            setServiceLogList(await serviceLogProvider.loadForDate(activeClient.Id as number, dateOfService.toDate()));
+            await populateServiceLog();
         };
         updateServiceLog();
     };
