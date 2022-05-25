@@ -20,6 +20,8 @@ interface IProps {
 
 type ServiceLogReportRecord = {
     clientInfo: ClientRecord | null;
+    clientHmis: string | null;
+    clientEnrollment: string | null;
     dateOfService: string;
     firstName: string;
     fullName: string;
@@ -70,6 +72,8 @@ const ReportsPage = (props: IProps) => {
                         clientRecordList.push(clientRecord);
                         serviceLogReportInfo.push({
                             clientInfo: clientRecord,
+                            clientEnrollment: clientRecord.EnrollmentId,
+                            clientHmis: clientRecord.HMIS,
                             dateOfService: dos.format('MM/DD/YYYY'),
                             firstName: clientRecord.FirstName,
                             fullName: clientFullName(clientRecord),
@@ -84,6 +88,8 @@ const ReportsPage = (props: IProps) => {
                     } else {
                         serviceLogReportInfo.push({
                             clientInfo: null,
+                            clientEnrollment: null,
+                            clientHmis: null,
                             dateOfService: dos.format('MM/DD/YYYY'),
                             firstName: '<unknown',
                             fullName: '<unknown client>',
@@ -103,6 +109,8 @@ const ReportsPage = (props: IProps) => {
                     const fullName = clientInfo ? clientFullName(clientInfo) : '<unknown client>';
                     serviceLogReportInfo.push({
                         clientInfo,
+                        clientEnrollment: clientInfo?.EnrollmentId || null,
+                        clientHmis: clientInfo?.HMIS || null,
                         dateOfService: dos.format('MM/DD/YYYY'),
                         firstName,
                         fullName,
@@ -154,7 +162,11 @@ const ReportsPage = (props: IProps) => {
             <tr key={`service-log-report-item-${serviceLogId}`}>
                 <td>
                     <Form.Check
-                        disabled={serviceLogItem.serviceHmisId?.length === 0}
+                        disabled={
+                            serviceLogItem.serviceHmisId?.length === 0 ||
+                            serviceLogItem.clientHmis === null ||
+                            serviceLogItem.EnrollmentId === null
+                        }
                         type="switch"
                         value={serviceLogId}
                         checked={serviceLogItem.selected}
@@ -207,7 +219,12 @@ const ReportsPage = (props: IProps) => {
                                         label="Select"
                                         onChange={() => {
                                             for (const [, serviceLogReportRecord] of serviceLogReport.entries())
-                                                serviceLogReportRecord.selected = !serviceLogSelectAll;
+                                                serviceLogReportRecord.selected =
+                                                    serviceLogReportRecord.clientHmis === null ||
+                                                    false ||
+                                                    serviceLogReportRecord.serviceHmisId?.length === 0
+                                                        ? false
+                                                        : !serviceLogSelectAll;
                                             setServiceLogSelectAll(!serviceLogSelectAll);
                                         }}
                                         type="switch"
@@ -278,7 +295,10 @@ const ReportsPage = (props: IProps) => {
                 <ClientEdit
                     clientInfo={clientModalInfo as ClientRecord}
                     clientProvider={clientProvider}
-                    onClose={() => setClientModalInfo(null)}
+                    onClose={(clientUpdated) => {
+                        setClientModalInfo(null);
+                        if (clientUpdated) setServiceLogReport(null);
+                    }}
                     show={true}
                 />
             )}
