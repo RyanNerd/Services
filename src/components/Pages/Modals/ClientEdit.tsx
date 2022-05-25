@@ -253,6 +253,22 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                             />
                         </Col>
                     </Form.Group>
+
+                    <Form.Group as={Row} className="my-1">
+                        <Form.Label column sm="2">
+                            EnrollmentId
+                        </Form.Label>
+                        <Col sm="4">
+                            <Form.Control
+                                autoComplete="off"
+                                type="text"
+                                name="EnrollmentId"
+                                onChange={(changeEvent) => handleOnChange(changeEvent)}
+                                value={clientInfo.EnrollmentId}
+                            />
+                        </Col>
+                    </Form.Group>
+
                     <Form.Group as={Row}>
                         <Form.Label column sm="2">
                             Notes

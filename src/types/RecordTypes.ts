@@ -4,6 +4,7 @@ export type ClientRecord = {
     DOB_DAY: number | string;
     DOB_MONTH: number | string;
     DOB_YEAR: number | string;
+    EnrollmentId: string;
     FirstName: string;
     HMIS: string;
     Id: null | number;
