@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import {IServiceLogProvider} from 'providers/serviceLogProvider';
 import {Card, Form, InputGroup} from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
 import React, {useEffect, useState} from 'reactn';
 import {ClientRecord, ServiceLogRecord, ServiceRecord, UNIT_OF_MEASURE} from 'types/RecordTypes';
 import {clientFullName} from 'utilities/clientFormatting';
@@ -15,7 +14,6 @@ interface IProps {
 }
 
 type ServiceLogInputRecord = {
-    AllowMultiple: boolean;
     Id: number;
     UnitOfMeasure: UNIT_OF_MEASURE;
     Units: number;
@@ -79,7 +77,6 @@ const ClientServicesCard = (props: IProps) => {
                 if (serviceLogRecord.ServiceId === serviceRecord.Id) {
                     found = true;
                     logInputList.push({
-                        AllowMultiple: serviceRecord.AllowMultiple,
                         Id: count++,
                         UnitOfMeasure: serviceLogRecord.UnitOfMeasure,
                         Units: serviceLogRecord.Units,
@@ -94,7 +91,6 @@ const ClientServicesCard = (props: IProps) => {
             // Even if the service has no service log records we need to add it to the list so it can be selected
             if (!found) {
                 logInputList.push({
-                    AllowMultiple: false,
                     Id: count++,
                     UnitOfMeasure: UNIT_OF_MEASURE.Count,
                     Units: 1,
@@ -205,17 +201,6 @@ const ClientServicesCard = (props: IProps) => {
 
                             {serviceLogInputItem.ServiceGiven && (
                                 <>
-                                    {serviceLogInputItem.AllowMultiple ? (
-                                        <Button
-                                            className="mx-2"
-                                            size="sm"
-                                            onClick={() => addServiceLog(serviceLogInputItem.ServiceId)}
-                                            variant="outline-info"
-                                        >
-                                            +
-                                        </Button>
-                                    ) : null}
-
                                     <Form.Group className="mx-2">
                                         <Form.Select
                                             onChange={(changeEvent) =>
