@@ -28,7 +28,7 @@ const ClientServicesModal = (props: IProps) => {
 
     return (
         <Modal
-            size="lg"
+            size="xl"
             show={show}
             onHide={() => {
                 setShow(false);

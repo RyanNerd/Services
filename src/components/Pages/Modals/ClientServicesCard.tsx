@@ -229,6 +229,7 @@ const ClientServicesCard = (props: IProps) => {
 
                                     <Form.Group className="mx-2">
                                         <Form.Control
+                                            className={serviceLogInputItem.Units <= 0 ? 'is-invalid' : undefined}
                                             onChange={(changeEvent) =>
                                                 handleOnChange(
                                                     changeEvent,
@@ -236,14 +237,24 @@ const ClientServicesCard = (props: IProps) => {
                                                     'Units'
                                                 )
                                             }
-                                            onBlur={() =>
-                                                saveChanges(serviceLogInputItem.ServiceLogRecord as ServiceLogRecord)
-                                            }
+                                            onBlur={(blurEvent) => {
+                                                if (serviceLogInputItem.Units > 0) {
+                                                    saveChanges(
+                                                        serviceLogInputItem.ServiceLogRecord as ServiceLogRecord
+                                                    );
+                                                } else {
+                                                    blurEvent.preventDefault();
+                                                    blurEvent.target.focus();
+                                                }
+                                            }}
                                             size="sm"
                                             type="number"
                                             placeholder="Units"
                                             value={serviceLogInputItem.Units}
                                         />
+                                        <Form.Control.Feedback type="invalid">
+                                            Units cannot be zero or less
+                                        </Form.Control.Feedback>
                                         <Form.Text id="mini-label-for-units" muted>
                                             Units
                                         </Form.Text>
@@ -251,6 +262,7 @@ const ClientServicesCard = (props: IProps) => {
 
                                     <Form.Group className="mx-2">
                                         <Form.Control
+                                            className={serviceLogInputItem.UnitValue <= 0 ? 'is-invalid' : undefined}
                                             onChange={(changeEvent) =>
                                                 handleOnChange(
                                                     changeEvent,
@@ -258,14 +270,24 @@ const ClientServicesCard = (props: IProps) => {
                                                     'UnitValue'
                                                 )
                                             }
-                                            onBlur={() =>
-                                                saveChanges(serviceLogInputItem.ServiceLogRecord as ServiceLogRecord)
-                                            }
+                                            onBlur={(blurEvent) => {
+                                                if (serviceLogInputItem.UnitValue > 0) {
+                                                    saveChanges(
+                                                        serviceLogInputItem.ServiceLogRecord as ServiceLogRecord
+                                                    );
+                                                } else {
+                                                    blurEvent.preventDefault();
+                                                    blurEvent.target.focus();
+                                                }
+                                            }}
                                             size="sm"
                                             type="number"
                                             placeholder="UnitValue"
                                             value={serviceLogInputItem.UnitValue}
                                         />
+                                        <Form.Control.Feedback type="invalid">
+                                            Unit value cannot be zero or less
+                                        </Form.Control.Feedback>
                                         <Form.Text id="mini-label-for-unit-value" muted>
                                             Unit Value
                                         </Form.Text>
