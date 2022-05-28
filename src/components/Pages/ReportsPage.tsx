@@ -192,7 +192,7 @@ const ReportsPage = (props: IProps) => {
                         {serviceLogItem.serviceName}
                         <br />
                     </span>
-                    <span>{serviceLogItem.serviceLogRecord.Notes}</span>
+                    <span>{serviceLogItem.serviceLogRecord.UnitOfMeasure}</span>
                 </td>
                 <td>{serviceLogItem.dateOfService}</td>
             </tr>

@@ -92,16 +92,26 @@ export type ServiceRecord = {
     deleted_at?: null | Date;
 };
 
+export enum UNIT_OF_MEASURE {
+    Dollars = 'D',
+    Minutes = 'M',
+    Count = 'C',
+    Hours = 'H'
+}
+
 export type ServiceLogRecord = {
     Id: number | null;
     ResidentId: number;
     ServiceId: number;
-    Notes: string;
+    UnitOfMeasure: UNIT_OF_MEASURE;
+    Units: number;
+    UnitValue: number;
     DateOfService: Date;
     Recorded?: null | Date;
     Updated?: null | Date;
     Created?: null | Date;
     deleted_at?: null | Date;
+    [key: string]: unknown;
 };
 // Default empty Service record
 export const newServiceRecord = {
