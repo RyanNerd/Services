@@ -216,63 +216,75 @@ const ClientServicesCard = (props: IProps) => {
                                         </Button>
                                     ) : null}
 
-                                    <Form.Select
-                                        onChange={(changeEvent) =>
-                                            handleOnChange(
-                                                changeEvent,
-                                                serviceLogInputItem.ServiceLogRecord as ServiceLogRecord,
-                                                'UnitOfMeasure'
-                                            )
-                                        }
-                                        onBlur={() =>
-                                            saveChanges(serviceLogInputItem.ServiceLogRecord as ServiceLogRecord)
-                                        }
-                                        size="sm"
-                                        className="mx-2"
-                                        placeholder="UnitOfMeasure"
-                                        value={serviceLogInputItem.UnitOfMeasure || UNIT_OF_MEASURE.Count}
-                                    >
-                                        <option value={UNIT_OF_MEASURE.Count}>Count</option>
-                                        <option value={UNIT_OF_MEASURE.Dollars}>Dollars</option>
-                                        <option value={UNIT_OF_MEASURE.Hours}>Hours</option>
-                                        <option value={UNIT_OF_MEASURE.Minutes}>Minutes</option>
-                                    </Form.Select>
+                                    <Form.Group className="mx-2">
+                                        <Form.Select
+                                            onChange={(changeEvent) =>
+                                                handleOnChange(
+                                                    changeEvent,
+                                                    serviceLogInputItem.ServiceLogRecord as ServiceLogRecord,
+                                                    'UnitOfMeasure'
+                                                )
+                                            }
+                                            onBlur={() =>
+                                                saveChanges(serviceLogInputItem.ServiceLogRecord as ServiceLogRecord)
+                                            }
+                                            size="sm"
+                                            placeholder="UnitOfMeasure"
+                                            value={serviceLogInputItem.UnitOfMeasure || UNIT_OF_MEASURE.Count}
+                                        >
+                                            <option value={UNIT_OF_MEASURE.Count}>Count</option>
+                                            <option value={UNIT_OF_MEASURE.Dollars}>Dollars</option>
+                                            <option value={UNIT_OF_MEASURE.Hours}>Hours</option>
+                                            <option value={UNIT_OF_MEASURE.Minutes}>Minutes</option>
+                                        </Form.Select>
+                                        <Form.Text id="mini-label-for-unit-of-measure" muted>
+                                            Unit of Measure
+                                        </Form.Text>
+                                    </Form.Group>
 
-                                    <Form.Control
-                                        onChange={(changeEvent) =>
-                                            handleOnChange(
-                                                changeEvent,
-                                                serviceLogInputItem.ServiceLogRecord as ServiceLogRecord,
-                                                'Units'
-                                            )
-                                        }
-                                        onBlur={() =>
-                                            saveChanges(serviceLogInputItem.ServiceLogRecord as ServiceLogRecord)
-                                        }
-                                        size="sm"
-                                        type="number"
-                                        className="mx-2"
-                                        placeholder="Units"
-                                        value={serviceLogInputItem.Units}
-                                    />
+                                    <Form.Group className="mx-2">
+                                        <Form.Control
+                                            onChange={(changeEvent) =>
+                                                handleOnChange(
+                                                    changeEvent,
+                                                    serviceLogInputItem.ServiceLogRecord as ServiceLogRecord,
+                                                    'Units'
+                                                )
+                                            }
+                                            onBlur={() =>
+                                                saveChanges(serviceLogInputItem.ServiceLogRecord as ServiceLogRecord)
+                                            }
+                                            size="sm"
+                                            type="number"
+                                            placeholder="Units"
+                                            value={serviceLogInputItem.Units}
+                                        />
+                                        <Form.Text id="mini-label-for-units" muted>
+                                            Units
+                                        </Form.Text>
+                                    </Form.Group>
 
-                                    <Form.Control
-                                        onChange={(changeEvent) =>
-                                            handleOnChange(
-                                                changeEvent,
-                                                serviceLogInputItem.ServiceLogRecord as ServiceLogRecord,
-                                                'UnitValue'
-                                            )
-                                        }
-                                        onBlur={() =>
-                                            saveChanges(serviceLogInputItem.ServiceLogRecord as ServiceLogRecord)
-                                        }
-                                        size="sm"
-                                        type="number"
-                                        className="mx-2"
-                                        placeholder="UnitValue"
-                                        value={serviceLogInputItem.UnitValue}
-                                    />
+                                    <Form.Group className="mx-2">
+                                        <Form.Control
+                                            onChange={(changeEvent) =>
+                                                handleOnChange(
+                                                    changeEvent,
+                                                    serviceLogInputItem.ServiceLogRecord as ServiceLogRecord,
+                                                    'UnitValue'
+                                                )
+                                            }
+                                            onBlur={() =>
+                                                saveChanges(serviceLogInputItem.ServiceLogRecord as ServiceLogRecord)
+                                            }
+                                            size="sm"
+                                            type="number"
+                                            placeholder="UnitValue"
+                                            value={serviceLogInputItem.UnitValue}
+                                        />
+                                        <Form.Text id="mini-label-for-unit-value" muted>
+                                            Unit Value
+                                        </Form.Text>
+                                    </Form.Group>
                                 </>
                             )}
                         </InputGroup>
