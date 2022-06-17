@@ -20,8 +20,8 @@ interface IProps {
 
 type ServiceLogReportRecord = {
     clientInfo: ClientRecord | null;
-    clientHmis: string | null;
-    clientEnrollment: string | null;
+    clientHmis: number | null;
+    clientEnrollment: number | null;
     dateOfService: string;
     firstName: string;
     fullName: string;
@@ -29,7 +29,7 @@ type ServiceLogReportRecord = {
     lastName: string;
     selected: boolean;
     serviceName: string;
-    serviceHmisId: string;
+    serviceHmisId: number;
     serviceLogRecord: ServiceLogRecord;
     sortDate: string;
     [key: string]: unknown;
@@ -65,7 +65,7 @@ const ReportsPage = (props: IProps) => {
                     (serviceRecord) => serviceRecord.Id === serviceLogRecord.ServiceId
                 );
                 const serviceName = serviceRecord?.ServiceName;
-                const serviceHmisId = serviceRecord?.HmisId || '';
+                const serviceHmisId = serviceRecord?.HmisId || 0;
                 if (!clientRecordList.some((c) => c.Id === serviceLogRecord.ResidentId)) {
                     const clientRecord = await clientProvider.read(serviceLogRecord.ResidentId);
                     if (clientRecord) {
@@ -159,9 +159,12 @@ const ReportsPage = (props: IProps) => {
         const clientStyle = clientInfo?.Id ? {color: 'blue', cursor: 'pointer'} : {};
         const serviceLogId = serviceLogItem.id;
         const canBeSelected = !(
-            serviceLogItem.serviceHmisId?.length === 0 ||
+            serviceLogItem.serviceHmisId === null ||
+            serviceLogItem.serviceHmisId === 0 ||
             serviceLogItem.clientHmis === null ||
-            serviceLogItem.EnrollmentId === null
+            serviceLogItem.clientHmis === 0 ||
+            serviceLogItem.EnrollmentId === null ||
+            serviceLogItem.EnrollmentId === 0
         );
 
         return (
@@ -229,8 +232,10 @@ const ReportsPage = (props: IProps) => {
                                             for (const [, serviceLogReportRecord] of serviceLogReport.entries())
                                                 serviceLogReportRecord.selected =
                                                     serviceLogReportRecord.clientHmis === null ||
+                                                    serviceLogReportRecord.clientHmis === 0 ||
                                                     false ||
-                                                    serviceLogReportRecord.serviceHmisId?.length === 0
+                                                    serviceLogReportRecord.serviceHmisId === null ||
+                                                    serviceLogReportRecord.serviceHmisId === 0
                                                         ? false
                                                         : !serviceLogSelectAll;
                                             setServiceLogSelectAll(!serviceLogSelectAll);

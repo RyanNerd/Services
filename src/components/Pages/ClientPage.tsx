@@ -117,8 +117,8 @@ const ClientPage = (props: IProps) => {
         const info = {...clientRecord};
         if (info.Notes === null) info.Notes = '';
         if (info.Nickname === null) info.Nickname = '';
-        if (info.HMIS === null) info.HMIS = '';
-        if (info.EnrollmentId === null) info.EnrollmentId = '';
+        if (info.HMIS === null) info.HMIS = 0;
+        if (info.EnrollmentId === null) info.EnrollmentId = 0;
         info.DOB_DAY = typeof info.DOB_DAY === 'string' ? Number.parseInt(info.DOB_DAY) : info.DOB_DAY;
         info.DOB_MONTH = typeof info.DOB_MONTH === 'string' ? Number.parseInt(info.DOB_MONTH) : info.DOB_MONTH;
         info.DOB_YEAR = typeof info.DOB_YEAR === 'string' ? Number.parseInt(info.DOB_YEAR) : info.DOB_YEAR;

@@ -4,13 +4,13 @@ export type ClientRecord = {
     DOB_DAY: number | string;
     DOB_MONTH: number | string;
     DOB_YEAR: number | string;
-    EnrollmentId: string;
     FirstName: string;
-    HMIS: string;
     Id: null | number;
     LastName: string;
     Nickname: string;
     Notes: string;
+    HMIS: number;
+    EnrollmentId: number;
     Updated?: null | Date;
     UserId?: number;
     deleted_at?: null | Date;
@@ -85,7 +85,7 @@ export type PillboxItemRecord = {
 export type ServiceRecord = {
     Id: number | null;
     ServiceName: string;
-    HmisId?: null | string;
+    HmisId: null | number;
     Updated?: null | Date;
     Created?: null | Date;
     deleted_at?: null | Date;
@@ -116,8 +116,7 @@ export type ServiceLogRecord = {
 export const newServiceRecord = {
     Id: null,
     ServiceName: '',
-    HmisId: '',
-    AllowMultiple: false
+    HmisId: null
 } as ServiceRecord;
 
 // Default empty Resident (Client) record

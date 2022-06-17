@@ -1,4 +1,5 @@
 import ClientPage from 'components/Pages/ClientPage';
+import FileUpload from 'components/Pages/FileUpload';
 import LoginPage from 'components/Pages/LoginPage';
 import ReportsPage from 'components/Pages/ReportsPage';
 import ServicesPage from 'components/Pages/ServicesPage';
@@ -66,6 +67,10 @@ const LandingPage = () => {
 
             <Tab disabled={!signIn.apiKey} eventKey="services" title="Services">
                 <ServicesPage providers={providers} tabKey={key} />
+            </Tab>
+
+            <Tab title="HMIS Import" eventKey="import" disabled={!signIn.apiKey}>
+                <FileUpload tabKey={key} />
             </Tab>
         </Tabs>
     );

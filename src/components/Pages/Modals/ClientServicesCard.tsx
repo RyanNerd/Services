@@ -94,7 +94,7 @@ const ClientServicesCard = (props: IProps) => {
                     Id: count++,
                     UnitOfMeasure: UNIT_OF_MEASURE.Count,
                     Units: 1,
-                    UnitValue: 1,
+                    UnitValue: 0,
                     ServiceGiven: false,
                     ServiceId: serviceRecord.Id as number,
                     ServiceLogRecord: null,
@@ -116,7 +116,7 @@ const ClientServicesCard = (props: IProps) => {
             ServiceId: serviceId,
             UnitOfMeasure: UNIT_OF_MEASURE.Count,
             Units: 1,
-            UnitValue: 1,
+            UnitValue: 0,
             DateOfService: dateOfService.toDate()
         });
         await populateServiceLog();
@@ -262,7 +262,7 @@ const ClientServicesCard = (props: IProps) => {
 
                                     <Form.Group className="mx-2">
                                         <Form.Control
-                                            className={serviceLogInputItem.UnitValue <= 0 ? 'is-invalid' : undefined}
+                                            className={serviceLogInputItem.UnitValue < 0 ? 'is-invalid' : undefined}
                                             onChange={(changeEvent) =>
                                                 handleOnChange(
                                                     changeEvent,
@@ -271,7 +271,7 @@ const ClientServicesCard = (props: IProps) => {
                                                 )
                                             }
                                             onBlur={(blurEvent) => {
-                                                if (serviceLogInputItem.UnitValue > 0) {
+                                                if (serviceLogInputItem.UnitValue >= 0) {
                                                     saveChanges(
                                                         serviceLogInputItem.ServiceLogRecord as ServiceLogRecord
                                                     );
