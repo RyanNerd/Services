@@ -20,8 +20,8 @@ interface IProps {
 
 type ServiceLogReportRecord = {
     clientInfo: ClientRecord | null;
-    clientHmis: string | null;
-    clientEnrollment: string | null;
+    clientHmis: number | null;
+    clientEnrollment: number | null;
     dateOfService: string;
     firstName: string;
     fullName: string;
@@ -29,7 +29,7 @@ type ServiceLogReportRecord = {
     lastName: string;
     selected: boolean;
     serviceName: string;
-    serviceHmisId: string;
+    serviceHmisId: number;
     serviceLogRecord: ServiceLogRecord;
     sortDate: string;
     [key: string]: unknown;
@@ -65,7 +65,7 @@ const ReportsPage = (props: IProps) => {
                     (serviceRecord) => serviceRecord.Id === serviceLogRecord.ServiceId
                 );
                 const serviceName = serviceRecord?.ServiceName;
-                const serviceHmisId = serviceRecord?.HmisId || '';
+                const serviceHmisId = serviceRecord?.HmisId || 0;
                 if (!clientRecordList.some((c) => c.Id === serviceLogRecord.ResidentId)) {
                     const clientRecord = await clientProvider.read(serviceLogRecord.ResidentId);
                     if (clientRecord) {
@@ -158,15 +158,23 @@ const ReportsPage = (props: IProps) => {
         const clientInfo = serviceLogItem.clientInfo;
         const clientStyle = clientInfo?.Id ? {color: 'blue', cursor: 'pointer'} : {};
         const serviceLogId = serviceLogItem.id;
+        const canBeSelected = !(
+            serviceLogItem.serviceHmisId === null ||
+            serviceLogItem.serviceHmisId === 0 ||
+            serviceLogItem.clientHmis === null ||
+            serviceLogItem.clientHmis === 0 ||
+            serviceLogItem.EnrollmentId === null ||
+            serviceLogItem.EnrollmentId === 0
+        );
+
         return (
-            <tr key={`service-log-report-item-${serviceLogId}`}>
+            <tr
+                key={`service-log-report-item-${serviceLogId}`}
+                style={{fontStyle: canBeSelected ? undefined : 'italic'}}
+            >
                 <td>
                     <Form.Check
-                        disabled={
-                            serviceLogItem.serviceHmisId?.length === 0 ||
-                            serviceLogItem.clientHmis === null ||
-                            serviceLogItem.EnrollmentId === null
-                        }
+                        disabled={!canBeSelected}
                         type="switch"
                         value={serviceLogId}
                         checked={serviceLogItem.selected}
@@ -192,7 +200,6 @@ const ReportsPage = (props: IProps) => {
                         {serviceLogItem.serviceName}
                         <br />
                     </span>
-                    <span>{serviceLogItem.serviceLogRecord.Notes}</span>
                 </td>
                 <td>{serviceLogItem.dateOfService}</td>
             </tr>
@@ -206,7 +213,11 @@ const ReportsPage = (props: IProps) => {
                 <Button className="mx-3" disabled={!allowImport} onClick={() => alert('todo: Perform Import')}>
                     Import into HMIS
                 </Button>
-                <Card.Subtitle className="my-1">Click on the table headers to sort</Card.Subtitle>
+                <Card.Subtitle className="my-1">
+                    <span style={{fontStyle: 'italic'}}>Italicized</span>
+                    <span> rows indicate the client is missing HMIS or EnrollmentId. </span>
+                    <span>Click on the table headers to sort.</span>
+                </Card.Subtitle>
             </Card.Header>
             <Card.Body>
                 {serviceLogReport !== null && serviceLogReport !== undefined && serviceLogReport.length > 0 ? (
@@ -221,8 +232,10 @@ const ReportsPage = (props: IProps) => {
                                             for (const [, serviceLogReportRecord] of serviceLogReport.entries())
                                                 serviceLogReportRecord.selected =
                                                     serviceLogReportRecord.clientHmis === null ||
+                                                    serviceLogReportRecord.clientHmis === 0 ||
                                                     false ||
-                                                    serviceLogReportRecord.serviceHmisId?.length === 0
+                                                    serviceLogReportRecord.serviceHmisId === null ||
+                                                    serviceLogReportRecord.serviceHmisId === 0
                                                         ? false
                                                         : !serviceLogSelectAll;
                                             setServiceLogSelectAll(!serviceLogSelectAll);

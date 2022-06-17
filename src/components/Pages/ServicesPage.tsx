@@ -69,15 +69,6 @@ const ServicesPage = (props: IProps) => {
                                     <Form.Group>
                                         <span>{`${sl.ServiceName} - HMIS# ${sl.HmisId}`}</span>
                                     </Form.Group>
-                                    <Form.Group>
-                                        <Form.Check
-                                            disabled={true}
-                                            type="switch"
-                                            value={sl.Id as number}
-                                            checked={sl.AllowMultiple}
-                                            label="Allow Multiple Services on the same day"
-                                        />
-                                    </Form.Group>
                                 </ListGroup.Item>
                             );
                         })}

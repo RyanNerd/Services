@@ -26,7 +26,7 @@ const ServiceEdit = (props: IProps) => {
     useEffect(() => {
         if (props.serviceInfo) {
             const info = {...props.serviceInfo};
-            if (info.HmisId === null) info.HmisId = '';
+            if (info.HmisId === null) info.HmisId = 0;
             if (info.ServiceName === null) info.ServiceName = '';
             setServiceInfo(info);
         }
@@ -64,27 +64,17 @@ const ServiceEdit = (props: IProps) => {
                     <FloatingLabel label="HMIS #" controlId="hmis-number" className="mb-3">
                         <Form.Control
                             autoComplete="off"
-                            className={serviceInfo.HmisId !== null && serviceInfo.HmisId !== '' ? '' : 'is-invalid'}
+                            className={serviceInfo.HmisId !== null && serviceInfo.HmisId > 0 ? '' : 'is-invalid'}
                             onChange={(changeEvent) =>
-                                setServiceInfo({...serviceInfo, HmisId: changeEvent.target.value})
+                                setServiceInfo({...serviceInfo, HmisId: Number.parseInt(changeEvent.target.value)})
                             }
                             placeholder="hmis-number"
                             required
-                            type="text"
-                            value={serviceInfo.HmisId as string}
+                            type="number"
+                            value={serviceInfo.HmisId || 0}
                         />
                         <Form.Control.Feedback type="invalid">HMIS # can not be blank.</Form.Control.Feedback>
                     </FloatingLabel>
-
-                    <Form.Check
-                        onChange={(changeEvent) =>
-                            setServiceInfo({...serviceInfo, AllowMultiple: changeEvent.target.checked})
-                        }
-                        type="switch"
-                        value={serviceInfo.Id as number}
-                        checked={serviceInfo.AllowMultiple}
-                        label="Allow Multiple Services on the same day"
-                    />
                 </Form>
             </Modal.Body>
             <Modal.Footer>

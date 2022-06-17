@@ -1,9 +1,8 @@
 import dayjs from 'dayjs';
 import {IServiceLogProvider} from 'providers/serviceLogProvider';
 import {Card, Form, InputGroup} from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
 import React, {useEffect, useState} from 'reactn';
-import {ClientRecord, ServiceLogRecord, ServiceRecord} from 'types/RecordTypes';
+import {ClientRecord, ServiceLogRecord, ServiceRecord, UNIT_OF_MEASURE} from 'types/RecordTypes';
 import {clientFullName} from 'utilities/clientFormatting';
 
 interface IProps {
@@ -15,9 +14,10 @@ interface IProps {
 }
 
 type ServiceLogInputRecord = {
-    AllowMultiple: boolean;
     Id: number;
-    Notes: string | null;
+    UnitOfMeasure: UNIT_OF_MEASURE;
+    Units: number;
+    UnitValue: number;
     ServiceGiven: boolean;
     ServiceId: number;
     ServiceLogRecord: ServiceLogRecord | null;
@@ -77,9 +77,10 @@ const ClientServicesCard = (props: IProps) => {
                 if (serviceLogRecord.ServiceId === serviceRecord.Id) {
                     found = true;
                     logInputList.push({
-                        AllowMultiple: serviceRecord.AllowMultiple,
                         Id: count++,
-                        Notes: serviceLogRecord.Notes,
+                        UnitOfMeasure: serviceLogRecord.UnitOfMeasure,
+                        Units: serviceLogRecord.Units,
+                        UnitValue: serviceLogRecord.UnitValue,
                         ServiceGiven: true,
                         ServiceId: serviceRecord.Id,
                         ServiceLogRecord: serviceLogRecord,
@@ -90,9 +91,10 @@ const ClientServicesCard = (props: IProps) => {
             // Even if the service has no service log records we need to add it to the list so it can be selected
             if (!found) {
                 logInputList.push({
-                    AllowMultiple: false,
                     Id: count++,
-                    Notes: null,
+                    UnitOfMeasure: UNIT_OF_MEASURE.Count,
+                    Units: 1,
+                    UnitValue: 0,
                     ServiceGiven: false,
                     ServiceId: serviceRecord.Id as number,
                     ServiceLogRecord: null,
@@ -112,7 +114,9 @@ const ClientServicesCard = (props: IProps) => {
             Id: null,
             ResidentId: activeClient.Id as number,
             ServiceId: serviceId,
-            Notes: '',
+            UnitOfMeasure: UNIT_OF_MEASURE.Count,
+            Units: 1,
+            UnitValue: 0,
             DateOfService: dateOfService.toDate()
         });
         await populateServiceLog();
@@ -139,27 +143,31 @@ const ClientServicesCard = (props: IProps) => {
     };
 
     /**
-     * Fires as the user changes the notes field
+     * Fires as the user changes unit of measure, units, or unit value fields
      * @param {React.ChangeEvent} changeEvent The onChange event
      * @param {ServiceLogRecord} serviceLogRecord The service log record notes to change
+     * @param {string} fieldName Name of the field that should be updated.
      */
-    const handleOnChange = (changeEvent: React.ChangeEvent, serviceLogRecord: ServiceLogRecord) => {
+    const handleOnChange = (changeEvent: React.ChangeEvent, serviceLogRecord: ServiceLogRecord, fieldName: string) => {
         const target = changeEvent.target as HTMLInputElement;
         const value = target.value;
         const cloneServiceLogList = [...serviceLogList];
         for (const [cloneIndex, clonedServiceLog] of cloneServiceLogList.entries()) {
-            if (clonedServiceLog.Id === serviceLogRecord.Id && cloneServiceLogList[cloneIndex].Notes !== value) {
-                cloneServiceLogList[cloneIndex].Notes = value;
-                setServiceLogList(cloneServiceLogList);
+            if (clonedServiceLog.Id === serviceLogRecord.Id) {
+                const logItem = cloneServiceLogList[cloneIndex];
+                if (logItem[fieldName] !== value) {
+                    logItem[fieldName] = value;
+                    setServiceLogList(cloneServiceLogList);
+                }
             }
         }
     };
 
     /**
-     * Fires when the focus is moved from the notes field
+     * Fires when the focus is moved from the unitOfMeasure, units, or unitValue fields
      * @param {ServiceLogRecord} serviceLogRecord The serviceLogRecord to update
      */
-    const saveNoteChanges = (serviceLogRecord: ServiceLogRecord) => {
+    const saveChanges = (serviceLogRecord: ServiceLogRecord) => {
         const updateServiceLog = async () => {
             await serviceLogProvider.update(serviceLogRecord);
             await populateServiceLog();
@@ -193,33 +201,97 @@ const ClientServicesCard = (props: IProps) => {
 
                             {serviceLogInputItem.ServiceGiven && (
                                 <>
-                                    {serviceLogInputItem.AllowMultiple ? (
-                                        <Button
-                                            className="mx-2"
+                                    <Form.Group className="mx-2">
+                                        <Form.Select
+                                            onChange={(changeEvent) =>
+                                                handleOnChange(
+                                                    changeEvent,
+                                                    serviceLogInputItem.ServiceLogRecord as ServiceLogRecord,
+                                                    'UnitOfMeasure'
+                                                )
+                                            }
+                                            onBlur={() =>
+                                                saveChanges(serviceLogInputItem.ServiceLogRecord as ServiceLogRecord)
+                                            }
                                             size="sm"
-                                            onClick={() => addServiceLog(serviceLogInputItem.ServiceId)}
-                                            variant="outline-info"
+                                            placeholder="UnitOfMeasure"
+                                            value={serviceLogInputItem.UnitOfMeasure || UNIT_OF_MEASURE.Count}
                                         >
-                                            +
-                                        </Button>
-                                    ) : null}
+                                            <option value={UNIT_OF_MEASURE.Count}>Count</option>
+                                            <option value={UNIT_OF_MEASURE.Dollars}>Dollars</option>
+                                            <option value={UNIT_OF_MEASURE.Hours}>Hours</option>
+                                            <option value={UNIT_OF_MEASURE.Minutes}>Minutes</option>
+                                        </Form.Select>
+                                        <Form.Text id="mini-label-for-unit-of-measure" muted>
+                                            Unit of Measure
+                                        </Form.Text>
+                                    </Form.Group>
 
-                                    <Form.Control
-                                        onChange={(changeEvent) =>
-                                            handleOnChange(
-                                                changeEvent,
-                                                serviceLogInputItem.ServiceLogRecord as ServiceLogRecord
-                                            )
-                                        }
-                                        onBlur={() =>
-                                            saveNoteChanges(serviceLogInputItem.ServiceLogRecord as ServiceLogRecord)
-                                        }
-                                        type="text"
-                                        size="sm"
-                                        className="mx-2"
-                                        placeholder="Notes"
-                                        value={serviceLogInputItem.Notes || ''}
-                                    />
+                                    <Form.Group className="mx-2">
+                                        <Form.Control
+                                            className={serviceLogInputItem.Units <= 0 ? 'is-invalid' : undefined}
+                                            onChange={(changeEvent) =>
+                                                handleOnChange(
+                                                    changeEvent,
+                                                    serviceLogInputItem.ServiceLogRecord as ServiceLogRecord,
+                                                    'Units'
+                                                )
+                                            }
+                                            onBlur={(blurEvent) => {
+                                                if (serviceLogInputItem.Units > 0) {
+                                                    saveChanges(
+                                                        serviceLogInputItem.ServiceLogRecord as ServiceLogRecord
+                                                    );
+                                                } else {
+                                                    blurEvent.preventDefault();
+                                                    blurEvent.target.focus();
+                                                }
+                                            }}
+                                            size="sm"
+                                            type="number"
+                                            placeholder="Units"
+                                            value={serviceLogInputItem.Units}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            Units cannot be zero or less
+                                        </Form.Control.Feedback>
+                                        <Form.Text id="mini-label-for-units" muted>
+                                            Units
+                                        </Form.Text>
+                                    </Form.Group>
+
+                                    <Form.Group className="mx-2">
+                                        <Form.Control
+                                            className={serviceLogInputItem.UnitValue < 0 ? 'is-invalid' : undefined}
+                                            onChange={(changeEvent) =>
+                                                handleOnChange(
+                                                    changeEvent,
+                                                    serviceLogInputItem.ServiceLogRecord as ServiceLogRecord,
+                                                    'UnitValue'
+                                                )
+                                            }
+                                            onBlur={(blurEvent) => {
+                                                if (serviceLogInputItem.UnitValue >= 0) {
+                                                    saveChanges(
+                                                        serviceLogInputItem.ServiceLogRecord as ServiceLogRecord
+                                                    );
+                                                } else {
+                                                    blurEvent.preventDefault();
+                                                    blurEvent.target.focus();
+                                                }
+                                            }}
+                                            size="sm"
+                                            type="number"
+                                            placeholder="UnitValue"
+                                            value={serviceLogInputItem.UnitValue}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            Unit value cannot be zero or less
+                                        </Form.Control.Feedback>
+                                        <Form.Text id="mini-label-for-unit-value" muted>
+                                            Unit Value
+                                        </Form.Text>
+                                    </Form.Group>
                                 </>
                             )}
                         </InputGroup>
