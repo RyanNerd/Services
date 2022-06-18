@@ -1,5 +1,8 @@
+import DisabledSpinner from 'components/Pages/DisabledSpinner';
+import UploadGrid from 'components/Pages/Grids/UploadGrid';
 import {Form} from 'react-bootstrap';
 import React, {useGlobal, useState} from 'reactn';
+import {ClientRecord} from 'types/RecordTypes';
 
 interface IProps {
     tabKey: string;
@@ -11,6 +14,8 @@ const FileUpload = (props: IProps) => {
     const fileProvider = providers.fileProvider;
     const [isBusy, setIsBusy] = useState(false);
     const [invalidMaxSize, setInvalidMaxSize] = useState(false);
+    const [updatedClients, setUpdatedClients] = useState<null | ClientRecord[]>(null);
+    const [fileValue, setFileValue] = useState<undefined | string>();
 
     /**
      * Handle when the user clicked the Select a File to Upload component
@@ -32,11 +37,14 @@ const FileUpload = (props: IProps) => {
                     try {
                         const formData = new FormData();
                         formData.append('single_file', file);
-                        await fileProvider.uploadHmisFile(formData);
+                        setUpdatedClients(await fileProvider.uploadHmisFile(formData));
                     } catch (error) {
                         await setErrorDetails(error);
                     }
+
+                    // We're done with the file upload so no longer busy and we reset the file control
                     setIsBusy(false);
+                    setFileValue('');
                 } else {
                     setInvalidMaxSize(true);
                 }
@@ -50,6 +58,7 @@ const FileUpload = (props: IProps) => {
     return (
         <Form>
             <Form.Group>
+                {isBusy && <DisabledSpinner className="mx-1" />}
                 <Form.Label>Select a File to Upload</Form.Label>
                 <Form.Control
                     className={invalidMaxSize ? 'is-invalid' : ''}
@@ -57,10 +66,18 @@ const FileUpload = (props: IProps) => {
                     style={{width: '25%'}}
                     id="custom-file"
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleFileUpload(event)}
+                    onClick={() => setUpdatedClients(null)}
                     type="file"
+                    value={fileValue}
                 />
                 <Form.Control.Feedback type="invalid">File exceeds maximum size allowed</Form.Control.Feedback>
             </Form.Group>
+
+            {updatedClients !== null && !isBusy && (
+                <div className="my-3">
+                    <UploadGrid clientList={updatedClients} />
+                </div>
+            )}
         </Form>
     );
 };
