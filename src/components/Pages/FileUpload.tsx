@@ -1,6 +1,8 @@
 import DisabledSpinner from 'components/Pages/DisabledSpinner';
 import UploadGrid from 'components/Pages/Grids/UploadGrid';
+import {ClientHmisResponse} from 'providers/fileProvider';
 import {Form} from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 import React, {useGlobal, useState} from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
 
@@ -14,7 +16,7 @@ const FileUpload = (props: IProps) => {
     const fileProvider = providers.fileProvider;
     const [isBusy, setIsBusy] = useState(false);
     const [invalidMaxSize, setInvalidMaxSize] = useState(false);
-    const [updatedClients, setUpdatedClients] = useState<null | ClientRecord[]>(null);
+    const [updatedClients, setUpdatedClients] = useState<null | ClientHmisResponse>(null);
     const [fileValue, setFileValue] = useState<undefined | string>();
 
     /**
@@ -58,8 +60,13 @@ const FileUpload = (props: IProps) => {
     return (
         <Form>
             <Form.Group>
+                {/* TODO: Actually show instructions */}
+                <Button disabled={isBusy}>Click here for instructions on how to generate a HMIS.XML file</Button>
+            </Form.Group>
+
+            <Form.Group className="my-4">
                 {isBusy && <DisabledSpinner className="mx-1" />}
-                <Form.Label>Select a File to Upload</Form.Label>
+                <Form.Label>Select a HMIS.XML File to Upload</Form.Label>
                 <Form.Control
                     className={invalidMaxSize ? 'is-invalid' : ''}
                     disabled={isBusy}

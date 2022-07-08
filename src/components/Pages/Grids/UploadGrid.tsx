@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {ClientHmisResponse} from 'providers/fileProvider';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
 import {ClientRecord} from 'types/RecordTypes';
@@ -6,11 +7,14 @@ import {ClientRecord} from 'types/RecordTypes';
 import {randomString} from 'utilities/randomString';
 
 interface IProps {
-    clientList: ClientRecord[];
+    clientList: ClientHmisResponse;
 }
 
 const UploadGrid = (props: IProps) => {
-    const clientList = props.clientList;
+    const clientsResponse = props.clientList;
+    // TODO: Need to show both updated and not found clients!
+    // const clientsNotFound = clientsResponse.clientsNotFound;
+    const clientList = clientsResponse.clientsUpdated;
 
     const ClientRow = (clientRecord: ClientRecord) => {
         const domId = clientRecord.Id ? clientRecord.Id : randomString();

@@ -1,12 +1,17 @@
 import Frak from 'frak/lib/components/Frak';
-import {ClientRecord, FileRecord} from 'types/RecordTypes';
+import {ClientNotFound, ClientRecord, FileRecord} from 'types/RecordTypes';
+
+export interface ClientHmisResponse {
+    clientsUpdated: ClientRecord[];
+    clientsNotFound: ClientNotFound[];
+}
 
 export interface IFileProvider {
     setApiKey: (apiKey: string) => void;
     download: (fileRecord: FileRecord) => Promise<void>;
     update: (fileRecord: FileRecord) => Promise<FileRecord>;
     uploadFile: (formData: FormData, clientId: number) => Promise<FileUploadRecord>;
-    uploadHmisFile: (formData: FormData) => Promise<ClientRecord[]>;
+    uploadHmisFile: (formData: FormData) => Promise<ClientHmisResponse>;
     load: (clientId: number) => Promise<FileRecord[]>;
     delete: (fileId: number, permanentDelete?: boolean) => Promise<boolean>;
 }
@@ -21,7 +26,7 @@ type FileUploadRecord = {
 type FileHmisUploadResponse = {
     status: number;
     success: boolean;
-    data: null | ClientRecord[];
+    data: null | ClientHmisResponse;
 };
 
 type UpdateResponse = {
@@ -114,7 +119,7 @@ const FileProvider = (baseUrl: string): IFileProvider => {
          * @param {FormData} formData The FormData object containing the name and file
          * @returns {Promise<ClientRecord[]>} A ClientRecord array as a Promise (note the array can be empty)
          */
-        uploadHmisFile: async (formData: FormData): Promise<ClientRecord[]> => {
+        uploadHmisFile: async (formData: FormData): Promise<ClientHmisResponse> => {
             const response = await fetch(`${_baseUrl}file/import-hmis?api_key=${_apiKey}`, {
                 method: 'POST',
                 body: formData,
@@ -126,7 +131,7 @@ const FileProvider = (baseUrl: string): IFileProvider => {
 
             const responseJSON = (await response.json()) as FileHmisUploadResponse;
             if (responseJSON.success) {
-                return responseJSON.data as ClientRecord[];
+                return responseJSON.data as ClientHmisResponse;
             } else {
                 throw response;
             }

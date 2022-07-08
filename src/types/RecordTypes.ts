@@ -17,6 +17,12 @@ export type ClientRecord = {
     [key: string]: unknown;
 };
 
+export type ClientNotFound = {
+    LastName: string;
+    FirstName: string;
+    Age: number;
+};
+
 // ORM record of the Document table
 export type FileRecord = {
     Created?: null | Date;
