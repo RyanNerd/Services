@@ -2,7 +2,7 @@ import {Form} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Modal from 'react-bootstrap/Modal';
-import React, {useEffect, useState} from 'reactn';
+import React, {useEffect, useRef, useState} from 'reactn';
 import {ServiceRecord} from 'types/RecordTypes';
 
 interface IProps {
@@ -16,6 +16,7 @@ const ServiceEdit = (props: IProps) => {
     const deleteAllowed = props.deleteAllowed;
     const [canSave, setCanSave] = useState(false);
 
+    const serviceNameReference = useRef<HTMLInputElement>(null);
     const [show, setShow] = useState(props.show);
     useEffect(() => {
         setShow(props.show);
@@ -39,7 +40,12 @@ const ServiceEdit = (props: IProps) => {
     if (!serviceInfo) return null;
 
     return (
-        <Modal backdrop="static" show={show} onHide={() => onClose(null)}>
+        <Modal
+            backdrop="static"
+            show={show}
+            onHide={() => onClose(null)}
+            onEnter={() => serviceNameReference?.current?.focus()}
+        >
             <Modal.Header closeButton>
                 <Modal.Title>{serviceInfo.Id !== null ? 'Edit ' + serviceInfo.ServiceName : 'Add Service'}</Modal.Title>
             </Modal.Header>
@@ -54,6 +60,7 @@ const ServiceEdit = (props: IProps) => {
                             onChange={(changeEvent) =>
                                 setServiceInfo({...serviceInfo, ServiceName: changeEvent.target.value})
                             }
+                            ref={serviceNameReference}
                             placeholder="service-name"
                             required
                             value={serviceInfo.ServiceName}
@@ -71,7 +78,7 @@ const ServiceEdit = (props: IProps) => {
                             placeholder="hmis-number"
                             required
                             type="number"
-                            value={serviceInfo.HmisId || 0}
+                            value={serviceInfo.HmisId || undefined}
                         />
                         <Form.Control.Feedback type="invalid">HMIS # can not be blank.</Form.Control.Feedback>
                     </FloatingLabel>
