@@ -2,7 +2,7 @@ import Frak from 'frak/lib/components/Frak';
 import {ClientNotFound, ClientRecord, FileRecord} from 'types/RecordTypes';
 
 export interface ClientHmisResponse {
-    clientsUpdated: ClientRecord[];
+    updatedClients: ClientRecord[];
     clientsNotFound: ClientNotFound[];
 }
 

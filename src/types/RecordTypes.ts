@@ -21,6 +21,8 @@ export type ClientNotFound = {
     LastName: string;
     FirstName: string;
     Age: number;
+    HMIS: number;
+    EnrollmentId: number;
 };
 
 // ORM record of the Document table

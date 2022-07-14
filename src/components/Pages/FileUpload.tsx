@@ -1,10 +1,9 @@
 import DisabledSpinner from 'components/Pages/DisabledSpinner';
-import UploadGrid from 'components/Pages/Grids/UploadGrid';
+import HmisUpdatedGrid from 'components/Pages/Grids/HmisUpdatedGrid';
 import {ClientHmisResponse} from 'providers/fileProvider';
 import {Form} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import React, {useGlobal, useState} from 'reactn';
-import {ClientRecord} from 'types/RecordTypes';
 
 interface IProps {
     tabKey: string;
@@ -82,7 +81,7 @@ const FileUpload = (props: IProps) => {
 
             {updatedClients !== null && !isBusy && (
                 <div className="my-3">
-                    <UploadGrid clientList={updatedClients} />
+                    <HmisUpdatedGrid clientHmisList={updatedClients} />
                 </div>
             )}
         </Form>

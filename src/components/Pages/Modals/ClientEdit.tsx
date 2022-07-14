@@ -27,7 +27,6 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     const onClose = props.onClose;
 
     const [isDupe, setIsDupe] = useState(false);
-    const [isDobValid, setIsDobValid] = useState(false);
     const focusReference = useRef<HTMLInputElement>(null);
 
     const [clientInfo, setClientInfo] = useState<ClientRecord>(props.clientInfo);
@@ -50,15 +49,8 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
     const [canSave, setCanSave] = useState(true);
     useEffect(() => {
         const noInvalid = document.querySelectorAll('.is-invalid')?.length === 0;
-        const now = dayjs();
-        const day = clientInfo.DOB_DAY as number;
-        const month = (clientInfo.DOB_MONTH as number) - 1;
-        const year = clientInfo.DOB_YEAR as number;
-        const dob = new Date(year, month, day);
-        const dobCompare = dob.getFullYear() > 1900 && dob.getFullYear() <= now.year() && dob.getMonth() === month;
-        setIsDobValid(dobCompare);
-        setCanSave(noInvalid && dobCompare);
-    }, [clientInfo, clientInfo.DOB_DAY, clientInfo.DOB_MONTH, clientInfo.DOB_YEAR]);
+        setCanSave(noInvalid);
+    }, [clientInfo]);
 
     /**
      * Fires when a text field or checkbox is changing.
@@ -190,9 +182,11 @@ const ClientEdit = (props: IProps): JSX.Element | null => {
                     </Form.Group>
 
                     <Form.Group as={Row} className="my-1">
+                        {/*
+                            NOTE: This used to have an is-invalid but since it's a label not input state wasn't updating
+                        */}
                         <Form.Label column sm="2">
-                            <span className={isDobValid ? '' : 'is-invalid'}>DOB</span>
-                            <Form.Control.Feedback type="invalid">Invalid Date of Birth</Form.Control.Feedback>
+                            DOB
                         </Form.Label>
                         <Form.Label column sm={1}>
                             Month
