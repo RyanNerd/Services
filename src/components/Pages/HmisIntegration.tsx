@@ -9,7 +9,7 @@ interface IProps {
     tabKey: string;
 }
 
-const FileUpload = (props: IProps) => {
+const HmisIntegration = (props: IProps) => {
     const [providers] = useGlobal('providers');
     const [, setErrorDetails] = useGlobal('errorDetails');
     const fileProvider = providers.fileProvider;
@@ -54,7 +54,7 @@ const FileUpload = (props: IProps) => {
     };
 
     // If the client tab isn't active then don't render anything
-    if (props.tabKey !== 'import') return null;
+    if (props.tabKey !== 'hmis-integration') return null;
 
     return (
         <Form>
@@ -88,4 +88,4 @@ const FileUpload = (props: IProps) => {
     );
 };
 
-export default FileUpload;
+export default HmisIntegration;
