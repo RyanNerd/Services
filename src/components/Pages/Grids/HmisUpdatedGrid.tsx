@@ -1,5 +1,7 @@
 import dayjs from 'dayjs';
 import {ClientHmisResponse} from 'providers/fileProvider';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import React from 'reactn';
 import {ClientNotFound, ClientRecord} from 'types/RecordTypes';
@@ -50,93 +52,100 @@ const HmisUpdatedGrid = (props: IProps) => {
     };
 
     return (
-        <>
-            <Table
-                bordered
-                className="d-block"
-                hover
-                size="sm"
-                striped
-                style={{
-                    width: 'fit-content',
-                    borderCollapse: 'separate',
-                    height: '600px',
-                    overflowY: 'auto',
-                    overflowX: 'auto'
-                }}
-            >
-                <thead className="dark" style={{position: 'sticky', top: 0, display: 'table-header-group'}}>
-                    {clientsNotFoundList && clientsNotFoundList?.length > 0 ? (
-                        <>
+        <Row>
+            <Col lg={6}>
+                <Table
+                    bordered
+                    className="d-block"
+                    hover
+                    size="sm"
+                    striped
+                    style={{
+                        width: 'fit-content',
+                        borderCollapse: 'separate',
+                        height: '600px',
+                        overflowY: 'auto',
+                        overflowX: 'auto'
+                    }}
+                >
+                    <thead className="dark" style={{position: 'sticky', top: 0, display: 'table-header-group'}}>
+                        {clientsNotFoundList && clientsNotFoundList?.length > 0 ? (
+                            <>
+                                <tr>
+                                    <th colSpan={6} style={{position: 'sticky', top: 0}}>
+                                        Clients Not Found
+                                    </th>
+                                </tr>
+                                <tr style={{backgroundColor: 'lightgray'}}>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Age</th>
+                                    <th>HMIS</th>
+                                    <th>EnrollmentId</th>
+                                </tr>
+                            </>
+                        ) : (
                             <tr>
-                                <th colSpan={6} style={{position: 'sticky', top: 0}}>
-                                    Clients Not Found
+                                <th colSpan={1}>
+                                    <td>All clients found</td>
                                 </th>
                             </tr>
-                            <tr style={{backgroundColor: 'lightgray'}}>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Age</th>
-                                <th>HMIS</th>
-                                <th>EnrollmentId</th>
-                            </tr>
-                        </>
-                    ) : (
-                        <tr>
-                            <th colSpan={1}>
-                                <td>All clients found</td>
-                            </th>
-                        </tr>
-                    )}
-                </thead>
-                <tbody style={{overflow: 'hidden'}}>
-                    {clientsNotFoundList?.length > 0 && (
-                        <>{clientsNotFoundList.map((client) => ClientNotFoundRow(client))}</>
-                    )}
-                </tbody>
-            </Table>
+                        )}
+                    </thead>
+                    <tbody style={{overflow: 'hidden'}}>
+                        {clientsNotFoundList?.length > 0 && (
+                            <>{clientsNotFoundList.map((client) => ClientNotFoundRow(client))}</>
+                        )}
+                    </tbody>
+                </Table>
+            </Col>
 
-            <Table
-                bordered
-                className="d-block my-3"
-                hover
-                size="sm"
-                striped
-                style={{
-                    width: 'fit-content',
-                    borderCollapse: 'collapse',
-                    height: '600px',
-                    overflowY: 'auto',
-                    overflowX: 'auto'
-                }}
-            >
-                <thead className="dark" style={{position: 'sticky', top: 0, display: 'table-header-group'}}>
-                    {clientsUpdatedList && clientsUpdatedList?.length > 0 ? (
-                        <tr>
-                            <th colSpan={5}>Clients Updated</th>
-                            <tr style={{backgroundColor: 'lightgray'}}>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>DOB</th>
-                                <th>HMIS #</th>
-                                <th>Enrollment ID</th>
+            <Col lg={6}>
+                <Table
+                    bordered
+                    className="d-block"
+                    hover
+                    size="sm"
+                    striped
+                    style={{
+                        width: 'fit-content',
+                        borderCollapse: 'collapse',
+                        height: '600px',
+                        overflowY: 'auto',
+                        overflowX: 'auto'
+                    }}
+                >
+                    <thead className="dark" style={{position: 'sticky', top: 0, display: 'table-header-group'}}>
+                        {clientsUpdatedList && clientsUpdatedList?.length > 0 ? (
+                            <>
+                                <tr>
+                                    <th colSpan={5}>Clients Updated</th>
+                                </tr>
+
+                                <tr style={{backgroundColor: 'lightgray'}}>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>DOB</th>
+                                    <th>HMIS #</th>
+                                    <th>Enrollment ID</th>
+                                </tr>
+                            </>
+                        ) : (
+                            <tr>
+                                <th colSpan={1}>
+                                    <td>No clients updated</td>
+                                </th>
                             </tr>
-                        </tr>
-                    ) : (
-                        <tr>
-                            <th colSpan={1}>
-                                <td>No clients updated</td>
-                            </th>
-                        </tr>
-                    )}
-                </thead>
-                <tbody>
-                    {clientsUpdatedList && clientsUpdatedList?.length > 0 && (
-                        <>{clientsUpdatedList.map((client) => ClientRow(client))}</>
-                    )}
-                </tbody>
-            </Table>
-        </>
+                        )}
+                    </thead>
+                    <tbody>
+                        {clientsUpdatedList && clientsUpdatedList?.length > 0 && (
+                            <>{clientsUpdatedList.map((client) => ClientRow(client))}</>
+                        )}
+                    </tbody>
+                </Table>
+            </Col>
+        </Row>
     );
 };
 
