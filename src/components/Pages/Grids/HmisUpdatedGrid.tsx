@@ -126,7 +126,9 @@ const HmisUpdatedGrid = (props: IProps) => {
                                                 className="mx-1"
                                                 size="sm"
                                                 onClick={async () => {
-                                                    await saveUnknownClientList(JSON.stringify(clientsNotFoundList));
+                                                    await saveUnknownClientList(
+                                                        JSON.stringify(clientsNotFoundList, null, 2)
+                                                    );
                                                 }}
                                             >
                                                 Save List
