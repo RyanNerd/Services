@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import {ClientHmisResponse} from 'providers/fileProvider';
+import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
@@ -11,6 +12,42 @@ import {randomString} from 'utilities/randomString';
 interface IProps {
     clientHmisList: ClientHmisResponse;
 }
+
+/**
+ * Get a fileHandle for when the user selects the fileName
+ * @param {string} filename The name of the file to save
+ */
+const getNewFileHandle = ({filename}: {filename: string}): Promise<FileSystemFileHandle> => {
+    const fileHandleOptions: SaveFilePickerOptions = {
+        suggestedName: filename,
+        types: [
+            {
+                description: 'Markdown file',
+                accept: {
+                    'text/plain': ['.md']
+                }
+            }
+        ]
+    };
+
+    return showSaveFilePicker(fileHandleOptions);
+};
+
+const writeFile = async ({fileHandle, blob}: {fileHandle: FileSystemFileHandle; blob: Blob}) => {
+    const writer = await fileHandle.createWritable();
+    await writer.write(blob);
+    await writer.close();
+};
+
+const saveUnknownClientList = async (notFoundClientsText: string) => {
+    const fileHandle = await getNewFileHandle({
+        filename: 'unknown_clients.txt'
+    });
+    await writeFile({
+        fileHandle,
+        blob: new Blob([notFoundClientsText])
+    });
+};
 
 const HmisUpdatedGrid = (props: IProps) => {
     const clientsResponse = props.clientHmisList;
@@ -73,7 +110,18 @@ const HmisUpdatedGrid = (props: IProps) => {
                             <>
                                 <tr>
                                     <th colSpan={6} style={{position: 'sticky', top: 0}}>
-                                        Clients Not Found
+                                        <span>
+                                            {'Clients Not Found'}
+                                            <Button
+                                                className="mx-1"
+                                                size="sm"
+                                                onClick={async () => {
+                                                    await saveUnknownClientList(JSON.stringify(clientsNotFoundList));
+                                                }}
+                                            >
+                                                Save List
+                                            </Button>
+                                        </span>
                                     </th>
                                 </tr>
                                 <tr style={{backgroundColor: 'lightgray'}}>
