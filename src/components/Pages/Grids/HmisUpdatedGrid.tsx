@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/valid-types */
 import dayjs from 'dayjs';
 import {ClientHmisResponse} from 'providers/fileProvider';
 import Button from 'react-bootstrap/Button';
@@ -14,7 +15,7 @@ interface IProps {
 }
 
 /**
- * Get a fileHandle for when the user selects the fileName
+ * Get a fileHandle for when the user selects the fileName to save
  * @param {string} filename The name of the file to save
  */
 const getNewFileHandle = ({filename}: {filename: string}): Promise<FileSystemFileHandle> => {
@@ -24,7 +25,7 @@ const getNewFileHandle = ({filename}: {filename: string}): Promise<FileSystemFil
             {
                 description: 'Markdown file',
                 accept: {
-                    'text/plain': ['.md']
+                    'text/plain': ['.txt', '.json']
                 }
             }
         ]
@@ -33,15 +34,24 @@ const getNewFileHandle = ({filename}: {filename: string}): Promise<FileSystemFil
     return showSaveFilePicker(fileHandleOptions);
 };
 
+/**
+ * Perform the save of the given file (Blob)
+ * @param {{FileSystemFileHandle} fileHandle, {Blob} blob}} The fileHandle from getNewFileHandle()
+ * @returns {Promise<void>}
+ */
 const writeFile = async ({fileHandle, blob}: {fileHandle: FileSystemFileHandle; blob: Blob}) => {
     const writer = await fileHandle.createWritable();
     await writer.write(blob);
     await writer.close();
 };
 
+/**
+ * Called when the Save List button is clicked - saves the Clients Not Found
+ * @param {string} notFoundClientsText The clients not found in a string format
+ */
 const saveUnknownClientList = async (notFoundClientsText: string) => {
     const fileHandle = await getNewFileHandle({
-        filename: 'unknown_clients.txt'
+        filename: 'unknown_clients.json'
     });
     await writeFile({
         fileHandle,
