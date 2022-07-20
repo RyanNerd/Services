@@ -18,7 +18,7 @@ const HmisIntegration = (props: IProps) => {
     const [invalidMaxSize, setInvalidMaxSize] = useState(false);
     const [updatedClients, setUpdatedClients] = useState<null | ClientHmisResponse>(null);
     const [fileValue, setFileValue] = useState<undefined | string>();
-    const [showInstructions, setShowinstructions] = useState(false);
+    const [showInstructions, setShowInstructions] = useState(false);
 
     /**
      * Handle when the user clicked the Select a File to Upload component
@@ -45,7 +45,7 @@ const HmisIntegration = (props: IProps) => {
                         await setErrorDetails(error);
                     }
 
-                    // We're done with the file upload so no longer busy and we reset the file control
+                    // We're done with the file upload so no longer busy, and we reset the file control
                     setIsBusy(false);
                     setFileValue('');
                 } else {
@@ -61,7 +61,7 @@ const HmisIntegration = (props: IProps) => {
     return (
         <Form>
             <Form.Group>
-                <Button disabled={isBusy} onClick={() => setShowinstructions(true)}>
+                <Button disabled={isBusy} onClick={() => setShowInstructions(true)}>
                     Click here for instructions on how to generate a `ClientTrackExport.xml` file
                 </Button>
             </Form.Group>
@@ -88,7 +88,7 @@ const HmisIntegration = (props: IProps) => {
                 </div>
             )}
 
-            <HmisInstructions show={showInstructions} onClose={() => setShowinstructions(false)} />
+            <HmisInstructions show={showInstructions} onClose={() => setShowInstructions(false)} />
         </Form>
     );
 };
