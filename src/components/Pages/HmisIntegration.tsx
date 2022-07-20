@@ -1,5 +1,6 @@
 import DisabledSpinner from 'components/Pages/DisabledSpinner';
 import HmisUpdatedGrid from 'components/Pages/Grids/HmisUpdatedGrid';
+import HmisInstructions from 'components/Pages/Modals/HmisInstructions';
 import {ClientHmisResponse} from 'providers/fileProvider';
 import {Form} from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
@@ -17,6 +18,7 @@ const HmisIntegration = (props: IProps) => {
     const [invalidMaxSize, setInvalidMaxSize] = useState(false);
     const [updatedClients, setUpdatedClients] = useState<null | ClientHmisResponse>(null);
     const [fileValue, setFileValue] = useState<undefined | string>();
+    const [showInstructions, setShowinstructions] = useState(false);
 
     /**
      * Handle when the user clicked the Select a File to Upload component
@@ -59,8 +61,9 @@ const HmisIntegration = (props: IProps) => {
     return (
         <Form>
             <Form.Group>
-                {/* TODO: Actually show instructions */}
-                <Button disabled={isBusy}>Click here for instructions on how to generate a HMIS.XML file</Button>
+                <Button disabled={isBusy} onClick={() => setShowinstructions(true)}>
+                    Click here for instructions on how to generate a HMIS.XML file
+                </Button>
             </Form.Group>
 
             <Form.Group className="my-4">
@@ -84,6 +87,8 @@ const HmisIntegration = (props: IProps) => {
                     <HmisUpdatedGrid clientHmisList={updatedClients} />
                 </div>
             )}
+
+            <HmisInstructions show={showInstructions} onClose={() => setShowinstructions(false)} />
         </Form>
     );
 };
