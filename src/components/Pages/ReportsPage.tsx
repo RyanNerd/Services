@@ -242,7 +242,7 @@ const ReportsPage = (props: IProps) => {
 
         const content = generateBatchUploadFile(serviceLogReport as ServiceLogReportRecord[]);
         const blob = new Blob([content], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            type: 'text/csv'
         });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
