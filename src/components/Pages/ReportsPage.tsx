@@ -206,35 +206,53 @@ const ReportsPage = (props: IProps) => {
         );
     };
 
-    const hmisUserId = 'BS7'; // TODO: Add dropdown to select who is generating the batch upload XLSX file.
+    const hmisUserId = 'BS7'; // TODO: Add dropdown to select who is generating the batch upload CSV file.
 
-    const generateBatchUploadFile = (serviceLogReport: ServiceLogReportRecord[]) => {
-        let contents =
-            // eslint-disable-next-line max-len
-            'Service_ServiceCodeID,Service_ClientID,Service_EnrollID,Service_RegionID,Service_BeginDate,Service_EndDate,Service_UnitsOfMeasure,Service_Units,Service_UnitValue,Service_UserID,Service_CreatedDate,Service_CreatedBy,Service_UpdatedDate,Service_UpdatedBy,Service_OrgID,Service_RestrictOrg';
-        const CRLF = String.fromCodePoint(13) + String.fromCodePoint(10);
-        contents += CRLF;
+    const handleFileSave = () => {
+        const generateBatchUploadFile = (serviceLogReport: ServiceLogReportRecord[]) => {
+            let content =
+                // eslint-disable-next-line max-len
+                'Service_ServiceCodeID,Service_ClientID,Service_EnrollID,Service_RegionID,Service_BeginDate,Service_EndDate,Service_UnitsOfMeasure,Service_Units,Service_UnitValue,Service_UserID,Service_CreatedDate,Service_CreatedBy,Service_UpdatedDate,Service_UpdatedBy,Service_OrgID,Service_RestrictOrg';
+            const CRLF = String.fromCodePoint(13) + String.fromCodePoint(10);
+            content += CRLF;
 
-        for (const slr of serviceLogReport) {
-            if (slr.selected) {
-                contents += slr.serviceHmisId + ',';
-                contents += slr.clientHmis + ',';
-                contents += slr.clientEnrollment + ',';
-                contents += '' + ',';
-                contents += slr.dateOfService + ',';
-                contents += slr.dateOfService + ',';
-                contents += slr.serviceLogRecord.UnitOfMeasure + ',';
-                contents += slr.serviceLogRecord.Units + ',';
-                contents += slr.serviceLogRecord.UnitValue + ',';
-                contents += hmisUserId + ',';
-                contents += 'STG,';
-                contents += 'Restrict to MOU/Info Release';
-                contents += CRLF;
+            for (const slr of serviceLogReport) {
+                if (slr.selected) {
+                    content += slr.serviceHmisId + ',';
+                    content += slr.clientHmis + ',';
+                    content += slr.clientEnrollment + ',';
+                    content += '' + ',';
+                    content += slr.dateOfService + ',';
+                    content += slr.dateOfService + ',';
+                    content += slr.serviceLogRecord.UnitOfMeasure + ',';
+                    content += slr.serviceLogRecord.Units + ',';
+                    content += slr.serviceLogRecord.UnitValue + ',';
+                    content += hmisUserId + ',';
+                    content += slr.dateOfService + ',';
+                    content += hmisUserId + ',';
+                    content += slr.dateOfService + ',';
+                    content += hmisUserId + ',';
+                    content += 'STG,';
+                    content += 'Restrict to MOU/Info Release';
+                    content += CRLF;
+                }
             }
-        }
+            return content;
+        };
 
-        alert('contents' + JSON.stringify(contents));
-        return contents;
+        const content = generateBatchUploadFile(serviceLogReport as ServiceLogReportRecord[]);
+        const blob = new Blob([content], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'batch-upload.csv';
+        document.body.append(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
     };
 
     return (
@@ -242,19 +260,15 @@ const ReportsPage = (props: IProps) => {
             <Card.Header>
                 <Form>
                     <Form.Group>
-                        <Button
-                            className="mx-3"
-                            disabled={!allowImport}
-                            onClick={() => generateBatchUploadFile(serviceLogReport as ServiceLogReportRecord[])}
-                        >
-                            Create file to import into HMIS
+                        <Button className="mx-3" disabled={!allowImport} onClick={() => handleFileSave()}>
+                            Create `batch-upload.csv` file to import into HMIS
                         </Button>
                         <Button
                             className="mx-3"
                             onClick={() => alert('todo: Show instructions on how to import to HMIS')}
                             variant="info"
                         >
-                            Click here for instructions on how to import the file to HMIS
+                            Click here for instructions on how to import the `batch-upload.csv` file into HMIS
                         </Button>
                     </Form.Group>
                     <Card.Subtitle className="my-2">
