@@ -64,3 +64,11 @@ Service_Units:
 
 **Service_RestrictOrg**:
  Restrict to MOU/Info Release
+
+Sample table:
+
+|Service_ServiceCodeID|Service_ClientID|Service_EnrollID|Service_RegionID|Service_BeginDate|Service_EndDate|Service_UnitsOfMeasure|Service_Units|Service_UnitValue|Service_UserID|Service_CreatedDate|Service_CreatedBy|Service_UpdatedDate|Service_UpdatedBy|Service_OrgID| Service_RestrictOrg          |
+|---------------------|----------------|----------------|----------------|-----------------|---------------|----------------------|-------------|-----------------|--------------|-------------------|-----------------|-------------------|-----------------|-------------|------------------------------|
+|629|419490|106136| |5/24/2022|5/24/2022|C|1|0|BS7|5/24/2022|BS7|5/24/2022|BS7|STG|Restrict to MOU/Info Release |
+|629|408213|93801| |5/24/2022|5/24/2022|C|1|0|BS7|5/24/2022|BS7|5/24/2022|BS7|STG|Restrict to MOU/Info Release |
+|629|410681|94419| |5/24/2022|5/24/2022|C|1|0|BS7|5/24/2022|BS7|5/24/2022|BS7|STG|Restrict to MOU/Info Release|

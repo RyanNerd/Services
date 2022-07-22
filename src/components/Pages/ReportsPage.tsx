@@ -206,18 +206,52 @@ const ReportsPage = (props: IProps) => {
         );
     };
 
+    const generateBatchUploadFile = (serviceLogReport: ServiceLogReportRecord[]) => {
+        let contents =
+            // eslint-disable-next-line max-len
+            'Service_ServiceCodeID,Service_ClientID,Service_EnrollID,Service_RegionID,Service_BeginDate,Service_EndDate,Service_UnitsOfMeasure,Service_Units,Service_UnitValue,Service_UserID,Service_CreatedDate,Service_CreatedBy,Service_UpdatedDate,Service_UpdatedBy,Service_OrgID,Service_RestrictOrg';
+        const CRLF = String.fromCodePoint(13) + String.fromCodePoint(10);
+        contents += CRLF;
+
+        for (const slr of serviceLogReport) {
+            if (slr.selected) {
+                contents += slr.serviceHmisId + ',';
+                contents += slr.clientHmis + ',';
+                contents += slr.clientEnrollment + ',';
+                contents += CRLF;
+            }
+        }
+
+        alert('contents' + JSON.stringify(contents));
+        return contents;
+    };
+
     return (
         <Card border="info">
             <Card.Header>
-                <span>Service Logs</span>
-                <Button className="mx-3" disabled={!allowImport} onClick={() => alert('todo: Perform Import')}>
-                    Import into HMIS
-                </Button>
-                <Card.Subtitle className="my-1">
-                    <span style={{fontStyle: 'italic'}}>Italicized</span>
-                    <span> rows indicate the client is missing HMIS or EnrollmentId. </span>
-                    <span>Click on the table headers to sort.</span>
-                </Card.Subtitle>
+                <Form>
+                    <Form.Group>
+                        <Button
+                            className="mx-3"
+                            disabled={!allowImport}
+                            onClick={() => generateBatchUploadFile(serviceLogReport as ServiceLogReportRecord[])}
+                        >
+                            Create file to import into HMIS
+                        </Button>
+                        <Button
+                            className="mx-3"
+                            onClick={() => alert('todo: Show instructions on how to import to HMIS')}
+                            variant="info"
+                        >
+                            Click here for instructions on how to import the file to HMIS
+                        </Button>
+                    </Form.Group>
+                    <Card.Subtitle className="my-2">
+                        <span style={{fontStyle: 'italic'}}>Italicized</span>
+                        <span> rows indicate the client is missing HMIS or EnrollmentId. </span>
+                        <span>Click on the table headers to sort.</span>
+                    </Card.Subtitle>
+                </Form>
             </Card.Header>
             <Card.Body>
                 {serviceLogReport !== null && serviceLogReport !== undefined && serviceLogReport.length > 0 ? (

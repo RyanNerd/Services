@@ -2,6 +2,8 @@
 
 App to track services of clients and allow the easy reporting and uploading to HMIS
 
+See the `docs` folder for HMIS integration documentation details.
+
 This app is written in React and uses the following libraries:
 
 - [useHooks](https://usehooks-ts.com/) A library of useful React hooks
