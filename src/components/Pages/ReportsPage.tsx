@@ -206,6 +206,8 @@ const ReportsPage = (props: IProps) => {
         );
     };
 
+    const hmisUserId = 'BS7'; // TODO: Add dropdown to select who is generating the batch upload XLSX file.
+
     const generateBatchUploadFile = (serviceLogReport: ServiceLogReportRecord[]) => {
         let contents =
             // eslint-disable-next-line max-len
@@ -218,6 +220,15 @@ const ReportsPage = (props: IProps) => {
                 contents += slr.serviceHmisId + ',';
                 contents += slr.clientHmis + ',';
                 contents += slr.clientEnrollment + ',';
+                contents += '' + ',';
+                contents += slr.dateOfService + ',';
+                contents += slr.dateOfService + ',';
+                contents += slr.serviceLogRecord.UnitOfMeasure + ',';
+                contents += slr.serviceLogRecord.Units + ',';
+                contents += slr.serviceLogRecord.UnitValue + ',';
+                contents += hmisUserId + ',';
+                contents += 'STG,';
+                contents += 'Restrict to MOU/Info Release';
                 contents += CRLF;
             }
         }
