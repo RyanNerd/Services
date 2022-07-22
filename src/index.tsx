@@ -10,7 +10,6 @@ const startApp = async () => {
     const root = createRoot(document.getElementById('root') as HTMLDivElement);
     root.render(
         <React.StrictMode>
-            {/* eslint-disable-next-line no-console */}
             <App>
                 <LandingPage />
             </App>

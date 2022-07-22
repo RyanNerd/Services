@@ -208,8 +208,16 @@ const ReportsPage = (props: IProps) => {
 
     const hmisUserId = 'BS7'; // TODO: Add dropdown to select who is generating the batch upload CSV file.
 
+    /**
+     * Fires when the user clicks the button to generate the batch-upload file
+     */
     const handleFileSave = () => {
-        const generateBatchUploadFile = (serviceLogReport: ServiceLogReportRecord[]) => {
+        /**
+         * Internal function to build out the CSV content for the batch-upload.csv file
+         * @param {ServiceLogReportRecord[]} serviceLogReport The array to process
+         * @returns {string} The CSV formatted string
+         */
+        const generateBatchUploadContent = (serviceLogReport: ServiceLogReportRecord[]) => {
             let content =
                 // eslint-disable-next-line max-len
                 'Service_ServiceCodeID,Service_ClientID,Service_EnrollID,Service_RegionID,Service_BeginDate,Service_EndDate,Service_UnitsOfMeasure,Service_Units,Service_UnitValue,Service_UserID,Service_CreatedDate,Service_CreatedBy,Service_UpdatedDate,Service_UpdatedBy,Service_OrgID,Service_RestrictOrg';
@@ -240,7 +248,7 @@ const ReportsPage = (props: IProps) => {
             return content;
         };
 
-        const content = generateBatchUploadFile(serviceLogReport as ServiceLogReportRecord[]);
+        const content = generateBatchUploadContent(serviceLogReport as ServiceLogReportRecord[]);
         const blob = new Blob([content], {
             type: 'text/csv'
         });
