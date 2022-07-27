@@ -1,5 +1,6 @@
 import ClientEdit from 'components/Pages/Modals/ClientEdit';
 import ClientServicesModal from 'components/Pages/Modals/ClientServicesModal';
+import CsvInstructions from 'components/Pages/Modals/CsvInstructions';
 import dayjs from 'dayjs';
 import usePrevious from 'hooks/usePrevious';
 import {Card, Spinner} from 'react-bootstrap';
@@ -46,6 +47,7 @@ const ReportsPage = (props: IProps) => {
     const [serviceLogSelectAll, setServiceLogSelectAll] = useState(false);
     const [serviceSortDirection, setServiceSortDirection] = useState(true);
     const [showServiceLogModal, setShowServiceLogModal] = useState<ServiceLogReportRecord | null>(null);
+    const [showInstructions, setShowInstructions] = useState(false);
 
     const [serviceList, setServiceList] = useState(props.serviceList);
     useEffect(() => {
@@ -206,16 +208,16 @@ const ReportsPage = (props: IProps) => {
         );
     };
 
-    const hmisUserId = 'BS7'; // TODO: Add dropdown to select who is generating the batch upload CSV file.
+    const hmisUserId = 'BS7';
 
     /**
      * Fires when the user clicks the button to generate the batch-upload file
      */
     const handleFileSave = () => {
         /**
-         * Internal function to build out the CSV content for the batch-upload.csv file
+         * Internal function to build out the csv content for the batch-upload.csv file
          * @param {ServiceLogReportRecord[]} serviceLogReport The array to process
-         * @returns {string} The CSV formatted string
+         * @returns {string} The csv formatted string
          */
         const generateBatchUploadContent = (serviceLogReport: ServiceLogReportRecord[]) => {
             let content =
@@ -285,11 +287,7 @@ const ReportsPage = (props: IProps) => {
                         <Button className="mx-3" disabled={!allowImport} onClick={() => handleFileSave()}>
                             Create `batch-upload.csv` file to import into HMIS
                         </Button>
-                        <Button
-                            className="mx-3"
-                            onClick={() => alert('todo: Show instructions on how to import to HMIS')}
-                            variant="info"
-                        >
+                        <Button className="mx-3" onClick={() => setShowInstructions(true)} variant="info">
                             Click here for instructions on how to import the `batch-upload.csv` file into HMIS
                         </Button>
                     </Form.Group>
@@ -420,6 +418,8 @@ const ReportsPage = (props: IProps) => {
                     serviceLogProvider={serviceLogProvider}
                 />
             )}
+
+            <CsvInstructions onClose={() => setShowInstructions(false)} show={showInstructions} />
         </Card>
     );
 };
