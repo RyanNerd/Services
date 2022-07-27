@@ -16,7 +16,7 @@ type LoadResponse = {
 };
 
 export interface IServiceLogProvider {
-    delete: (residentId: number, permanentDelete?: boolean) => Promise<DeleteResponse>;
+    delete: (serviceLogId: number, permanentDelete?: boolean) => Promise<DeleteResponse>;
     loadAll: (clientId?: number) => Promise<ServiceLogRecord[]>;
     loadForDate: (clientId: number, dateOfService: Date) => Promise<ServiceLogRecord[]>;
     update: (serviceLogInfo: ServiceLogRecord) => Promise<ServiceLogRecord>;
@@ -102,7 +102,7 @@ const serviceLogProvider = (url: string): IServiceLogProvider => {
 
         /**
          * ServiceLog Delete
-         * @param {number} serviceLogId PK of the Service table
+         * @param {number} serviceLogId PK of the ServiceLog table
          * @param {boolean} permanentDelete Set to true to destroy the record
          * @returns {Promise<DeleteResponse>} Success: true/false
          */

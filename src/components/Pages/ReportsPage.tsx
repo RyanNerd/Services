@@ -263,6 +263,20 @@ const ReportsPage = (props: IProps) => {
         a.remove();
     };
 
+    /**
+     * Fires when user clicks Mark all selected as imported into HMIS
+     */
+    const handleMarkAsImported = async () => {
+        if (serviceLogReport) {
+            for (const slr of serviceLogReport) {
+                if (slr.selected) {
+                    await serviceLogProvider.delete(slr.id);
+                }
+            }
+            setServiceLogReport(null); // Refresh the serviceLogReport list
+        }
+    };
+
     return (
         <Card border="info">
             <Card.Header>
@@ -279,13 +293,23 @@ const ReportsPage = (props: IProps) => {
                             Click here for instructions on how to import the `batch-upload.csv` file into HMIS
                         </Button>
                     </Form.Group>
-                    <Card.Subtitle className="my-2">
+
+                    <Card.Subtitle>
+                        <Button
+                            className="my-3 mx-3"
+                            disabled={!allowImport}
+                            onClick={() => handleMarkAsImported()}
+                            variant="outline-danger"
+                        >
+                            Mark all selected as imported into HMIS
+                        </Button>
                         <span style={{fontStyle: 'italic'}}>Italicized</span>
                         <span> rows indicate the client is missing HMIS or EnrollmentId. </span>
                         <span>Click on the table headers to sort.</span>
                     </Card.Subtitle>
                 </Form>
             </Card.Header>
+
             <Card.Body>
                 {serviceLogReport !== null && serviceLogReport !== undefined && serviceLogReport.length > 0 ? (
                     <Table bordered hover striped>
