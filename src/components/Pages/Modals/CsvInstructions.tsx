@@ -5,19 +5,19 @@ import Tab from 'react-bootstrap/Tab';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import React, {useEffect, useState} from 'reactn';
-import step1 from 'images/integration/step-1.png';
-import step2 from 'images/integration/step-2.png';
-import step3 from 'images/integration/step-3.png';
-import step4 from 'images/integration/step-4.png';
-import step5 from 'images/integration/step-5.png';
-import step6 from 'images/integration/step-6.png';
+import step1 from 'images/csv/step-1.png';
+import step2 from 'images/csv/step-2.png';
+import step3 from 'images/csv/step-3.png';
+import step4 from 'images/csv/step-4.png';
+import step5 from 'images/csv/step-5.png';
+import step6 from 'images/csv/step-6.png';
 
 interface IProps {
     show: boolean;
     onClose: () => void;
 }
 
-const HmisInstructions = (props: IProps) => {
+const CsvInstructions = (props: IProps) => {
     const [tabIndicator, setTabIndicator] = useState(1);
 
     const [key, setKey] = useState('step' + tabIndicator);
@@ -31,13 +31,10 @@ const HmisInstructions = (props: IProps) => {
     }, [props.show]);
     const onClose = props.onClose;
 
-    const step2Text =
-        'In the Clients in Programs Report set the Date Range to this year and make sure the Organization(s) has Switchpoint checkmarked';
-
     return (
         <Modal backdrop="static" size="xl" show={show} onHide={() => onClose()} onEnter={() => setTabIndicator(1)}>
             <Modal.Header closeButton>
-                <Modal.Title>HMIS Integration Guide</Modal.Title>
+                <Modal.Title>CSV HMIS Upload Guide</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
@@ -56,12 +53,12 @@ const HmisInstructions = (props: IProps) => {
 
                     <Tabs activeKey={key} onSelect={(key) => setKey(key || 'step1')}>
                         <Tab disabled={true} eventKey="step1" title="Step 1">
-                            <img src={step1} alt="step 1" width={1000} height={100} />
+                            <img src={step1} alt="step 1" width={400} height={60} />
                             <Form.Control
                                 className="my-4"
-                                style={{fontSize: '21px', fontWeight: 'bold'}}
+                                style={{fontSize: '17px', fontWeight: 'bold'}}
                                 as="textarea"
-                                value="In HMIS use the search box and search for 'Clients in Programs'"
+                                value="Select from the table what services are to be imported and then click on 'Create `batch-upload.csv` file to import into HMIS'. Make a note of where the `batch-upload.csv` was saved as this is the file that will be uploaded into HMIS"
                                 readOnly
                             />
                         </Tab>
@@ -74,18 +71,18 @@ const HmisInstructions = (props: IProps) => {
                                 as="textarea"
                                 rows={3}
                                 plaintext
-                                value={step2Text}
+                                value={'In HMIS Select Services -> Import Services'}
                                 readOnly
                             />
                         </Tab>
 
                         <Tab disabled={true} eventKey="step3" title="Step 3">
-                            <img src={step3} alt="step 3" width={300} height={75} />
+                            <img src={step3} alt="step 3" width={135} height={116} />
                             <Form.Control
                                 className="my-4"
                                 as="textarea"
                                 style={{fontSize: '21px', fontWeight: 'bold'}}
-                                value="Click the Report button at the bottom"
+                                value="In the upper right click on the Excel Import button"
                                 readOnly
                             />
                         </Tab>
@@ -96,37 +93,29 @@ const HmisInstructions = (props: IProps) => {
                                 className="my-4"
                                 as="textarea"
                                 style={{fontSize: '21px', fontWeight: 'bold'}}
-                                value="Once the report finishes running you should see something like this"
+                                value="Click on the browse button and find the `batch-upload.csv` file you created then click `Import Now`"
                                 readOnly
                             />
                         </Tab>
 
                         <Tab disabled={true} eventKey="step5" title="Step 5">
-                            <img src={step5} alt="step 5" width={800} height={350} />
+                            <img src={step5} alt="step 5" width={350} height={375} />
                             <Form.Control
                                 className="my-4"
                                 as="textarea"
                                 style={{fontSize: '21px', fontWeight: 'bold'}}
-                                value="At the top of the report click on the disk icon dropdown and select Excel Data"
+                                value="Click on `Start/Resume Import"
                                 readOnly
                             />
                         </Tab>
 
                         <Tab disabled={true} eventKey="step6" title="Step 6">
-                            <Form.Control
-                                className="my-4"
-                                as="textarea"
-                                style={{fontSize: '31px', fontWeight: 'bold', color: 'red'}}
-                                value="IMPORTANT! Always select `Export as Excel XML`"
-                                readOnly
-                            />
-                            <img src={step6} alt="step 6" width={501} height={251} />
+                            <img src={step6} alt="step 6" width={350} height={375} />
                             <Form.Control
                                 className="my-4"
                                 as="textarea"
                                 style={{fontSize: '21px', fontWeight: 'bold'}}
-                                value="This will create and download a file called `Export Report ClientsInPrograms YYYY-MM-DD.xml`
-                                 Note where this is downloaded as this is the file that needs to be uploaded in the services app."
+                                value="If there were no errors it will indicate 100% complete and show how many services were imported"
                                 readOnly
                             />
                         </Tab>
@@ -159,4 +148,4 @@ const HmisInstructions = (props: IProps) => {
     );
 };
 
-export default HmisInstructions;
+export default CsvInstructions;
