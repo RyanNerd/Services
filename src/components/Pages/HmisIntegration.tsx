@@ -62,13 +62,13 @@ const HmisIntegration = (props: IProps) => {
         <Form>
             <Form.Group>
                 <Button disabled={isBusy} onClick={() => setShowInstructions(true)}>
-                    Click here for instructions on how to generate a `ClientTrackExport.xml` file
+                    Click here for instructions on how to generate an `Export Report ClientsInPrograms.xml` file
                 </Button>
             </Form.Group>
 
             <Form.Group className="my-4">
                 {isBusy && <DisabledSpinner className="mx-1" />}
-                <Form.Label>Select the `ClientTrackExport.xml` File to Upload</Form.Label>
+                <Form.Label>Select the `Export Report ClientsInPrograms.xml` File to Upload</Form.Label>
                 <Form.Control
                     className={invalidMaxSize ? 'is-invalid' : ''}
                     disabled={isBusy}

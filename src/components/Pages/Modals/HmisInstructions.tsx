@@ -32,13 +32,14 @@ const HmisInstructions = (props: IProps) => {
     const onClose = props.onClose;
 
     const step2Text =
-        'In the Clients in Programs Report set the Date Range to this year, and make sure the Organization(s) has Switchpoint checkmarked';
+        'In the Clients in Programs Report set the Date Range to this year and make sure the Organization(s) has Switchpoint checkmarked';
 
     return (
         <Modal backdrop="static" size="xl" show={show} onHide={() => onClose()} onEnter={() => setTabIndicator(1)}>
             <Modal.Header closeButton>
                 <Modal.Title>HMIS Integration Guide</Modal.Title>
             </Modal.Header>
+
             <Modal.Body>
                 <Form>
                     {tabIndicator !== 6 && (
@@ -112,18 +113,27 @@ const HmisInstructions = (props: IProps) => {
                         </Tab>
 
                         <Tab disabled={true} eventKey="step6" title="Step 6">
-                            <img src={step6} alt="step 6" width={300} height={25} />
+                            <Form.Control
+                                className="my-4"
+                                as="textarea"
+                                style={{fontSize: '31px', fontWeight: 'bold', color: 'red'}}
+                                value="IMPORTANT! Always select `Export as Excel XML`"
+                                readOnly
+                            />
+                            <img src={step6} alt="step 6" width={501} height={251} />
                             <Form.Control
                                 className="my-4"
                                 as="textarea"
                                 style={{fontSize: '21px', fontWeight: 'bold'}}
-                                value="This will create and download a file called ClientTrackExport.xml Make note where this downloaded as this is the file that needs to be uploaded in the services app."
+                                value="This will create and download a file called `Export Report ClientsInPrograms YYYY-MM-DD.xml`
+                                 Note where this is downloaded as this is the file that needs to be uploaded in the services app."
                                 readOnly
                             />
                         </Tab>
                     </Tabs>
                 </Form>
             </Modal.Body>
+
             <Modal.Footer>
                 {tabIndicator !== 6 && (
                     <Button
