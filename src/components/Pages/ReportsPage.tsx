@@ -160,7 +160,7 @@ const ReportsPage = (props: IProps) => {
         const clientInfo = serviceLogItem.clientInfo;
         const clientStyle = clientInfo?.Id ? {color: 'blue', cursor: 'pointer'} : {};
         const serviceLogId = serviceLogItem.id;
-        const canBeSelected = !(
+        const hasHmisAndEnrollmentId = !(
             serviceLogItem.serviceHmisId === null ||
             serviceLogItem.serviceHmisId === 0 ||
             serviceLogItem.clientHmis === null ||
@@ -172,11 +172,10 @@ const ReportsPage = (props: IProps) => {
         return (
             <tr
                 key={`service-log-report-item-${serviceLogId}`}
-                style={{fontStyle: canBeSelected ? undefined : 'italic'}}
+                style={{fontStyle: hasHmisAndEnrollmentId ? undefined : 'italic'}}
             >
                 <td>
                     <Form.Check
-                        disabled={!canBeSelected}
                         type="switch"
                         value={serviceLogId}
                         checked={serviceLogItem.selected}
@@ -227,7 +226,12 @@ const ReportsPage = (props: IProps) => {
             content += CRLF;
 
             for (const slr of serviceLogReport) {
-                if (slr.selected) {
+                if (
+                    slr.selected &&
+                    (slr.clientEnrollment !== null || slr.clientEnrollment !== 0) &&
+                    slr.clientHmis !== null &&
+                    slr.clientHmis !== 0
+                ) {
                     content += slr.serviceHmisId + ',';
                     content += slr.clientHmis + ',';
                     content += slr.clientEnrollment + ',';
@@ -271,7 +275,14 @@ const ReportsPage = (props: IProps) => {
     const handleMarkAsImported = async () => {
         if (serviceLogReport) {
             for (const slr of serviceLogReport) {
-                if (slr.selected) {
+                // Do not delete if the HMIS or EnrollmentId is empty. User will need to manually remove the service
+                if (
+                    slr.selected &&
+                    slr.clientEnrollment !== null &&
+                    slr.clientEnrollment !== 0 &&
+                    slr.clientHmis !== null &&
+                    slr.clientHmis !== 0
+                ) {
                     await serviceLogProvider.delete(slr.id);
                 }
             }
@@ -301,9 +312,13 @@ const ReportsPage = (props: IProps) => {
                         >
                             Mark all selected as imported into HMIS
                         </Button>
-                        <span style={{fontStyle: 'italic'}}>Italicized</span>
-                        <span> rows indicate the client is missing HMIS or EnrollmentId. </span>
-                        <span>Click on the table headers to sort.</span>
+                        <span>Italicized</span>
+                        <span> rows indicate the client is missing HMIS or EnrollmentId.</span>
+                        <span>
+                            {' '}
+                            Clients with missing HMIS or EnrollmentId{' '}
+                            <span style={{fontStyle: 'bold', color: 'red'}}>WILL NOT</span> be imported
+                        </span>
                     </Card.Subtitle>
                 </Form>
             </Card.Header>
@@ -319,14 +334,7 @@ const ReportsPage = (props: IProps) => {
                                         label="Select"
                                         onChange={() => {
                                             for (const [, serviceLogReportRecord] of serviceLogReport.entries())
-                                                serviceLogReportRecord.selected =
-                                                    serviceLogReportRecord.clientHmis === null ||
-                                                    serviceLogReportRecord.clientHmis === 0 ||
-                                                    false ||
-                                                    serviceLogReportRecord.serviceHmisId === null ||
-                                                    serviceLogReportRecord.serviceHmisId === 0
-                                                        ? false
-                                                        : !serviceLogSelectAll;
+                                                serviceLogReportRecord.selected = !serviceLogSelectAll;
                                             setServiceLogSelectAll(!serviceLogSelectAll);
                                         }}
                                         type="switch"

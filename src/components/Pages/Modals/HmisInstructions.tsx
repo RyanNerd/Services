@@ -6,7 +6,9 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import React, {useEffect, useState} from 'reactn';
 import step1 from 'images/integration/step-1.png';
-import step2 from 'images/integration/step-2.png';
+import step2a from 'images/integration/step-2a.png';
+import step2b from 'images/integration/step-2b.png';
+import step2c from 'images/integration/step-2c.png';
 import step3 from 'images/integration/step-3.png';
 import step4 from 'images/integration/step-4.png';
 import step5 from 'images/integration/step-5.png';
@@ -32,7 +34,7 @@ const HmisInstructions = (props: IProps) => {
     const onClose = props.onClose;
 
     const step2Text =
-        'In the Clients in Programs Report set the Date Range to this year and make sure the Organization(s) has Switchpoint checkmarked';
+        'Change the Date Range to `This Year`. Make sure the Organization(s) has Switchpoint checkmarked. In the programs checkmark the Filter by Program(s) and select ONLY `STG-SwitchPoint CRC Drop-in Services`';
 
     return (
         <Modal backdrop="static" size="xl" show={show} onHide={() => onClose()} onEnter={() => setTabIndicator(1)}>
@@ -55,7 +57,7 @@ const HmisInstructions = (props: IProps) => {
                     )}
 
                     <Tabs activeKey={key} onSelect={(key) => setKey(key || 'step1')}>
-                        <Tab disabled={true} eventKey="step1" title="Step 1">
+                        <Tab eventKey="step1" title="Step 1">
                             <img src={step1} alt="step 1" width={1000} height={100} />
                             <Form.Control
                                 className="my-4"
@@ -66,8 +68,10 @@ const HmisInstructions = (props: IProps) => {
                             />
                         </Tab>
 
-                        <Tab disabled={true} eventKey="step2" title="Step 2">
-                            <img src={step2} alt="step 2" width={1000} height={350} />
+                        <Tab eventKey="step2" title="Step 2">
+                            <img src={step2a} alt="step 2a" width={900} height={120} />
+                            <img src={step2b} alt="step 2b" width={900} height={120} />
+                            <img src={step2c} alt="step 2c" width={900} height={175} />
                             <Form.Control
                                 className="my-4"
                                 style={{fontSize: '21px', fontWeight: 'bold'}}
@@ -79,7 +83,7 @@ const HmisInstructions = (props: IProps) => {
                             />
                         </Tab>
 
-                        <Tab disabled={true} eventKey="step3" title="Step 3">
+                        <Tab eventKey="step3" title="Step 3">
                             <img src={step3} alt="step 3" width={300} height={75} />
                             <Form.Control
                                 className="my-4"
@@ -90,7 +94,7 @@ const HmisInstructions = (props: IProps) => {
                             />
                         </Tab>
 
-                        <Tab disabled={true} eventKey="step4" title="Step 4">
+                        <Tab eventKey="step4" title="Step 4">
                             <img src={step4} alt="step 4" width={900} height={450} />
                             <Form.Control
                                 className="my-4"
@@ -101,7 +105,7 @@ const HmisInstructions = (props: IProps) => {
                             />
                         </Tab>
 
-                        <Tab disabled={true} eventKey="step5" title="Step 5">
+                        <Tab eventKey="step5" title="Step 5">
                             <img src={step5} alt="step 5" width={800} height={350} />
                             <Form.Control
                                 className="my-4"
@@ -112,7 +116,7 @@ const HmisInstructions = (props: IProps) => {
                             />
                         </Tab>
 
-                        <Tab disabled={true} eventKey="step6" title="Step 6">
+                        <Tab eventKey="step6" title="Step 6">
                             <Form.Control
                                 className="my-4"
                                 as="textarea"

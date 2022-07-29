@@ -179,7 +179,7 @@ const HmisUpdatedGrid = (props: IProps) => {
                         {clientsUpdatedList && clientsUpdatedList?.length > 0 ? (
                             <>
                                 <tr>
-                                    <th colSpan={5}>Clients Updated</th>
+                                    <th colSpan={5}>Clients EnrollmentId Updated</th>
                                 </tr>
 
                                 <tr style={{backgroundColor: 'lightgray'}}>
