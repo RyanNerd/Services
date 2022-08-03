@@ -1,5 +1,6 @@
 import ClientPage from 'components/Pages/ClientPage';
 import HmisIntegration from 'components/Pages/HmisIntegration';
+import HmisUsersPage from 'components/Pages/HmisUsersPage';
 import LoginPage from 'components/Pages/LoginPage';
 import ReportsPage from 'components/Pages/ReportsPage';
 import ServicesPage from 'components/Pages/ServicesPage';
@@ -14,8 +15,10 @@ const LandingPage = () => {
     const [, setErrorDetails] = useGlobal('errorDetails');
     const [key, setKey] = useState('login');
     const [providers] = useGlobal('providers');
+    const [, setHmisUserList] = useGlobal('hmisUsersList');
     const [serviceList, setServiceList] = useGlobal('serviceList');
     const [signIn, setSignIn] = useState<Authenticated>({apiKey: null, organization: null, success: null});
+    const hmisUsersProvider = providers.hmisUsersProvider;
     const serviceProvider = providers.serviceProvider;
 
     /**
@@ -29,6 +32,8 @@ const LandingPage = () => {
                 await providers.setApi(authenticated.apiKey);
                 const serviceList = await serviceProvider.load();
                 await setServiceList(serviceList);
+                const hmisUsersList = await hmisUsersProvider.load();
+                await setHmisUserList(hmisUsersList);
                 setKey('client');
             } catch (error: unknown) {
                 await setErrorDetails(error);
@@ -71,6 +76,10 @@ const LandingPage = () => {
 
             <Tab title="HMIS Integration" eventKey="hmis-integration" disabled={!signIn.apiKey}>
                 <HmisIntegration tabKey={key} />
+            </Tab>
+
+            <Tab disabled={!signIn.apiKey} eventKey="hmis-users" title="HMIS Users">
+                <HmisUsersPage providers={providers} tabKey={key} />
             </Tab>
         </Tabs>
     );

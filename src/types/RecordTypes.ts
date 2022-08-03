@@ -99,6 +99,21 @@ export type ServiceRecord = {
     deleted_at?: null | Date;
 };
 
+export type HmisUserRecord = {
+    Id: number | null;
+    HmisUserName: string;
+    HmisUserId: string;
+    Updated?: null | Date;
+    Created?: null | Date;
+    deleted_at?: null | Date;
+};
+
+export const newHmisUserRecord = {
+    Id: null,
+    HmisUserName: '',
+    HmisUserId: ''
+};
+
 export enum UNIT_OF_MEASURE {
     Dollars = 'D',
     Minutes = 'M',

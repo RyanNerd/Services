@@ -21,7 +21,7 @@ type ServiceLogResponse = {
 };
 
 export interface IServiceProvider {
-    delete: (residentId: number) => Promise<DeleteResponse>;
+    delete: (serviceId: number) => Promise<DeleteResponse>;
     load: () => Promise<ServiceRecord[]>;
     update: (serviceInfo: ServiceRecord) => Promise<ServiceRecord>;
     read: (id: number) => Promise<ServiceRecord>;
@@ -77,7 +77,7 @@ const serviceProvider = (url: string): IServiceProvider => {
 
         /**
          * Service Read
-         * @param {number} id PK of the Resident table
+         * @param {number} id PK of the Service table
          * @returns {Promise<ServiceRecord>} A service record
          */
         read: async (id: number): Promise<ServiceRecord> => {

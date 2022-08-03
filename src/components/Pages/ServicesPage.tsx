@@ -82,13 +82,10 @@ const ServicesPage = (props: IProps) => {
                     setShowServiceEdit(null);
                     if (serviceRecord !== null) {
                         // If the serviceRecord.Id is negative then it indicates the record should be destroyed
-                        if (serviceRecord.Id === null || serviceRecord.Id > 0) {
-                            await serviceProvider.update(serviceRecord);
-                            await setServiceList(await serviceProvider.load());
-                        } else {
-                            await serviceProvider.delete(Math.abs(serviceRecord.Id as number));
-                            await setServiceList(await serviceProvider.load());
-                        }
+                        await (serviceRecord.Id === null || serviceRecord.Id > 0
+                            ? serviceProvider.update(serviceRecord)
+                            : serviceProvider.delete(Math.abs(serviceRecord.Id as number)));
+                        await setServiceList(await serviceProvider.load());
                     }
                 }}
                 serviceInfo={showServiceEdit as ServiceRecord}

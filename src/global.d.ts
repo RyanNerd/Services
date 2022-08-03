@@ -1,4 +1,4 @@
-import {ServiceRecord} from 'types/RecordTypes';
+import {HmisUserRecord, ServiceRecord} from 'types/RecordTypes';
 import {IProviders} from 'utilities/getInitialState';
 
 declare module 'reactn/default' {
@@ -6,5 +6,6 @@ declare module 'reactn/default' {
         errorDetails: unknown;
         providers: IProviders;
         serviceList: ServiceRecord[];
+        hmisUsersList: HmisUserRecord[];
     }
 }
